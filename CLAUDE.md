@@ -35,6 +35,13 @@
 - 每次只实现一个功能，原子性提交
 - 提交前确保代码可编译、测试通过
 
+## Git 仓库
+
+- **远程仓库**: https://github.com/parilion/campus-exchange
+- **主分支**: `main`
+- 每次 commit 后必须 `git push origin main` 推送到远程
+- 推送前先 `git pull origin main --rebase` 确保无冲突
+
 ## 工作流程
 
 ```
@@ -42,8 +49,9 @@
 2. 实现该功能（后端 API + 前端页面）
 3. 运行测试验证
 4. git add + git commit（原子性提交）
-5. 更新 features.json 中该功能的 passes 为 true
-6. 更新 claude-progress.md 的进度信息
+5. git push origin main（推送到远程仓库）
+6. 更新 features.json 中该功能的 passes 为 true
+7. 更新 claude-progress.md 的进度信息
 ```
 
 ## features.json 规则
@@ -54,7 +62,10 @@
 
 ## 数据库
 
-- MySQL 8.0，数据库名: `campus_exchange`
+- MySQL 5.7，数据库名: `campus_exchange`
+- 端口:3307
+- 用户:root
+- 密码:123456
 - 字符集: utf8mb4
 - Schema 文件: `sql/schema.sql`
 - 使用 MyBatis-Plus 自动填充 createTime/updateTime

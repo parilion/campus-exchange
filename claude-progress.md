@@ -22,5 +22,12 @@
 ## 技术债务
 - 无
 
+## Git 仓库
+- 远程: https://github.com/parilion/campus-exchange
+- 分支: main
+- 每次 commit 后需 push 到远程
+
 ## 最近变更
 - 初始提交：项目骨架 + Harness 框架
+- 连接远程 GitHub 仓库并推送
+- 创建自动化开发脚本 auto-dev.ps1
