@@ -1,7 +1,11 @@
 package com.campus.exchange.service;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.campus.exchange.dto.CreateProductRequest;
+import com.campus.exchange.dto.ProductPageRequest;
+import com.campus.exchange.dto.ProductPageResponse;
 import com.campus.exchange.dto.ProductVO;
 import com.campus.exchange.mapper.CategoryMapper;
 import com.campus.exchange.mapper.ProductMapper;
@@ -82,6 +86,54 @@ public class ProductService {
             throw new IllegalArgumentException("商品不存在");
         }
         return getProductVO(product);
+    }
+
+    /**
+     * 分页查询商品列表
+     */
+    public ProductPageResponse getProductList(ProductPageRequest request) {
+        // 创建分页对象
+        Page<Product> page = new Page<>(request.getPage(), request.getPageSize());
+
+        // 构建查询条件
+        LambdaQueryWrapper<Product> queryWrapper = new LambdaQueryWrapper<>();
+        queryWrapper.eq(Product::getStatus, request.getStatus());
+
+        // 分类筛选
+        if (request.getCategoryId() != null) {
+            queryWrapper.eq(Product::getCategoryId, request.getCategoryId());
+        }
+
+        // 排序
+        String sortBy = request.getSortBy();
+        boolean isAsc = "asc".equalsIgnoreCase(request.getSortOrder());
+
+        if ("price".equals(sortBy)) {
+            queryWrapper.orderBy(true, isAsc, Product::getPrice);
+        } else if ("viewCount".equals(sortBy)) {
+            queryWrapper.orderBy(true, isAsc, Product::getViewCount);
+        } else {
+            // 默认按创建时间排序
+            queryWrapper.orderBy(true, isAsc, Product::getCreatedAt);
+        }
+
+        // 执行分页查询
+        IPage<Product> productPage = productMapper.selectPage(page, queryWrapper);
+
+        // 转换为VO列表
+        List<ProductVO> productVOList = productPage.getRecords().stream()
+                .map(this::getProductVO)
+                .collect(Collectors.toList());
+
+        // 构建响应
+        ProductPageResponse response = new ProductPageResponse();
+        response.setList(productVOList);
+        response.setPage((int) productPage.getCurrent());
+        response.setPageSize((int) productPage.getSize());
+        response.setTotal(productPage.getTotal());
+        response.setTotalPages((int) productPage.getPages());
+
+        return response;
     }
 
     /**

@@ -4,6 +4,7 @@ import zhCN from 'antd/locale/zh_CN';
 import LoginPage from './pages/LoginPage';
 import RegisterPage from './pages/RegisterPage';
 import PublishPage from './pages/PublishPage';
+import ProductListPage from './pages/ProductListPage';
 import AuthRoute from './components/AuthRoute';
 
 function App() {
@@ -18,12 +19,14 @@ function App() {
               <PublishPage />
             </AuthRoute>
           } />
+          <Route path="/products" element={
+            <AuthRoute>
+              <ProductListPage />
+            </AuthRoute>
+          } />
           <Route path="/" element={
             <AuthRoute>
-              <div style={{ padding: 24 }}>
-                <h1>Campus Exchange - 首页</h1>
-                <p>欢迎来到校园二手交易平台！（开发中）</p>
-              </div>
+              <ProductListPage />
             </AuthRoute>
           } />
         </Routes>

@@ -1,6 +1,8 @@
 package com.campus.exchange.controller;
 
 import com.campus.exchange.dto.CreateProductRequest;
+import com.campus.exchange.dto.ProductPageRequest;
+import com.campus.exchange.dto.ProductPageResponse;
 import com.campus.exchange.dto.ProductVO;
 import com.campus.exchange.service.ProductService;
 import com.campus.exchange.util.Result;
@@ -40,6 +42,15 @@ public class ProductController {
     public Result<ProductVO> getProduct(@PathVariable Long id) {
         ProductVO product = productService.getProductById(id);
         return Result.success(product);
+    }
+
+    /**
+     * 分页查询商品列表
+     */
+    @GetMapping
+    public Result<ProductPageResponse> getProductList(@ModelAttribute ProductPageRequest request) {
+        ProductPageResponse response = productService.getProductList(request);
+        return Result.success(response);
     }
 
     private Long getCurrentUserId() {

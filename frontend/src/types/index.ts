@@ -19,6 +19,25 @@ export interface PageResult<T> {
   size: number;
 }
 
+// 商品分页响应
+export interface ProductPageResponse {
+  list: Product[];
+  page: number;
+  pageSize: number;
+  total: number;
+  totalPages: number;
+}
+
+// 商品分页请求参数
+export interface ProductPageParams {
+  page?: number;
+  pageSize?: number;
+  categoryId?: number;
+  status?: string;
+  sortBy?: string;
+  sortOrder?: string;
+}
+
 // 用户信息
 export interface User {
   id: number;
