@@ -1,6 +1,7 @@
 package com.campus.exchange.config;
 
 import com.campus.exchange.security.JwtAuthenticationFilter;
+import org.springframework.http.HttpMethod;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -35,7 +36,7 @@ public class SecurityConfig {
             .authorizeRequests()
                 .antMatchers("/api/auth/register", "/api/auth/login").permitAll()
                 .antMatchers("/api/health").permitAll()
-                .antMatchers("/api/products/list", "/api/products/detail/**").permitAll()
+                .antMatchers(HttpMethod.GET, "/api/products/**").permitAll()
                 .antMatchers("/api/categories/**").permitAll()
                 .antMatchers("/uploads/**").permitAll()
                 .anyRequest().authenticated()
