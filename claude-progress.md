@@ -2,10 +2,21 @@
 
 ## 当前状态
 - 开发中模块: 商品管理
-- 当前功能: ID#16 - 发布商品 API
-- 进度: 18/190 (9.5%)
+- 当前功能: ID#17 - 发布商品 API - 图片上传
+- 进度: 19/190 (10.0%)
 
 ## 开发日志 (按时间倒序)
+
+### 2026-02-13 18:23:03 | 完成: 发布商品 API - 图片上传 (#17)
+- **Commit**: `feat: implement product image upload API`
+- **涉及文件**:
+  - backend/src/main/java/com/campus/exchange/controller/ImageController.java
+  - backend/src/main/java/com/campus/exchange/config/WebMvcConfig.java
+  - backend/src/main/java/com/campus/exchange/config/SecurityConfig.java
+  - backend/src/main/resources/application.yml
+  - frontend/src/pages/PublishPage.tsx
+  - frontend/src/services/image.ts
+- **备注**: 图片上传 API + 前端组件，支持单图/多图上传、格式/大小校验、静态资源映射
 
 ### 2026-02-13 | 完成: 发布商品 API - 基本信息 (#16)
 - **Commit**: `feat: implement product publishing API and UI`
@@ -158,7 +169,7 @@
 
 ### 商品管理 (P0)
 - [x] #16 发布商品 API - 基本信息 (2026-02-13)
-- [ ] #17 发布商品 API - 图片上传
+- [x] #17 发布商品 API - 图片上传 (2026-02-13)
 - [ ] #18 商品列表 API - 分页查询
 - [ ] #19 商品详情 API
 - [ ] #20 编辑商品信息
