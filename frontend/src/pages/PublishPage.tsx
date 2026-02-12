@@ -13,9 +13,11 @@ import {
   Col,
   Space,
 } from 'antd';
-import { PlusOutlined, UploadOutlined } from '@ant-design/icons';
+import { PlusOutlined, LoadingOutlined } from '@ant-design/icons';
 import { useNavigate } from 'react-router-dom';
-import { createProduct, CreateProductRequest } from '../services/product';
+import { createProduct } from '../services/product';
+import type { CreateProductRequest } from '../services/product';
+import { uploadImage } from '../services/image';
 
 const { Title, Text } = Typography;
 const { TextArea } = Input;
@@ -47,10 +49,16 @@ const TRADE_TYPE_OPTIONS = [
   { value: 'ONLINE', label: '线上交易' },
 ];
 
+interface PreviewImage {
+  url: string;
+  uploadUrl: string;
+}
+
 export default function PublishPage() {
   const [form] = Form.useForm();
   const [loading, setLoading] = useState(false);
-  const [imageList, setImageList] = useState<string[]>([]);
+  const [uploading, setUploading] = useState(false);
+  const [imageList, setImageList] = useState<PreviewImage[]>([]);
   const navigate = useNavigate();
 
   const onFinish = async (values: CreateProductRequest) => {
@@ -64,7 +72,7 @@ export default function PublishPage() {
         originalPrice: values.originalPrice,
         categoryId: values.categoryId,
         condition: values.condition,
-        images: imageList.length > 0 ? imageList : undefined,
+        images: imageList.length > 0 ? imageList.map((img) => img.uploadUrl) : undefined,
         tradeType: values.tradeType,
         tradeLocation: values.tradeLocation,
       };
@@ -80,16 +88,42 @@ export default function PublishPage() {
     }
   };
 
-  // 处理图片上传（模拟上传，实际项目中应调用上传接口）
-  const handleImageUpload = (file: File) => {
-    const reader = new FileReader();
-    reader.onload = (e) => {
-      const result = e.target?.result as string;
-      if (result) {
-        setImageList((prev) => [...prev, result]);
-      }
-    };
-    reader.readAsDataURL(file);
+  // 处理图片上传
+  const handleImageUpload = async (file: File): Promise<boolean> => {
+    // 验证文件类型
+    const isImage = file.type.startsWith('image/');
+    if (!isImage) {
+      message.error('只能上传图片文件');
+      return false;
+    }
+
+    // 验证文件大小 (5MB)
+    const isLt5M = file.size / 1024 / 1024 < 5;
+    if (!isLt5M) {
+      message.error('图片大小不能超过 5MB');
+      return false;
+    }
+
+    setUploading(true);
+    try {
+      const uploadUrl = await uploadImage(file);
+
+      // 获取本地预览URL
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        const result = e.target?.result as string;
+        if (result) {
+          setImageList((prev) => [...prev, { url: result, uploadUrl }]);
+        }
+      };
+      reader.readAsDataURL(file);
+    } catch (err) {
+      const errorMsg = err instanceof Error ? err.message : '上传失败';
+      message.error(errorMsg);
+    } finally {
+      setUploading(false);
+    }
+
     return false; // 阻止默认上传行为
   };
 
@@ -209,7 +243,7 @@ export default function PublishPage() {
                       }}
                     >
                       <img
-                        src={img}
+                        src={img.url}
                         alt={`商品图片${index + 1}`}
                         style={{ width: '100%', height: '100%', objectFit: 'cover' }}
                       />
@@ -233,6 +267,7 @@ export default function PublishPage() {
                     showUploadList={false}
                     beforeUpload={handleImageUpload}
                     accept="image/*"
+                    disabled={uploading || imageList.length >= 9}
                   >
                     <div
                       style={{
@@ -244,19 +279,26 @@ export default function PublishPage() {
                         flexDirection: 'column',
                         justifyContent: 'center',
                         alignItems: 'center',
-                        cursor: 'pointer',
+                        cursor: uploading || imageList.length >= 9 ? 'not-allowed' : 'pointer',
                         color: '#999',
+                        background: uploading || imageList.length >= 9 ? '#f5f5f5' : 'transparent',
                       }}
                     >
-                      <PlusOutlined style={{ fontSize: 24, marginBottom: 4 }} />
-                      <Text type="secondary" style={{ fontSize: 12 }}>
-                        上传图片
-                      </Text>
+                      {uploading ? (
+                        <LoadingOutlined style={{ fontSize: 24 }} />
+                      ) : (
+                        <>
+                          <PlusOutlined style={{ fontSize: 24, marginBottom: 4 }} />
+                          <Text type="secondary" style={{ fontSize: 12 }}>
+                            {imageList.length >= 9 ? '已上限' : '上传图片'}
+                          </Text>
+                        </>
+                      )}
                     </div>
                   </Upload>
                 </div>
                 <Text type="secondary" style={{ fontSize: 12 }}>
-                  建议上传实物图片，支持 jpg、png 格式
+                  建议上传实物图片，最多 9 张，支持 jpg、png 格式，单张不超过 5MB
                 </Text>
               </Form.Item>
 

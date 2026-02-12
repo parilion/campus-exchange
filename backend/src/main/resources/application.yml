@@ -38,10 +38,11 @@ jwt:
   expiration: 86400000  # 24 hours
 
 # 文件上传配置
-upload:
-  path: ./uploads
-  max-size: 10485760  # 10MB
-  allowed-types: image/jpeg,image/png,image/gif,image/webp
+file:
+  upload:
+    path: ./uploads
+    max-size: 10485760  # 10MB
+    allowed-types: image/jpeg,image/png,image/gif,image/webp
 
 logging:
   level:
