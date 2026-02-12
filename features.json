@@ -15,7 +15,7 @@
   {"id": 14, "category": "用户认证", "module": "auth", "description": "登录日志记录", "priority": "P2", "passes": false},
   {"id": 15, "category": "用户认证", "module": "auth", "description": "账号封禁/解封", "priority": "P2", "passes": false},
 
-  {"id": 16, "category": "商品管理", "module": "product", "description": "发布商品 API - 基本信息", "priority": "P0", "passes": false},
+  {"id": 16, "category": "商品管理", "module": "product", "description": "发布商品 API - 基本信息", "priority": "P0", "passes": true},
   {"id": 17, "category": "商品管理", "module": "product", "description": "发布商品 API - 图片上传", "priority": "P0", "passes": false},
   {"id": 18, "category": "商品管理", "module": "product", "description": "商品列表 API - 分页查询", "priority": "P0", "passes": false},
   {"id": 19, "category": "商品管理", "module": "product", "description": "商品详情 API", "priority": "P0", "passes": false},

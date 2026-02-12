@@ -1,53 +1,183 @@
 # Campus Exchange - 开发进度
 
-## 当前状态: 用户认证模块完成
+## 当前状态
+- 开发中模块: 商品管理
+- 当前功能: ID#16 - 发布商品 API
+- 进度: 18/190 (9.5%)
 
-## 已完成
-- [x] 项目骨架搭建（前端 React + 后端 Spring Boot）
-- [x] Harness 框架文件创建（CLAUDE.md, features.json, scripts/）
-- [x] 数据库 Schema 设计
-- [x] Git 仓库初始化
-- [x] 用户注册 API（#1）- 邮箱注册，用户名/邮箱唯一性校验
-- [x] 用户登录 API（#2）- 账号密码登录
-- [x] JWT Token 生成与验证（#3）- JwtTokenProvider + JwtAuthenticationFilter
-- [x] Token 刷新机制（#4）- /api/auth/refresh 接口
-- [x] 退出登录（#5）- /api/auth/logout 接口
-- [x] 密码加密存储 BCrypt（#6）
-- [x] 登录页面 UI（#7）- Ant Design 表单
-- [x] 注册页面 UI（#8）- 含密码确认
-- [x] 前端 Token 存储与自动携带（#9）- Zustand + localStorage + Axios 拦截器
-- [x] 路由守卫（#10）- AuthRoute 组件
-- [x] Spring Security 安全配置（#166）
-- [x] CORS 跨域配置（#167）
-- [x] 接口参数校验（#173）- @Valid + DTO
-- [x] 统一异常处理（#174）- GlobalExceptionHandler
-- [x] 统一响应格式封装（#175）- Result<T>
-- [x] 数据库连接池配置（#177）- HikariCP
-- [x] Axios 请求/响应拦截器（#179）
+## 开发日志 (按时间倒序)
 
-## 进行中
-- [ ] 无
+### 2026-02-13 | 完成: 发布商品 API - 基本信息 (#16)
+- **Commit**: `feat: implement product publishing API and UI`
+- **涉及文件**:
+  - backend/src/main/java/com/campus/exchange/controller/ProductController.java
+  - backend/src/main/java/com/campus/exchange/dto/CreateProductRequest.java
+  - backend/src/main/java/com/campus/exchange/dto/ProductVO.java
+  - backend/src/main/java/com/campus/exchange/service/ProductService.java
+  - backend/src/main/java/com/campus/exchange/mapper/ProductMapper.java
+  - backend/src/main/java/com/campus/exchange/config/SecurityConfig.java
+  - frontend/src/pages/PublishPage.tsx
+  - frontend/src/services/product.ts
+  - frontend/src/App.tsx
+- **备注**: 发布商品 API + 前端页面，含分类、新旧程度、交易方式等字段
 
-## 下一步工作
-- [ ] P0: 商品发布 API（#16）
-- [ ] P0: 商品列表分页查询（#18）
-- [ ] P0: 商品详情 API（#19）
-- [ ] P0: 商品分类体系（#23）
-- [ ] P0: 商品相关前端页面
+### 2026-02-13 | 完成: Axios 请求/响应拦截器 (#179)
+- **Commit**: `feat: add axios interceptors for token and error handling`
+- **涉及文件**:
+  - frontend/src/utils/request.ts
+- **备注**: Token 自动携带、401 自动跳转登录、错误统一提示
 
-## 已知问题
-- 数据库端口已从 3306 改为 3307（与 CLAUDE.md 一致）
+### 2026-02-13 | 完成: 数据库连接池配置 (#177)
+- **Commit**: `feat: configure hikariCP database connection pool`
+- **涉及文件**:
+  - backend/src/main/resources/application.yml
+- **备注**: HikariCP 连接池配置，优化数据库连接性能
+
+### 2026-02-13 | 完成: 统一响应格式封装 (#175)
+- **Commit**: `feat: add unified response wrapper Result<T>`
+- **涉及文件**:
+  - backend/src/main/java/com/campus/exchange/common/Result.java
+- **备注**: 统一 API 响应格式 {code, message, data}
+
+### 2026-02-13 | 完成: 统一异常处理 (#174)
+- **Commit**: `feat: add global exception handler`
+- **涉及文件**:
+  - backend/src/main/java/com/campus/exchange/config/GlobalExceptionHandler.java
+- **备注**: @RestControllerAdvice 统一处理所有异常
+
+### 2026-02-13 | 完成: 接口参数校验 (#173)
+- **Commit**: `feat: add parameter validation with @Valid`
+- **涉及文件**:
+  - backend/src/main/java/com/campus/exchange/dto/*.java
+- **备注**: 使用 Hibernate Validator 进行参数校验
+
+### 2026-02-13 | 完成: CORS 跨域配置 (#167)
+- **Commit**: `feat: configure CORS for frontend-backend communication`
+- **涉及文件**:
+  - backend/src/main/java/com/campus/exchange/config/CorsConfig.java
+- **备注**: 允许 localhost:5173 跨域访问
+
+### 2026-02-13 | 完成: Spring Security 安全配置 (#166)
+- **Commit**: `feat: configure spring security with JWT`
+- **涉及文件**:
+  - backend/src/main/java/com/campus/exchange/config/SecurityConfig.java
+  - backend/src/main/java/com/campus/exchange/config/JwtAuthenticationFilter.java
+- **备注**: JWT Token 认证、URL 权限配置
+
+### 2026-02-13 | 完成: 路由守卫 - 未登录跳转 (#10)
+- **Commit**: `feat: add auth route guard component`
+- **涉及文件**:
+  - frontend/src/components/AuthRoute.tsx
+  - frontend/src/App.tsx
+- **备注**: 未登录用户自动跳转到登录页
+
+### 2026-02-13 | 完成: 前端 Token 存储与自动携带 (#9)
+- **Commit**: `feat: add token storage and axios interceptor`
+- **涉及文件**:
+  - frontend/src/stores/authStore.ts
+  - frontend/src/utils/request.ts
+- **备注**: Zustand 状态管理 + localStorage 持久化 + Axios 请求拦截
+
+### 2026-02-13 | 完成: 注册页面 UI (#8)
+- **Commit**: `feat: add user registration page UI`
+- **涉及文件**:
+  - frontend/src/pages/Register.tsx
+- **备注**: Ant Design 表单，含密码确认、邮箱输入
+
+### 2026-02-13 | 完成: 登录页面 UI (#7)
+- **Commit**: `feat: add user login page UI`
+- **涉及文件**:
+  - frontend/src/pages/Login.tsx
+- **备注**: Ant Design 表单，美观简洁
+
+### 2026-02-13 | 完成: 密码加密存储 BCrypt (#6)
+- **Commit**: `feat: add BCrypt password encoding`
+- **涉及文件**:
+  - backend/src/main/java/com/campus/exchange/service/AuthService.java
+- **备注**: 使用 BCryptPasswordEncoder 进行密码加密
+
+### 2026-02-13 | 完成: 退出登录 (#5)
+- **Commit**: `feat: add logout API endpoint`
+- **涉及文件**:
+  - backend/src/main/java/com/campus/exchange/controller/AuthController.java
+  - backend/src/main/java/com/campus/exchange/service/AuthService.java
+- **备注**: /api/auth/logout 接口，Token 失效处理
+
+### 2026-02-13 | 完成: Token 刷新机制 (#4)
+- **Commit**: `feat: add token refresh mechanism`
+- **涉及文件**:
+  - backend/src/main/java/com/campus/exchange/controller/AuthController.java
+  - backend/src/main/java/com/campus/exchange/service/AuthService.java
+- **备注**: /api/auth/refresh 接口，支持 Token 续期
+
+### 2026-02-13 | 完成: JWT Token 生成与验证 (#3)
+- **Commit**: `feat: add JWT token generation and validation`
+- **涉及文件**:
+  - backend/src/main/java/com/campus/exchange/security/JwtTokenProvider.java
+  - backend/src/main/java/com/campus/exchange/config/JwtAuthenticationFilter.java
+- **备注**: JJWT 库实现 Token 生成、解析、验证
+
+### 2026-02-13 | 完成: 用户登录 API (#2)
+- **Commit**: `feat: add user login API`
+- **涉及文件**:
+  - backend/src/main/java/com/campus/exchange/controller/AuthController.java
+  - backend/src/main/java/com/campus/exchange/service/AuthService.java
+  - backend/src/main/java/com/campus/exchange/mapper/UserMapper.java
+- **备注**: 账号密码登录，BCrypt 密码校验，JWT Token 返回
+
+### 2026-02-13 | 完成: 用户注册 API (#1)
+- **Commit**: `feat: add user registration API`
+- **涉及文件**:
+  - backend/src/main/java/com/campus/exchange/controller/AuthController.java
+  - backend/src/main/java/com/campus/exchange/service/AuthService.java
+  - backend/src/main/java/com/campus/exchange/mapper/UserMapper.java
+- **备注**: 邮箱注册，用户名/邮箱唯一性校验
+
+## 已完成功能 (按模块)
+
+### 用户认证 (P0) ✓
+- [x] #1 用户注册 - 邮箱注册 (2026-02-13)
+- [x] #2 用户登录 - 账号密码登录 (2026-02-13)
+- [x] #3 JWT Token 生成与验证 (2026-02-13)
+- [x] #4 Token 刷新机制 (2026-02-13)
+- [x] #5 退出登录 (2026-02-13)
+- [x] #6 密码加密存储 BCrypt (2026-02-13)
+- [x] #7 登录页面 UI (2026-02-13)
+- [x] #8 注册页面 UI (2026-02-13)
+- [x] #9 前端 Token 存储与自动携带 (2026-02-13)
+- [x] #10 路由守卫 - 未登录跳转 (2026-02-13)
+
+### 安全与性能 (P0) ✓
+- [x] #166 Spring Security 安全配置 (2026-02-13)
+- [x] #167 CORS 跨域配置 (2026-02-13)
+- [x] #173 接口参数校验 (2026-02-13)
+- [x] #174 统一异常处理 (2026-02-13)
+- [x] #175 统一响应格式封装 (2026-02-13)
+- [x] #177 数据库连接池配置 (2026-02-13)
+- [x] #179 Axios 请求/响应拦截器 (2026-02-13)
+
+### 商品管理 (P0)
+- [x] #16 发布商品 API - 基本信息 (2026-02-13)
+- [ ] #17 发布商品 API - 图片上传
+- [ ] #18 商品列表 API - 分页查询
+- [ ] #19 商品详情 API
+- [ ] #20 编辑商品信息
+- [ ] #21 删除商品（软删除）
+- [ ] #22 商品状态管理
+- [ ] #23 商品分类体系
+- [ ] #24 发布商品页面 UI
+- [ ] #25 商品列表页面 UI
+- [ ] #26 商品详情页面 UI
+- [ ] #37 商品新旧程度标注
+- [ ] #40 我的发布列表页面
+
+### 搜索与筛选 (P1)
+- [ ] #41 关键词搜索 API
+- [ ] #42 分类筛选
+- [ ] #43 价格区间筛选
 
 ## 技术债务
 - 无
 
-## Git 仓库
-- 远程: https://github.com/parilion/campus-exchange
-- 分支: main
-- 每次 commit 后需 push 到远程
-
-## 最近变更
-- 实现完整用户认证模块（后端 API + 前端页面）
-- 集成 JWT Token 认证（生成、验证、刷新）
-- 实现登录/注册页面 UI（Ant Design）
-- 实现前端路由守卫和 Token 管理
+## 阻塞项
+- 无
