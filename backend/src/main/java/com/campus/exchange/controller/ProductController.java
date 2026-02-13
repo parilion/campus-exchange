@@ -37,21 +37,31 @@ public class ProductController {
     }
 
     /**
-     * 获取商品详情
-     */
-    @GetMapping("/{id}")
-    public Result<ProductVO> getProduct(@PathVariable Long id) {
-        ProductVO product = productService.getProductById(id);
-        return Result.success(product);
-    }
-
-    /**
      * 分页查询商品列表
      */
     @GetMapping
     public Result<ProductPageResponse> getProductList(@ModelAttribute ProductPageRequest request) {
         ProductPageResponse response = productService.getProductList(request);
         return Result.success(response);
+    }
+
+    /**
+     * 获取当前用户发布的商品列表
+     */
+    @GetMapping("/my")
+    public Result<ProductPageResponse> getMyProducts(@ModelAttribute ProductPageRequest request) {
+        Long userId = getCurrentUserId();
+        ProductPageResponse response = productService.getMyProducts(userId, request);
+        return Result.success(response);
+    }
+
+    /**
+     * 获取商品详情
+     */
+    @GetMapping("/{id}")
+    public Result<ProductVO> getProduct(@PathVariable Long id) {
+        ProductVO product = productService.getProductById(id);
+        return Result.success(product);
     }
 
     /**
@@ -72,16 +82,6 @@ public class ProductController {
         Long userId = getCurrentUserId();
         productService.deleteProduct(id, userId);
         return Result.success(null);
-    }
-
-    /**
-     * 获取当前用户发布的商品列表
-     */
-    @GetMapping("/my")
-    public Result<ProductPageResponse> getMyProducts(@ModelAttribute ProductPageRequest request) {
-        Long userId = getCurrentUserId();
-        ProductPageResponse response = productService.getMyProducts(userId, request);
-        return Result.success(response);
     }
 
     private Long getCurrentUserId() {
