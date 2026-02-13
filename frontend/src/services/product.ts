@@ -45,3 +45,9 @@ export async function updateProduct(id: number, data: Partial<CreateProductReque
   const res = await request.put<Result<Product>>(`/products/${id}`, data);
   return res.data.data;
 }
+
+// 删除商品（软删除）
+export async function deleteProduct(id: number) {
+  const res = await request.delete<Result<void>>(`/products/${id}`);
+  return res.data.data;
+}

@@ -64,6 +64,16 @@ public class ProductController {
         return Result.success(product);
     }
 
+    /**
+     * 删除商品（软删除）
+     */
+    @DeleteMapping("/{id}")
+    public Result<Void> deleteProduct(@PathVariable Long id) {
+        Long userId = getCurrentUserId();
+        productService.deleteProduct(id, userId);
+        return Result.success(null);
+    }
+
     private Long getCurrentUserId() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         return (Long) authentication.getPrincipal();

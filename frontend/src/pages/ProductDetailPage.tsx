@@ -1,8 +1,8 @@
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { Row, Col, Card, Image, Tag, Button, Descriptions, Avatar, Space, Typography, Spin, Divider, message, Alert } from 'antd';
-import { ArrowLeftOutlined, EyeOutlined, HeartOutlined, MessageOutlined, ShareAltOutlined, WarningOutlined, EditOutlined } from '@ant-design/icons';
-import { getProduct } from '../services/product';
+import { Row, Col, Card, Image, Tag, Button, Descriptions, Avatar, Space, Typography, Spin, Divider, message, Alert, Modal } from 'antd';
+import { ArrowLeftOutlined, EyeOutlined, HeartOutlined, MessageOutlined, ShareAltOutlined, WarningOutlined, EditOutlined, DeleteOutlined } from '@ant-design/icons';
+import { getProduct, deleteProduct } from '../services/product';
 import { useUserStore } from '../stores/userStore';
 import type { Product } from '../types';
 import './ProductDetailPage.css';
@@ -76,6 +76,28 @@ export default function ProductDetailPage() {
     navigate(-1);
   };
 
+  // 处理删除商品
+  const handleDelete = () => {
+    Modal.confirm({
+      title: '确认删除',
+      content: '确定要删除这个商品吗？删除后无法恢复。',
+      okText: '确认删除',
+      okType: 'danger',
+      cancelText: '取消',
+      onOk: async () => {
+        if (!id) return;
+        try {
+          await deleteProduct(Number(id));
+          message.success('商品已删除');
+          navigate('/products');
+        } catch (error) {
+          const errorMsg = error instanceof Error ? error.message : '删除失败';
+          message.error(errorMsg);
+        }
+      },
+    });
+  };
+
   if (loading) {
     return (
       <div className="product-detail-loading">
@@ -105,13 +127,22 @@ export default function ProductDetailPage() {
           返回
         </Button>
         {userId === product.sellerId && product.status === 'ON_SALE' && (
-          <Button
-            type="primary"
-            icon={<EditOutlined />}
-            onClick={() => navigate(`/products/${product.id}/edit`)}
-          >
-            编辑商品
-          </Button>
+          <Space>
+            <Button
+              type="primary"
+              icon={<EditOutlined />}
+              onClick={() => navigate(`/products/${product.id}/edit`)}
+            >
+              编辑商品
+            </Button>
+            <Button
+              danger
+              icon={<DeleteOutlined />}
+              onClick={handleDelete}
+            >
+              删除商品
+            </Button>
+          </Space>
         )}
       </div>
 

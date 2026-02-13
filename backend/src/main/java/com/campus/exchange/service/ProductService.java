@@ -203,6 +203,26 @@ public class ProductService {
     }
 
     /**
+     * 删除商品（软删除）
+     */
+    public void deleteProduct(Long productId, Long userId) {
+        // 查询商品
+        Product product = productMapper.selectById(productId);
+        if (product == null) {
+            throw new IllegalArgumentException("商品不存在");
+        }
+
+        // 校验权限（只有卖家可以删除自己的商品）
+        if (!product.getSellerId().equals(userId)) {
+            throw new IllegalArgumentException("无权限删除此商品");
+        }
+
+        // 软删除：将状态设置为 DELETED
+        product.setStatus("DELETED");
+        productMapper.updateById(product);
+    }
+
+    /**
      * 将 Product 转换为 ProductVO
      */
     private ProductVO getProductVO(Product product) {
