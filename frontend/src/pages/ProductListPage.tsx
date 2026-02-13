@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Row, Col, Card, Select, Pagination, Empty, Image, Tag, Space, Typography } from 'antd';
 import { FireOutlined, ClockCircleOutlined, EyeOutlined } from '@ant-design/icons';
 import { getProductList } from '../services/product';
@@ -57,7 +58,7 @@ const PriceTag = ({ price, originalPrice }: { price: number; originalPrice?: num
 );
 
 // 商品卡片组件
-const ProductCard = ({ product }: { product: Product }) => {
+const ProductCard = ({ product, onClick }: { product: Product; onClick: () => void }) => {
   const imageUrl = product.images && product.images.length > 0
     ? product.images[0]
     : 'https://via.placeholder.com/300x200?text=No+Image';
@@ -66,6 +67,7 @@ const ProductCard = ({ product }: { product: Product }) => {
     <Card
       hoverable
       className="product-card"
+      onClick={onClick}
       cover={
         <div className="product-image-wrapper">
           <Image
@@ -112,6 +114,7 @@ const ProductCardSkeleton = () => (
 );
 
 export default function ProductListPage() {
+  const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
   const [products, setProducts] = useState<Product[]>([]);
   const [pagination, setPagination] = useState({
@@ -232,7 +235,10 @@ export default function ProductListPage() {
           <Row gutter={[16, 16]}>
             {products.map(product => (
               <Col key={product.id} xs={12} sm={8} md={6} lg={6}>
-                <ProductCard product={product} />
+                <ProductCard
+                  product={product}
+                  onClick={() => navigate(`/products/${product.id}`)}
+                />
               </Col>
             ))}
           </Row>

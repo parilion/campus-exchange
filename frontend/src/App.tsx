@@ -5,6 +5,7 @@ import LoginPage from './pages/LoginPage';
 import RegisterPage from './pages/RegisterPage';
 import PublishPage from './pages/PublishPage';
 import ProductListPage from './pages/ProductListPage';
+import ProductDetailPage from './pages/ProductDetailPage';
 import AuthRoute from './components/AuthRoute';
 
 function App() {
@@ -27,6 +28,11 @@ function App() {
           <Route path="/" element={
             <AuthRoute>
               <ProductListPage />
+            </AuthRoute>
+          } />
+          <Route path="/products/:id" element={
+            <AuthRoute>
+              <ProductDetailPage />
             </AuthRoute>
           } />
         </Routes>

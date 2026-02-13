@@ -65,7 +65,7 @@ export interface Product {
   status: 'ON_SALE' | 'SOLD' | 'OFF_SHELF';
   images: string[];
   sellerId: number;
-  sellerName?: string;
+  sellerNickname?: string;
   sellerAvatar?: string;
   viewCount: number;
   favoriteCount: number;
