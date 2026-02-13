@@ -49,6 +49,8 @@ CREATE TABLE IF NOT EXISTS `product` (
     `category_id` BIGINT DEFAULT NULL COMMENT '分类ID',
     `condition` VARCHAR(20) NOT NULL COMMENT '新旧程度: NEW, LIKE_NEW, GOOD, FAIR, POOR',
     `status` VARCHAR(20) DEFAULT 'ON_SALE' COMMENT '状态: ON_SALE, SOLD, OFF_SHELF',
+    `trade_type` VARCHAR(20) DEFAULT 'OFFLINE' COMMENT '交易方式: ONLINE, OFFLINE',
+    `trade_location` VARCHAR(200) DEFAULT NULL COMMENT '交易地点',
     `images` TEXT COMMENT '图片JSON数组',
     `seller_id` BIGINT NOT NULL COMMENT '卖家ID',
     `view_count` INT DEFAULT 0 COMMENT '浏览量',

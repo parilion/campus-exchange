@@ -1,8 +1,9 @@
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { Row, Col, Card, Image, Tag, Button, Descriptions, Avatar, Space, Typography, Spin, Divider, message, Alert } from 'antd';
-import { ArrowLeftOutlined, EyeOutlined, HeartOutlined, MessageOutlined, ShareAltOutlined, WarningOutlined } from '@ant-design/icons';
+import { ArrowLeftOutlined, EyeOutlined, HeartOutlined, MessageOutlined, ShareAltOutlined, WarningOutlined, EditOutlined } from '@ant-design/icons';
 import { getProduct } from '../services/product';
+import { useAuthStore } from '../stores/authStore';
 import type { Product } from '../types';
 import './ProductDetailPage.css';
 
@@ -43,6 +44,7 @@ export default function ProductDetailPage() {
   const [loading, setLoading] = useState(true);
   const [product, setProduct] = useState<Product | null>(null);
   const [selectedImage, setSelectedImage] = useState(0);
+  const userId = useAuthStore((state) => state.user?.id);
 
   // 加载商品详情
   useEffect(() => {
@@ -92,15 +94,26 @@ export default function ProductDetailPage() {
 
   return (
     <div className="product-detail-page">
-      {/* 返回按钮 */}
-      <Button
-        type="text"
-        icon={<ArrowLeftOutlined />}
-        onClick={handleGoBack}
-        className="back-button"
-      >
-        返回
-      </Button>
+      {/* 返回按钮和编辑按钮 */}
+      <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 16 }}>
+        <Button
+          type="text"
+          icon={<ArrowLeftOutlined />}
+          onClick={handleGoBack}
+          className="back-button"
+        >
+          返回
+        </Button>
+        {userId === product.sellerId && product.status === 'ON_SALE' && (
+          <Button
+            type="primary"
+            icon={<EditOutlined />}
+            onClick={() => navigate(`/products/${product.id}/edit`)}
+          >
+            编辑商品
+          </Button>
+        )}
+      </div>
 
       <Row gutter={[24, 24]}>
         {/* 左侧 - 商品图片 */}

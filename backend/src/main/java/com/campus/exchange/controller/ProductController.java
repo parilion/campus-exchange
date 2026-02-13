@@ -4,6 +4,7 @@ import com.campus.exchange.dto.CreateProductRequest;
 import com.campus.exchange.dto.ProductPageRequest;
 import com.campus.exchange.dto.ProductPageResponse;
 import com.campus.exchange.dto.ProductVO;
+import com.campus.exchange.dto.UpdateProductRequest;
 import com.campus.exchange.service.ProductService;
 import com.campus.exchange.util.Result;
 import org.springframework.security.core.Authentication;
@@ -51,6 +52,16 @@ public class ProductController {
     public Result<ProductPageResponse> getProductList(@ModelAttribute ProductPageRequest request) {
         ProductPageResponse response = productService.getProductList(request);
         return Result.success(response);
+    }
+
+    /**
+     * 更新商品信息
+     */
+    @PutMapping("/{id}")
+    public Result<ProductVO> updateProduct(@PathVariable Long id, @Valid @RequestBody UpdateProductRequest request) {
+        Long userId = getCurrentUserId();
+        ProductVO product = productService.updateProduct(id, userId, request);
+        return Result.success(product);
     }
 
     private Long getCurrentUserId() {

@@ -4,6 +4,7 @@ import zhCN from 'antd/locale/zh_CN';
 import LoginPage from './pages/LoginPage';
 import RegisterPage from './pages/RegisterPage';
 import PublishPage from './pages/PublishPage';
+import EditProductPage from './pages/EditProductPage';
 import ProductListPage from './pages/ProductListPage';
 import ProductDetailPage from './pages/ProductDetailPage';
 import AuthRoute from './components/AuthRoute';
@@ -33,6 +34,11 @@ function App() {
           <Route path="/products/:id" element={
             <AuthRoute>
               <ProductDetailPage />
+            </AuthRoute>
+          } />
+          <Route path="/products/:id/edit" element={
+            <AuthRoute>
+              <EditProductPage />
             </AuthRoute>
           } />
         </Routes>

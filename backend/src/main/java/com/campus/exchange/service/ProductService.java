@@ -7,6 +7,7 @@ import com.campus.exchange.dto.CreateProductRequest;
 import com.campus.exchange.dto.ProductPageRequest;
 import com.campus.exchange.dto.ProductPageResponse;
 import com.campus.exchange.dto.ProductVO;
+import com.campus.exchange.dto.UpdateProductRequest;
 import com.campus.exchange.mapper.CategoryMapper;
 import com.campus.exchange.mapper.ProductMapper;
 import com.campus.exchange.model.Category;
@@ -137,6 +138,71 @@ public class ProductService {
     }
 
     /**
+     * 更新商品信息
+     */
+    public ProductVO updateProduct(Long productId, Long userId, UpdateProductRequest request) {
+        // 查询商品
+        Product product = productMapper.selectById(productId);
+        if (product == null) {
+            throw new IllegalArgumentException("商品不存在");
+        }
+
+        // 校验权限（只有卖家可以编辑自己的商品）
+        if (!product.getSellerId().equals(userId)) {
+            throw new IllegalArgumentException("无权限编辑此商品");
+        }
+
+        // 检查商品状态（已售商品不能编辑）
+        if ("SOLD".equals(product.getStatus())) {
+            throw new IllegalArgumentException("已售商品不能编辑");
+        }
+
+        // 更新非空字段
+        if (request.getTitle() != null) {
+            product.setTitle(request.getTitle());
+        }
+        if (request.getDescription() != null) {
+            product.setDescription(request.getDescription());
+        }
+        if (request.getPrice() != null) {
+            product.setPrice(request.getPrice());
+        }
+        if (request.getOriginalPrice() != null) {
+            product.setOriginalPrice(request.getOriginalPrice());
+        }
+        if (request.getCategoryId() != null) {
+            product.setCategoryId(request.getCategoryId());
+        }
+        if (request.getCondition() != null) {
+            product.setCondition(request.getCondition());
+        }
+        if (request.getStatus() != null) {
+            product.setStatus(request.getStatus());
+        }
+        if (request.getTradeType() != null) {
+            product.setTradeType(request.getTradeType());
+        }
+        if (request.getTradeLocation() != null) {
+            product.setTradeLocation(request.getTradeLocation());
+        }
+
+        // 更新图片
+        if (request.getImages() != null) {
+            try {
+                product.setImages(objectMapper.writeValueAsString(request.getImages()));
+            } catch (JsonProcessingException e) {
+                // 忽略
+            }
+        }
+
+        // 保存更新
+        productMapper.updateById(product);
+
+        // 返回更新后的商品详情
+        return getProductVO(product);
+    }
+
+    /**
      * 将 Product 转换为 ProductVO
      */
     private ProductVO getProductVO(Product product) {
@@ -149,6 +215,8 @@ public class ProductService {
         vo.setCategoryId(product.getCategoryId());
         vo.setCondition(product.getCondition());
         vo.setStatus(product.getStatus());
+        vo.setTradeType(product.getTradeType());
+        vo.setTradeLocation(product.getTradeLocation());
         vo.setImages(parseImages(product.getImages()));
         vo.setSellerId(product.getSellerId());
         vo.setViewCount(product.getViewCount());

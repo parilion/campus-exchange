@@ -37,6 +37,16 @@ public class ProductVO {
     private String status;
 
     /**
+     * 交易方式：ONLINE, OFFLINE
+     */
+    private String tradeType;
+
+    /**
+     * 交易地点（线下交易时使用）
+     */
+    private String tradeLocation;
+
+    /**
      * 图片URL列表
      */
     private List<String> images;

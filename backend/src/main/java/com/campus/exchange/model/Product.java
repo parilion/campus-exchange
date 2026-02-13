@@ -30,6 +30,12 @@ public class Product {
     /** ON_SALE, SOLD, OFF_SHELF */
     private String status;
 
+    /** 交易方式：ONLINE, OFFLINE */
+    private String tradeType;
+
+    /** 交易地点（线下交易时使用） */
+    private String tradeLocation;
+
     /** JSON 数组存储图片路径 */
     private String images;
 

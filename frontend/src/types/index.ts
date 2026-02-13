@@ -63,6 +63,8 @@ export interface Product {
   categoryName?: string;
   condition: 'NEW' | 'LIKE_NEW' | 'GOOD' | 'FAIR' | 'POOR';
   status: 'ON_SALE' | 'SOLD' | 'OFF_SHELF';
+  tradeType?: 'ONLINE' | 'OFFLINE';
+  tradeLocation?: string;
   images: string[];
   sellerId: number;
   sellerNickname?: string;

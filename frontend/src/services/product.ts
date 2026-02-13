@@ -39,3 +39,9 @@ export async function getProductList(params: ProductPageParams = {}) {
   });
   return res.data.data;
 }
+
+// 更新商品
+export async function updateProduct(id: number, data: Partial<CreateProductRequest>) {
+  const res = await request.put<Result<Product>>(`/products/${id}`, data);
+  return res.data.data;
+}
