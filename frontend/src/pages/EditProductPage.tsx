@@ -18,7 +18,6 @@ import { PlusOutlined, LoadingOutlined, ArrowLeftOutlined } from '@ant-design/ic
 import { useNavigate, useParams } from 'react-router-dom';
 import { getProduct, updateProduct, type CreateProductRequest } from '../services/product';
 import { uploadImage } from '../services/image';
-import type { Product } from '../types';
 
 const { Title, Text } = Typography;
 const { TextArea } = Input;
