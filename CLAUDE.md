@@ -46,12 +46,198 @@
 
 ```
 1. 从 features.json 选择一个未完成的最高优先级功能
-2. 实现该功能（后端 API + 前端页面）
-3. 运行测试验证
-4. git add + git commit（原子性提交）
-5. git push origin main（推送到远程仓库）
-6. 更新 features.json 中该功能的 passes 为 true
-7. 更新 claude-progress.md 的进度信息
+2. 记录开始时间（startTime=$(date "+%Y-%m-%d %H:%M:%S")）
+3. 实现该功能（后端 API + 前端页面）
+4. 运行测试验证（见下方测试验证规范）
+5. 记录结束时间（endTime=$(date "+%Y-%m-%d %H:%M:%S")）
+6. git add + git commit（原子性提交）
+7. git push origin main（推送到远程仓库）
+8. 更新 features.json 中该功能的 passes 为 true
+9. 更新 claude-progress.md（见下方进度记录规范）
+```
+
+## 测试验证规范
+
+每次功能实现完成后，必须按以下步骤进行测试验证，形成闭环。
+
+### 步骤 1: 后端代码验证
+
+```bash
+# 进入后端目录
+cd backend
+
+# 编译检查（确保无语法错误）
+mvn compile -q
+
+# 运行单元测试（可选，如有测试类）
+mvn test -Dtest=*Test
+```
+
+### 步骤 2: 前端代码验证
+
+```bash
+# 进入前端目录
+cd frontend
+
+# TypeScript 类型检查
+npm run build
+
+# 或只检查类型（更快）
+npx tsc --noEmit
+```
+
+### 步骤 3: 后端服务启动测试
+
+确保后端服务可以正常启动：
+
+```bash
+cd backend
+mvn spring-boot:run
+# 验证启动成功：访问 http://localhost:8080/api/auth/test
+```
+
+### 步骤 4: 前端服务启动测试
+
+```bash
+cd frontend
+npm run dev
+# 验证启动成功：访问 http://localhost:5173
+```
+
+### 步骤 5: API 集成测试（使用 MySQL MCP）
+
+使用 `mcp__mysql__mysql_query` 工具验证数据库操作：
+
+```sql
+-- 示例：验证用户注册功能
+-- 1. 插入测试用户
+INSERT INTO user (username, email, password, create_time)
+VALUES ('testuser', 'test@example.com', '$2a$10$xxx', NOW());
+
+-- 2. 验证插入成功
+SELECT * FROM user WHERE username = 'testuser';
+
+-- 3. 清理测试数据
+DELETE FROM user WHERE username = 'testuser';
+```
+
+### 步骤 6: E2E 端到端测试（使用 Playwright MCP）
+
+使用 Playwright MCP 工具进行浏览器自动化测试：
+
+```javascript
+// 1. 启动后端服务（后台运行）
+// 2. 启动前端服务（后台运行）
+
+// 3. 使用 Playwright MCP 进行测试
+// 导航到页面
+mcp__playwright__browser_navigate({ url: "http://localhost:5173/login" })
+
+// 4. 填写登录表单
+mcp__playwright__browser_fill_form({
+  fields: [
+    { name: "username", type: "textbox", ref: "...", value: "testuser" },
+    { name: "password", type: "textbox", ref: "...", value: "password123" }
+  ]
+})
+
+// 5. 点击登录按钮
+mcp__playwright__browser_click({ ref: "登录按钮ref" })
+
+// 6. 验证登录成功
+mcp__playwright__browser_wait_for({ text: "首页" })
+
+// 7. 截图保存
+mcp__playwright__browser_take_screenshot({ type: "png", filename: "test-result.png" })
+```
+
+### 步骤 7: 验证检查清单
+
+完成所有测试后，确认以下事项：
+
+- [ ] 后端 `mvn compile` 编译通过
+- [ ] 前端 `npm run build` 构建成功
+- [ ] 后端服务可以正常启动
+- [ ] 前端页面可以正常访问
+- [ ] API 接口返回正确的数据格式
+- [ ] 数据库操作正常（插入/查询/更新/删除）
+- [ ] 页面交互符合预期（按钮点击、表单提交等）
+- [ ] 无控制台报错
+
+### MCP 工具使用说明
+
+#### MySQL MCP (mcp__mysql__mysql_query)
+- 用于执行 SQL 查询验证数据
+- 连接信息已在系统配置中
+- 返回查询结果用于验证
+
+#### Playwright MCP (mcp__playwright__*)
+- `browser_navigate` - 导航到指定 URL
+- `browser_snapshot` - 获取页面快照（用于定位元素）
+- `browser_click` - 点击元素
+- `browser_fill_form` - 填写表单
+- `browser_type` - 输入文本
+- `browser_evaluate` - 执行 JS 代码
+- `browser_take_screenshot` - 截图保存
+- `browser_network_requests` - 获取网络请求
+
+### 测试失败处理
+
+若测试失败，按以下流程处理：
+
+1. **分析错误信息**：查看控制台/终端的错误输出
+2. **定位问题**：根据错误定位到具体文件和行
+3. **修复代码**：修改代码解决 bug
+4. **重新测试**：重复验证步骤直到通过
+5. **记录问题**：如果暂时无法解决，记录到 claude-progress.md 的「技术债务」或「阻塞项」
+
+## 进度记录规范 (claude-progress.md)
+
+每次功能完成后，必须更新 `claude-progress.md`，按以下步骤操作：
+
+### 步骤 1: 更新开发日志
+在「开发日志」章节的**顶部**插入新条目，格式如下：
+```markdown
+### YYYY-MM-DD HH:mm:ss | 完成: 功能名称 (#功能ID)
+- **开始时间**: YYYY-MM-DD HH:mm:ss
+- **结束时间**: YYYY-MM-DD HH:mm:ss
+- **Commit**: `提交信息（英文，Conventional Commits 格式）`
+- **涉及文件**:
+  - 后端文件路径
+  - 前端文件路径
+- **备注**: 简短描述实现要点
+```
+
+### 步骤 2: 更新已完成功能列表
+在对应模块的「已完成功能」列表中，将 `[ ]` 改为 `[x]`，并添加完成日期：
+```markdown
+- [x] #ID 功能描述 (YYYY-MM-DD)
+```
+
+### 步骤 3: 更新进度百分比
+- 计算新进度: `已完成数/190 * 100%`
+- 更新「当前状态」中的进度显示
+
+### 进度文件结构参考
+```
+# Campus Exchange - 开发进度
+
+## 当前状态
+- 开发中模块: [模块名]
+- 当前功能: ID#[ID] - [功能名]
+- 进度: X/190 (X.X%)
+
+## 开发日志 (按时间倒序)
+[每次完成的功能记录]
+
+## 已完成功能 (按模块)
+[按模块分组的已完成功能列表]
+
+## 技术债务
+[待处理的技术问题]
+
+## 阻塞项
+[当前无法解决的问题]
 ```
 
 ## features.json 规则
@@ -69,6 +255,21 @@
 - 字符集: utf8mb4
 - Schema 文件: `sql/schema.sql`
 - 使用 MyBatis-Plus 自动填充 createTime/updateTime
+
+## 测试账号
+
+测试 E2E 时使用以下账号登录：
+
+| 账号 | 密码 | 角色 | 说明 |
+|------|------|------|------|
+| admin | admin123 | ADMIN | 管理员账号 |
+| testuser | test123 | USER | 普通测试用户 |
+
+> **注意**：如果登录失败，可通过注册新用户获取正确的密码哈希，或使用 MySQL MCP 执行：
+> ```sql
+> DELETE FROM user;
+> -- 然后通过 POST /api/auth/register 注册新用户
+> ```
 
 ## API 约定
 
