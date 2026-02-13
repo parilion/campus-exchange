@@ -17,9 +17,9 @@
 
   {"id": 16, "category": "商品管理", "module": "product", "description": "发布商品 API - 基本信息", "priority": "P0", "passes": true},
   {"id": 17, "category": "商品管理", "module": "product", "description": "发布商品 API - 图片上传", "priority": "P0", "passes": true},
-  {"id": 18, "category": "商品管理", "module": "product", "description": "商品列表 API - 分页查询", "priority": "P0", "passes": false},
-  {"id": 19, "category": "商品管理", "module": "product", "description": "商品详情 API", "priority": "P0", "passes": false},
-  {"id": 20, "category": "商品管理", "module": "product", "description": "编辑商品信息", "priority": "P0", "passes": true},
+  {"id": 18, "category": "商品管理", "module": "product", "description": "商品列表 API - 分页查询", "priority": "P0", "passes": true},
+  {"id": 19, "category": "商品管理", "module": "product", "description": "商品详情 API", "priority": "P0", "passes": true},
+  {"id": 20, "category": "商品管理", "module": "product", "description": "编辑商品信息", "priority": "P0", "passes": false},
   {"id": 21, "category": "商品管理", "module": "product", "description": "删除商品（软删除）", "priority": "P0", "passes": false},
   {"id": 22, "category": "商品管理", "module": "product", "description": "商品状态管理（在售/已售/下架）", "priority": "P0", "passes": false},
   {"id": 23, "category": "商品管理", "module": "product", "description": "商品分类体系", "priority": "P0", "passes": false},

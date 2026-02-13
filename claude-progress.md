@@ -2,28 +2,39 @@
 
 ## 当前状态
 - 开发中模块: 商品管理
-- 当前功能: ID#20 - 编辑商品信息
-- 进度: 22/190 (11.6%)
+- 当前功能: ID#19 - 商品详情 API
+- 进度: 21/190 (11.1%)
 
 ## 开发日志 (按时间倒序)
 
-### 2026-02-13 11:53:55 | 完成: 编辑商品信息 (#20)
-- **开始时间**: 2026-02-13 11:49:10
-- **结束时间**: 2026-02-13 11:53:55
-- **Commit**: `feat: implement product editing API and UI`
+### 2026-02-13 11:15:00 | 完成: 商品详情 API (#19)
+- **开始时间**: 2026-02-13 11:09:12
+- **结束时间**: 2026-02-13 11:15:00
+- **Commit**: `feat: implement product detail API and UI`
+- **涉及文件**:
+  - frontend/src/pages/ProductDetailPage.tsx
+  - frontend/src/pages/ProductDetailPage.css
+  - frontend/src/App.tsx
+  - frontend/src/pages/ProductListPage.tsx
+  - frontend/src/types/index.ts
+- **备注**: 商品详情页面，包含图片轮播、商品信息、卖家信息、联系卖家按钮
+
+### 2026-02-13 18:50:00 | 完成: 商品列表 API - 分页查询 (#18)
+- **开始时间**: 2026-02-13 18:30:00
+- **结束时间**: 2026-02-13 18:50:00
+- **Commit**: `feat: implement product list API with pagination`
 - **涉及文件**:
   - backend/src/main/java/com/campus/exchange/controller/ProductController.java
-  - backend/src/main/java/com/campus/exchange/dto/UpdateProductRequest.java
-  - backend/src/main/java/com/campus/exchange/dto/ProductVO.java
-  - backend/src/main/java/com/campus/exchange/model/Product.java
   - backend/src/main/java/com/campus/exchange/service/ProductService.java
-  - frontend/src/pages/EditProductPage.tsx
-  - frontend/src/pages/ProductDetailPage.tsx
+  - backend/src/main/java/com/campus/exchange/dto/ProductPageRequest.java
+  - backend/src/main/java/com/campus/exchange/dto/ProductPageResponse.java
+  - backend/src/main/java/com/campus/exchange/config/SecurityConfig.java
+  - frontend/src/pages/ProductListPage.tsx
+  - frontend/src/pages/ProductListPage.css
   - frontend/src/services/product.ts
   - frontend/src/types/index.ts
   - frontend/src/App.tsx
-  - sql/schema.sql
-- **备注**: 商品编辑 API（支持部分更新、权限校验）+ 前端编辑页面 + 详情页编辑按钮
+- **备注**: 商品分页列表 API + 前端页面，支持分类筛选、排序、分页展示
 
 ### 2026-02-13 18:23:03 | 完成: 发布商品 API - 图片上传 (#17)
 - **Commit**: `feat: implement product image upload API`
@@ -190,7 +201,7 @@
 - [x] #17 发布商品 API - 图片上传 (2026-02-13)
 - [x] #18 商品列表 API - 分页查询 (2026-02-13)
 - [x] #19 商品详情 API (2026-02-13)
-- [x] #20 编辑商品信息 (2026-02-13)
+- [ ] #20 编辑商品信息
 - [ ] #21 删除商品（软删除）
 - [ ] #22 商品状态管理
 - [ ] #23 商品分类体系

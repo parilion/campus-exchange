@@ -1,4 +1,4 @@
-# Campus Exchange - 自动开发循环脚本 (Windows PowerShell)
+﻿# Campus Exchange - 自动开发循环脚本 (Windows PowerShell)
 # 用法: powershell -ExecutionPolicy Bypass -File scripts\auto-dev.ps1 -Iterations 10
 # 或:   .\scripts\auto-dev.ps1 -Iterations 10
 
