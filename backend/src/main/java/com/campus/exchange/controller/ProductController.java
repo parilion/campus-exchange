@@ -74,6 +74,16 @@ public class ProductController {
         return Result.success(null);
     }
 
+    /**
+     * 获取当前用户发布的商品列表
+     */
+    @GetMapping("/my")
+    public Result<ProductPageResponse> getMyProducts(@ModelAttribute ProductPageRequest request) {
+        Long userId = getCurrentUserId();
+        ProductPageResponse response = productService.getMyProducts(userId, request);
+        return Result.success(response);
+    }
+
     private Long getCurrentUserId() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         return (Long) authentication.getPrincipal();

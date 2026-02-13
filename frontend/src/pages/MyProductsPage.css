@@ -1,0 +1,131 @@
+.my-products-page {
+  min-height: 100vh;
+  background: #f0f2f5;
+  padding: 24px;
+}
+
+.my-products-page .page-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+}
+
+.my-products-page .page-header .page-title {
+  margin-bottom: 4px !important;
+}
+
+.my-products-page .filter-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+  padding: 16px;
+  background: #fff;
+  border-radius: 8px;
+}
+
+.my-products-page .product-grid {
+  margin-bottom: 24px;
+}
+
+.my-products-page .my-product-card {
+  border-radius: 8px;
+  overflow: hidden;
+  transition: all 0.3s;
+}
+
+.my-products-page .my-product-card:hover {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.my-products-page .product-image-wrapper {
+  position: relative;
+}
+
+.my-products-page .condition-tag {
+  position: absolute;
+  top: 8px;
+  left: 8px;
+}
+
+.my-products-page .status-tag {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+}
+
+.my-products-page .product-info {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.my-products-page .price-row {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+}
+
+.my-products-page .current-price {
+  font-size: 18px;
+  font-weight: bold;
+  color: #ff4d4f;
+}
+
+.my-products-page .original-price {
+  font-size: 14px;
+  color: #999;
+  text-decoration: line-through;
+}
+
+.my-products-page .product-stats {
+  font-size: 12px;
+  color: #999;
+}
+
+.my-products-page .pagination-wrapper {
+  display: flex;
+  justify-content: center;
+  padding: 24px 0;
+}
+
+/*.my-products-page . 骨架屏 */
+skeleton .skeleton-image {
+  height: 160px;
+  background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+  background-size: 200% 100%;
+  animation: skeleton-loading 1.5s infinite;
+}
+
+.my-products-page .skeleton .skeleton-content {
+  padding: 12px;
+}
+
+.my-products-page .skeleton .skeleton-title {
+  height: 20px;
+  width: 80%;
+  margin-bottom: 8px;
+  background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+  background-size: 200% 100%;
+  animation: skeleton-loading 1.5s infinite;
+  border-radius: 4px;
+}
+
+.my-products-page .skeleton .skeleton-price {
+  height: 16px;
+  width: 50%;
+  background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+  background-size: 200% 100%;
+  animation: skeleton-loading 1.5s infinite;
+  border-radius: 4px;
+}
+
+@keyframes skeleton-loading {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
+}

@@ -51,3 +51,18 @@ export async function deleteProduct(id: number) {
   const res = await request.delete<Result<void>>(`/products/${id}`);
   return res.data.data;
 }
+
+// 获取当前用户发布的商品列表
+export async function getMyProducts(params: ProductPageParams = {}) {
+  const res = await request.get<Result<ProductPageResponse>>('/products/my', {
+    params: {
+      page: params.page || 1,
+      pageSize: params.pageSize || 10,
+      categoryId: params.categoryId,
+      status: params.status,
+      sortBy: params.sortBy || 'createdAt',
+      sortOrder: params.sortOrder || 'desc'
+    }
+  });
+  return res.data.data;
+}

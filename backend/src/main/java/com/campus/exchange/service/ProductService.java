@@ -223,6 +223,55 @@ public class ProductService {
     }
 
     /**
+     * 获取当前用户发布的商品列表
+     */
+    public ProductPageResponse getMyProducts(Long userId, ProductPageRequest request) {
+        // 创建分页对象
+        Page<Product> page = new Page<>(request.getPage(), request.getPageSize());
+
+        // 构建查询条件：查询当前用户的商品
+        LambdaQueryWrapper<Product> queryWrapper = new LambdaQueryWrapper<>();
+        queryWrapper.eq(Product::getSellerId, userId);
+
+        // 状态筛选（可选）
+        if (request.getStatus() != null && !request.getStatus().isEmpty()) {
+            queryWrapper.eq(Product::getStatus, request.getStatus());
+        }
+
+        // 分类筛选
+        if (request.getCategoryId() != null) {
+            queryWrapper.eq(Product::getCategoryId, request.getCategoryId());
+        }
+
+        // 排序：默认按创建时间倒序
+        String sortBy = request.getSortBy();
+        boolean isAsc = "asc".equalsIgnoreCase(request.getSortOrder());
+        if ("price".equals(sortBy)) {
+            queryWrapper.orderBy(true, isAsc, Product::getPrice);
+        } else {
+            queryWrapper.orderBy(true, false, Product::getCreatedAt);
+        }
+
+        // 执行分页查询
+        IPage<Product> productPage = productMapper.selectPage(page, queryWrapper);
+
+        // 转换为VO列表
+        List<ProductVO> productVOList = productPage.getRecords().stream()
+                .map(this::getProductVO)
+                .collect(Collectors.toList());
+
+        // 构建响应
+        ProductPageResponse response = new ProductPageResponse();
+        response.setList(productVOList);
+        response.setPage((int) productPage.getCurrent());
+        response.setPageSize((int) productPage.getSize());
+        response.setTotal(productPage.getTotal());
+        response.setTotalPages((int) productPage.getPages());
+
+        return response;
+    }
+
+    /**
      * 将 Product 转换为 ProductVO
      */
     private ProductVO getProductVO(Product product) {

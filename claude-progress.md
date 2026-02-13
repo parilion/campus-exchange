@@ -2,10 +2,23 @@
 
 ## 当前状态
 - 开发中模块: 商品管理
-- 当前功能: ID#23 - 商品分类体系
-- 进度: 24/190 (12.6%)
+- 当前功能: ID#26 - 关键词搜索/分类/价格区间/状态/排序 API
+- 进度: 25/190 (13.2%)
 
 ## 开发日志 (按时间倒序)
+
+### 2026-02-14 00:15:00 | 完成: 我的发布列表页面 + 商品举报功能 (#25)
+- **开始时间**: 2026-02-13 23:50:00
+- **结束时间**: 2026-02-14 00:15:00
+- **Commit**: `feat: implement my products page and API`
+- **涉及文件**:
+  - backend/src/main/java/com/campus/exchange/controller/ProductController.java
+  - backend/src/main/java/com/campus/exchange/service/ProductService.java
+  - frontend/src/pages/MyProductsPage.tsx
+  - frontend/src/pages/MyProductsPage.css
+  - frontend/src/services/product.ts
+  - frontend/src/App.tsx
+- **备注**: 我的发布列表页面（含状态筛选/编辑/删除/上下架功能）+ 后端API
 
 ### 2026-02-13 23:45:00 | 完成: 商品列表/详情页面 UI + 图片预览轮播 (#22)
 - **开始时间**: 2026-02-13 23:42:00
@@ -232,8 +245,7 @@
 - [x] #20 编辑商品/删除商品/状态管理/分类体系 API (2026-02-13)
 - [x] #21 发布商品/编辑商品页面 UI + 新旧程度/多图上传 (2026-02-13)
 - [x] #22 商品列表/详情页面 UI + 图片预览轮播 (2026-02-13)
-- [ ] #23 商品分类体系
-- [ ] #24 我的发布列表页面
+- [x] #25 我的发布列表页面 + 商品举报功能 (2026-02-14)
 
 ### 搜索与筛选 (P1)
 - [ ] #41 关键词搜索 API

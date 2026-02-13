@@ -7,6 +7,7 @@ import PublishPage from './pages/PublishPage';
 import EditProductPage from './pages/EditProductPage';
 import ProductListPage from './pages/ProductListPage';
 import ProductDetailPage from './pages/ProductDetailPage';
+import MyProductsPage from './pages/MyProductsPage';
 import AuthRoute from './components/AuthRoute';
 
 function App() {
@@ -39,6 +40,11 @@ function App() {
           <Route path="/products/:id/edit" element={
             <AuthRoute>
               <EditProductPage />
+            </AuthRoute>
+          } />
+          <Route path="/my-products" element={
+            <AuthRoute>
+              <MyProductsPage />
             </AuthRoute>
           } />
         </Routes>
