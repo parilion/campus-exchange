@@ -2,10 +2,28 @@
 
 ## 当前状态
 - 开发中模块: 商品管理
-- 当前功能: ID#17 - 发布商品 API - 图片上传
-- 进度: 19/190 (10.0%)
+- 当前功能: ID#20 - 编辑商品信息
+- 进度: 22/190 (11.6%)
 
 ## 开发日志 (按时间倒序)
+
+### 2026-02-13 11:53:55 | 完成: 编辑商品信息 (#20)
+- **开始时间**: 2026-02-13 11:49:10
+- **结束时间**: 2026-02-13 11:53:55
+- **Commit**: `feat: implement product editing API and UI`
+- **涉及文件**:
+  - backend/src/main/java/com/campus/exchange/controller/ProductController.java
+  - backend/src/main/java/com/campus/exchange/dto/UpdateProductRequest.java
+  - backend/src/main/java/com/campus/exchange/dto/ProductVO.java
+  - backend/src/main/java/com/campus/exchange/model/Product.java
+  - backend/src/main/java/com/campus/exchange/service/ProductService.java
+  - frontend/src/pages/EditProductPage.tsx
+  - frontend/src/pages/ProductDetailPage.tsx
+  - frontend/src/services/product.ts
+  - frontend/src/types/index.ts
+  - frontend/src/App.tsx
+  - sql/schema.sql
+- **备注**: 商品编辑 API（支持部分更新、权限校验）+ 前端编辑页面 + 详情页编辑按钮
 
 ### 2026-02-13 18:23:03 | 完成: 发布商品 API - 图片上传 (#17)
 - **Commit**: `feat: implement product image upload API`
@@ -170,9 +188,9 @@
 ### 商品管理 (P0)
 - [x] #16 发布商品 API - 基本信息 (2026-02-13)
 - [x] #17 发布商品 API - 图片上传 (2026-02-13)
-- [ ] #18 商品列表 API - 分页查询
-- [ ] #19 商品详情 API
-- [ ] #20 编辑商品信息
+- [x] #18 商品列表 API - 分页查询 (2026-02-13)
+- [x] #19 商品详情 API (2026-02-13)
+- [x] #20 编辑商品信息 (2026-02-13)
 - [ ] #21 删除商品（软删除）
 - [ ] #22 商品状态管理
 - [ ] #23 商品分类体系
