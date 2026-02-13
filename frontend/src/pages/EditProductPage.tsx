@@ -16,7 +16,7 @@ import {
 } from 'antd';
 import { PlusOutlined, LoadingOutlined, ArrowLeftOutlined } from '@ant-design/icons';
 import { useNavigate, useParams } from 'react-router-dom';
-import { getProduct, updateProduct, CreateProductRequest } from '../services/product';
+import { getProduct, updateProduct, type CreateProductRequest } from '../services/product';
 import { uploadImage } from '../services/image';
 import type { Product } from '../types';
 
@@ -121,7 +121,7 @@ export default function EditProductPage() {
 
       await updateProduct(Number(id), data);
       message.success('更新成功');
-      navigate(`/product/${id}`);
+      navigate(`/products/${id}`);
     } catch (err: unknown) {
       const errorMsg = err instanceof Error ? err.message : '更新失败';
       message.error(errorMsg);

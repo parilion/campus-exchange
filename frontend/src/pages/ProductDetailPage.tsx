@@ -3,7 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { Row, Col, Card, Image, Tag, Button, Descriptions, Avatar, Space, Typography, Spin, Divider, message, Alert } from 'antd';
 import { ArrowLeftOutlined, EyeOutlined, HeartOutlined, MessageOutlined, ShareAltOutlined, WarningOutlined, EditOutlined } from '@ant-design/icons';
 import { getProduct } from '../services/product';
-import { useAuthStore } from '../stores/authStore';
+import { useUserStore } from '../stores/userStore';
 import type { Product } from '../types';
 import './ProductDetailPage.css';
 
@@ -44,7 +44,7 @@ export default function ProductDetailPage() {
   const [loading, setLoading] = useState(true);
   const [product, setProduct] = useState<Product | null>(null);
   const [selectedImage, setSelectedImage] = useState(0);
-  const userId = useAuthStore((state) => state.user?.id);
+  const userId = useUserStore((state) => state.user?.id);
 
   // 加载商品详情
   useEffect(() => {
