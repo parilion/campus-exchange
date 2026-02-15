@@ -1,11 +1,23 @@
 # Campus Exchange - 开发进度
 
 ## 当前状态
-- 开发中模块: 商品管理
-- 当前功能: ID#26 - 关键词搜索/分类/价格区间/状态/排序 API
-- 进度: 25/190 (13.2%)
+- 开发中模块: 搜索与筛选
+- 当前功能: ID#27 - 高级筛选 + 新旧程度筛选 + 结果高亮/统计
+- 进度: 26/190 (13.7%)
 
 ## 开发日志 (按时间倒序)
+
+### 2026-02-15 11:34:10 | 完成: 关键词搜索/分类/价格区间/状态/排序 API (#26)
+- **开始时间**: 2026-02-15 11:22:13
+- **结束时间**: 2026-02-15 11:34:10
+- **Commit**: `feat: implement product search API with keyword and price range filter`
+- **涉及文件**:
+  - backend/src/main/java/com/campus/exchange/dto/ProductPageRequest.java
+  - backend/src/main/java/com/campus/exchange/service/ProductService.java
+  - frontend/src/pages/ProductListPage.tsx
+  - frontend/src/services/product.ts
+  - frontend/src/types/index.ts
+- **备注**: 关键词搜索（标题/描述模糊匹配）+ 价格区间筛选 + 前端搜索框和价格输入框
 
 ### 2026-02-14 00:15:00 | 完成: 我的发布列表页面 + 商品举报功能 (#25)
 - **开始时间**: 2026-02-13 23:50:00
@@ -248,9 +260,9 @@
 - [x] #25 我的发布列表页面 + 商品举报功能 (2026-02-14)
 
 ### 搜索与筛选 (P1)
-- [ ] #41 关键词搜索 API
-- [ ] #42 分类筛选
-- [ ] #43 价格区间筛选
+- [x] #26 关键词搜索/分类/价格区间/状态/排序 API (2026-02-15)
+- [ ] #27 高级筛选 + 新旧程度筛选 + 结果高亮/统计
+- [ ] #28 搜索结果页面 UI + 自动补全/历史记录/热门推荐
 
 ## 技术债务
 - 无
