@@ -12,6 +12,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.List;
 
 /**
  * 商品控制器
@@ -24,6 +25,24 @@ public class ProductController {
 
     public ProductController(ProductService productService) {
         this.productService = productService;
+    }
+
+    /**
+     * 搜索建议（自动补全）
+     */
+    @GetMapping("/suggestions")
+    public Result<List<String>> getSearchSuggestions(@RequestParam String keyword) {
+        List<String> suggestions = productService.getSearchSuggestions(keyword);
+        return Result.success(suggestions);
+    }
+
+    /**
+     * 获取热门搜索词
+     */
+    @GetMapping("/popular-searches")
+    public Result<List<String>> getPopularSearches() {
+        List<String> popularSearches = productService.getPopularSearches();
+        return Result.success(popularSearches);
     }
 
     /**

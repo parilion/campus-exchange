@@ -18,6 +18,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.stereotype.Service;
 
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -157,6 +158,56 @@ public class ProductService {
         response.setTotalPages((int) productPage.getPages());
 
         return response;
+    }
+
+    /**
+     * 获取搜索建议（自动补全）
+     */
+    public List<String> getSearchSuggestions(String keyword) {
+        if (keyword == null || keyword.trim().isEmpty()) {
+            return Collections.emptyList();
+        }
+
+        // 查询匹配的商品标题
+        LambdaQueryWrapper<Product> queryWrapper = new LambdaQueryWrapper<>();
+        queryWrapper.like(Product::getTitle, keyword.trim())
+                .eq(Product::getStatus, "ON_SALE")
+                .orderByDesc(Product::getViewCount)
+                .last("LIMIT 10");
+
+        List<Product> products = productMapper.selectList(queryWrapper);
+
+        // 提取标题去重
+        return products.stream()
+                .map(Product::getTitle)
+                .distinct()
+                .limit(10)
+                .collect(Collectors.toList());
+    }
+
+    /**
+     * 获取热门搜索词
+     */
+    public List<String> getPopularSearches() {
+        // 预定义热门搜索词
+        List<String> popularSearches = Arrays.asList(
+                "教材",
+                "课本",
+                "二手书",
+                "电动车",
+                "自行车",
+                "手机",
+                "电脑",
+                "笔记本",
+                "耳机",
+                "键盘",
+                "鼠标",
+                "显示器",
+                "衣架",
+                "台灯",
+                "收纳"
+        );
+        return popularSearches;
     }
 
     /**

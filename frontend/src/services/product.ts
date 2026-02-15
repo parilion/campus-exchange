@@ -70,3 +70,17 @@ export async function getMyProducts(params: ProductPageParams = {}) {
   });
   return res.data.data;
 }
+
+// 获取搜索建议（自动补全）
+export async function getSearchSuggestions(keyword: string): Promise<string[]> {
+  const res = await request.get<Result<string[]>>('/products/suggestions', {
+    params: { keyword }
+  });
+  return res.data.data || [];
+}
+
+// 获取热门搜索词
+export async function getPopularSearches(): Promise<string[]> {
+  const res = await request.get<Result<string[]>>('/products/popular-searches');
+  return res.data.data || [];
+}

@@ -1,9 +1,10 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Row, Col, Card, Select, Pagination, Empty, Image, Tag, Space, Typography, Input } from 'antd';
-import { FireOutlined, ClockCircleOutlined, EyeOutlined, SearchOutlined } from '@ant-design/icons';
+import { FireOutlined, ClockCircleOutlined, EyeOutlined } from '@ant-design/icons';
 import { getProductList } from '../services/product';
 import type { Product, ProductPageResponse } from '../types';
+import SearchBox from '../components/SearchBox';
 import './ProductListPage.css';
 
 const { Title, Text } = Typography;
@@ -222,12 +223,9 @@ export default function ProductListPage() {
         <Row gutter={[16, 16]} align="middle">
           {/* 关键词搜索 */}
           <Col xs={24} md={6}>
-            <Input.Search
-              placeholder="搜索商品..."
-              allowClear
-              enterButton={<SearchOutlined />}
+            <SearchBox
+              defaultValue={filters.keyword}
               onSearch={handleSearch}
-              style={{ width: '100%' }}
             />
           </Col>
           {/* 分类筛选 */}
