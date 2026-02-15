@@ -8,6 +8,8 @@ import EditProductPage from './pages/EditProductPage';
 import ProductListPage from './pages/ProductListPage';
 import ProductDetailPage from './pages/ProductDetailPage';
 import MyProductsPage from './pages/MyProductsPage';
+import OrdersPage from './pages/OrdersPage';
+import OrderDetailPage from './pages/OrderDetailPage';
 import AuthRoute from './components/AuthRoute';
 
 function App() {
@@ -45,6 +47,16 @@ function App() {
           <Route path="/my-products" element={
             <AuthRoute>
               <MyProductsPage />
+            </AuthRoute>
+          } />
+          <Route path="/orders" element={
+            <AuthRoute>
+              <OrdersPage />
+            </AuthRoute>
+          } />
+          <Route path="/orders/:id" element={
+            <AuthRoute>
+              <OrderDetailPage />
             </AuthRoute>
           } />
         </Routes>
