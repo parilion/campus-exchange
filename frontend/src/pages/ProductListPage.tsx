@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Row, Col, Card, Select, Pagination, Empty, Image, Tag, Space, Typography } from 'antd';
-import { FireOutlined, ClockCircleOutlined, EyeOutlined } from '@ant-design/icons';
+import { Row, Col, Card, Select, Pagination, Empty, Image, Tag, Space, Typography, Input } from 'antd';
+import { FireOutlined, ClockCircleOutlined, EyeOutlined, SearchOutlined } from '@ant-design/icons';
 import { getProductList } from '../services/product';
 import type { Product, ProductPageResponse } from '../types';
 import './ProductListPage.css';
@@ -127,6 +127,9 @@ export default function ProductListPage() {
     categoryId: undefined as number | undefined,
     sortBy: 'createdAt',
     sortOrder: 'desc',
+    keyword: '',
+    minPrice: undefined as number | undefined,
+    maxPrice: undefined as number | undefined,
   });
 
   // 加载商品列表
@@ -139,6 +142,9 @@ export default function ProductListPage() {
         categoryId: filters.categoryId,
         sortBy: filters.sortBy,
         sortOrder: filters.sortOrder,
+        keyword: filters.keyword || undefined,
+        minPrice: filters.minPrice,
+        maxPrice: filters.maxPrice,
       });
       setProducts(data.list);
       setPagination(prev => ({
@@ -169,6 +175,16 @@ export default function ProductListPage() {
     setPagination(prev => ({ ...prev, page: 1 }));
   };
 
+  const handleSearch = (value: string) => {
+    setFilters(prev => ({ ...prev, keyword: value }));
+    setPagination(prev => ({ ...prev, page: 1 }));
+  };
+
+  const handlePriceChange = (type: 'min' | 'max', value: number | undefined) => {
+    setFilters(prev => ({ ...prev, [type === 'min' ? 'minPrice' : 'maxPrice']: value }));
+    setPagination(prev => ({ ...prev, page: 1 }));
+  };
+
   const handlePageChange = (page: number, pageSize: number) => {
     setPagination(prev => ({ ...prev, page, pageSize }));
   };
@@ -186,8 +202,19 @@ export default function ProductListPage() {
 
       {/* 筛选栏 */}
       <div className="filter-bar">
-        <Row gutter={[16, 16]} align="middle" justify="space-between">
-          <Col xs={24} sm={12} md={8}>
+        <Row gutter={[16, 16]} align="middle">
+          {/* 关键词搜索 */}
+          <Col xs={24} md={6}>
+            <Input.Search
+              placeholder="搜索商品..."
+              allowClear
+              enterButton={<SearchOutlined />}
+              onSearch={handleSearch}
+              style={{ width: '100%' }}
+            />
+          </Col>
+          {/* 分类筛选 */}
+          <Col xs={24} sm={12} md={4}>
             <Select
               style={{ width: '100%' }}
               value={filters.categoryId}
@@ -197,7 +224,27 @@ export default function ProductListPage() {
               allowClear
             />
           </Col>
+          {/* 价格区间筛选 */}
           <Col xs={24} sm={12} md={6}>
+            <Space.Compact style={{ width: '100%' }}>
+              <Input
+                placeholder="最低价"
+                type="number"
+                value={filters.minPrice}
+                onChange={(e) => handlePriceChange('min', e.target.value ? Number(e.target.value) : undefined)}
+                style={{ width: '50%' }}
+              />
+              <Input
+                placeholder="最高价"
+                type="number"
+                value={filters.maxPrice}
+                onChange={(e) => handlePriceChange('max', e.target.value ? Number(e.target.value) : undefined)}
+                style={{ width: '50%' }}
+              />
+            </Space.Compact>
+          </Col>
+          {/* 排序 */}
+          <Col xs={24} sm={12} md={4}>
             <Select
               style={{ width: '100%' }}
               value={`${filters.sortBy}-${filters.sortOrder}`}
@@ -206,7 +253,8 @@ export default function ProductListPage() {
               placeholder="排序方式"
             />
           </Col>
-          <Col xs={24} md={10} className="result-count">
+          {/* 结果数量 */}
+          <Col xs={24} md={4} className="result-count">
             <Text type="secondary">
               共 {pagination.total} 件商品
             </Text>

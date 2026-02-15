@@ -105,6 +105,23 @@ public class ProductService {
             queryWrapper.eq(Product::getCategoryId, request.getCategoryId());
         }
 
+        // 关键词搜索（标题或描述模糊匹配）
+        if (request.getKeyword() != null && !request.getKeyword().trim().isEmpty()) {
+            String keyword = request.getKeyword().trim();
+            queryWrapper.and(wrapper -> wrapper
+                    .like(Product::getTitle, keyword)
+                    .or()
+                    .like(Product::getDescription, keyword));
+        }
+
+        // 价格区间筛选
+        if (request.getMinPrice() != null) {
+            queryWrapper.ge(Product::getPrice, request.getMinPrice());
+        }
+        if (request.getMaxPrice() != null) {
+            queryWrapper.le(Product::getPrice, request.getMaxPrice());
+        }
+
         // 排序
         String sortBy = request.getSortBy();
         boolean isAsc = "asc".equalsIgnoreCase(request.getSortOrder());

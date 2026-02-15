@@ -36,6 +36,9 @@ export interface ProductPageParams {
   status?: string;
   sortBy?: string;
   sortOrder?: string;
+  keyword?: string;
+  minPrice?: number;
+  maxPrice?: number;
 }
 
 // 用户信息

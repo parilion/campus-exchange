@@ -43,4 +43,19 @@ public class ProductPageRequest {
      * 排序方向：asc, desc
      */
     private String sortOrder = "desc";
+
+    /**
+     * 关键词搜索（标题/描述）
+     */
+    private String keyword;
+
+    /**
+     * 最低价格
+     */
+    private Double minPrice;
+
+    /**
+     * 最高价格
+     */
+    private Double maxPrice;
 }
