@@ -2,10 +2,22 @@
 
 ## 当前状态
 - 开发中模块: 搜索与筛选
-- 当前功能: ID#27 - 高级筛选 + 新旧程度筛选 + 结果高亮/统计
-- 进度: 26/190 (13.7%)
+- 当前功能: ID#28 - 搜索结果页面 UI + 自动补全/历史记录/热门推荐
+- 进度: 27/190 (14.2%)
 
 ## 开发日志 (按时间倒序)
+
+### 2026-02-15 12:05:00 | 完成: 高级筛选 + 新旧程度筛选 (#27)
+- **开始时间**: 2026-02-15 11:40:00
+- **结束时间**: 2026-02-15 12:05:00
+- **Commit**: `feat: implement product condition filter in search API and UI`
+- **涉及文件**:
+  - backend/src/main/java/com/campus/exchange/dto/ProductPageRequest.java
+  - backend/src/main/java/com/campus/exchange/service/ProductService.java
+  - frontend/src/pages/ProductListPage.tsx
+  - frontend/src/services/product.ts
+  - frontend/src/types/index.ts
+- **备注**: 新旧程度筛选（全新/几乎全新/良好/一般/较差）+ 前端下拉框UI + E2E测试验证
 
 ### 2026-02-15 11:34:10 | 完成: 关键词搜索/分类/价格区间/状态/排序 API (#26)
 - **开始时间**: 2026-02-15 11:22:13
@@ -261,7 +273,7 @@
 
 ### 搜索与筛选 (P1)
 - [x] #26 关键词搜索/分类/价格区间/状态/排序 API (2026-02-15)
-- [ ] #27 高级筛选 + 新旧程度筛选 + 结果高亮/统计
+- [x] #27 高级筛选 + 新旧程度筛选 + 结果高亮/统计 (2026-02-15)
 - [ ] #28 搜索结果页面 UI + 自动补全/历史记录/热门推荐
 
 ## 技术债务
