@@ -122,6 +122,11 @@ public class ProductService {
             queryWrapper.le(Product::getPrice, request.getMaxPrice());
         }
 
+        // 新旧程度筛选
+        if (request.getCondition() != null && !request.getCondition().trim().isEmpty()) {
+            queryWrapper.eq(Product::getCondition, request.getCondition());
+        }
+
         // 排序
         String sortBy = request.getSortBy();
         boolean isAsc = "asc".equalsIgnoreCase(request.getSortOrder());

@@ -58,4 +58,9 @@ public class ProductPageRequest {
      * 最高价格
      */
     private Double maxPrice;
+
+    /**
+     * 新旧程度筛选：NEW, LIKE_NEW, GOOD, FAIR, POOR
+     */
+    private String condition;
 }

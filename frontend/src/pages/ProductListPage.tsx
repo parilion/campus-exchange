@@ -30,6 +30,16 @@ const SORT_OPTIONS = [
   { value: 'viewCount-desc', label: '热度优先' },
 ];
 
+// 新旧程度选项
+const CONDITION_OPTIONS = [
+  { value: undefined, label: '全部成色' },
+  { value: 'NEW', label: '全新' },
+  { value: 'LIKE_NEW', label: '几乎全新' },
+  { value: 'GOOD', label: '良好' },
+  { value: 'FAIR', label: '一般' },
+  { value: 'POOR', label: '较差' },
+];
+
 // 新旧程度标签颜色
 const CONDITION_COLORS: Record<string, string> = {
   NEW: '#52c41a',
@@ -130,6 +140,7 @@ export default function ProductListPage() {
     keyword: '',
     minPrice: undefined as number | undefined,
     maxPrice: undefined as number | undefined,
+    condition: undefined as string | undefined,
   });
 
   // 加载商品列表
@@ -145,6 +156,7 @@ export default function ProductListPage() {
         keyword: filters.keyword || undefined,
         minPrice: filters.minPrice,
         maxPrice: filters.maxPrice,
+        condition: filters.condition,
       });
       setProducts(data.list);
       setPagination(prev => ({
@@ -182,6 +194,11 @@ export default function ProductListPage() {
 
   const handlePriceChange = (type: 'min' | 'max', value: number | undefined) => {
     setFilters(prev => ({ ...prev, [type === 'min' ? 'minPrice' : 'maxPrice']: value }));
+    setPagination(prev => ({ ...prev, page: 1 }));
+  };
+
+  const handleConditionChange = (value: string | undefined) => {
+    setFilters(prev => ({ ...prev, condition: value }));
     setPagination(prev => ({ ...prev, page: 1 }));
   };
 
@@ -225,7 +242,7 @@ export default function ProductListPage() {
             />
           </Col>
           {/* 价格区间筛选 */}
-          <Col xs={24} sm={12} md={6}>
+          <Col xs={24} sm={12} md={5}>
             <Space.Compact style={{ width: '100%' }}>
               <Input
                 placeholder="最低价"
@@ -242,6 +259,17 @@ export default function ProductListPage() {
                 style={{ width: '50%' }}
               />
             </Space.Compact>
+          </Col>
+          {/* 新旧程度筛选 */}
+          <Col xs={24} sm={12} md={4}>
+            <Select
+              style={{ width: '100%' }}
+              value={filters.condition}
+              onChange={handleConditionChange}
+              options={CONDITION_OPTIONS}
+              placeholder="新旧程度"
+              allowClear
+            />
           </Col>
           {/* 排序 */}
           <Col xs={24} sm={12} md={4}>

@@ -37,7 +37,8 @@ export async function getProductList(params: ProductPageParams = {}) {
       sortOrder: params.sortOrder || 'desc',
       keyword: params.keyword,
       minPrice: params.minPrice,
-      maxPrice: params.maxPrice
+      maxPrice: params.maxPrice,
+      condition: params.condition
     }
   });
   return res.data.data;

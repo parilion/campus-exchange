@@ -39,6 +39,7 @@ export interface ProductPageParams {
   keyword?: string;
   minPrice?: number;
   maxPrice?: number;
+  condition?: string;
 }
 
 // 用户信息
