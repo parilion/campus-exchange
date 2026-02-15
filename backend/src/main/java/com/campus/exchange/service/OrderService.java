@@ -16,6 +16,7 @@ import com.campus.exchange.model.User;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -302,6 +303,43 @@ public class OrderService {
         response.setTotalPages((int) orderPage.getPages());
 
         return response;
+    }
+
+    /**
+     * 自动取消超时订单（24小时未支付）
+     * 由定时任务调用
+     */
+    @Transactional
+    public int autoCancelExpiredOrders() {
+        // 查询超时未支付的订单（创建超过24小时）
+        LocalDateTime expireTime = LocalDateTime.now().minusHours(24);
+
+        LambdaQueryWrapper<Order> queryWrapper = new LambdaQueryWrapper<>();
+        queryWrapper.eq(Order::getStatus, "PENDING")
+                .le(Order::getCreatedAt, expireTime);
+
+        List<Order> expiredOrders = orderMapper.selectList(queryWrapper);
+
+        int count = 0;
+        for (Order order : expiredOrders) {
+            try {
+                // 取消订单
+                order.setStatus("CANCELLED");
+                orderMapper.updateById(order);
+
+                // 恢复商品状态
+                Product product = productMapper.selectById(order.getProductId());
+                if (product != null && "SOLD".equals(product.getStatus())) {
+                    product.setStatus("ON_SALE");
+                    productMapper.updateById(product);
+                }
+                count++;
+            } catch (Exception e) {
+                // 忽略单个订单的错误，继续处理其他订单
+            }
+        }
+
+        return count;
     }
 
     /**
