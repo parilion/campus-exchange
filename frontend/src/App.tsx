@@ -10,6 +10,7 @@ import ProductDetailPage from './pages/ProductDetailPage';
 import MyProductsPage from './pages/MyProductsPage';
 import OrdersPage from './pages/OrdersPage';
 import OrderDetailPage from './pages/OrderDetailPage';
+import BargainsPage from './pages/BargainsPage';
 import AuthRoute from './components/AuthRoute';
 
 function App() {
@@ -57,6 +58,11 @@ function App() {
           <Route path="/orders/:id" element={
             <AuthRoute>
               <OrderDetailPage />
+            </AuthRoute>
+          } />
+          <Route path="/bargains" element={
+            <AuthRoute>
+              <BargainsPage />
             </AuthRoute>
           } />
         </Routes>

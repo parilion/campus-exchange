@@ -1,8 +1,9 @@
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { Row, Col, Card, Image, Tag, Button, Descriptions, Avatar, Space, Typography, Spin, Divider, message, Alert, Modal } from 'antd';
-import { ArrowLeftOutlined, EyeOutlined, HeartOutlined, MessageOutlined, ShareAltOutlined, WarningOutlined, EditOutlined, DeleteOutlined } from '@ant-design/icons';
+import { Row, Col, Card, Image, Tag, Button, Descriptions, Avatar, Space, Typography, Spin, Divider, message, Alert, Modal, Form, InputNumber, Input } from 'antd';
+import { ArrowLeftOutlined, EyeOutlined, HeartOutlined, MessageOutlined, ShareAltOutlined, WarningOutlined, EditOutlined, DeleteOutlined, DollarOutlined } from '@ant-design/icons';
 import { getProduct, deleteProduct } from '../services/product';
+import { createBargain } from '../services/bargain';
 import { useUserStore } from '../stores/userStore';
 import type { Product } from '../types';
 import './ProductDetailPage.css';
@@ -44,6 +45,9 @@ export default function ProductDetailPage() {
   const [loading, setLoading] = useState(true);
   const [product, setProduct] = useState<Product | null>(null);
   const [selectedImage, setSelectedImage] = useState(0);
+  const [bargainModalVisible, setBargainModalVisible] = useState(false);
+  const [bargainLoading, setBargainLoading] = useState(false);
+  const [form] = Form.useForm();
   const userId = useUserStore((state) => state.user?.id);
 
   // 加载商品详情
@@ -69,6 +73,27 @@ export default function ProductDetailPage() {
   // 处理联系卖家
   const handleContactSeller = () => {
     message.info('聊天功能开发中...');
+  };
+
+  // 处理发起议价
+  const handleBargain = async (values: { proposedPrice: number; message?: string }) => {
+    if (!product) return;
+    setBargainLoading(true);
+    try {
+      await createBargain({
+        productId: product.id,
+        originalPrice: product.price,
+        proposedPrice: values.proposedPrice,
+        message: values.message,
+      });
+      message.success('议价已发起，等待卖家回复');
+      setBargainModalVisible(false);
+      form.resetFields();
+    } catch (error: any) {
+      message.error(error.message || '发起议价失败');
+    } finally {
+      setBargainLoading(false);
+    }
   };
 
   // 处理返回
@@ -292,6 +317,16 @@ export default function ProductDetailPage() {
                   >
                     联系卖家
                   </Button>
+                  {userId !== product.sellerId && (
+                    <Button
+                      size="large"
+                      icon={<DollarOutlined />}
+                      onClick={() => setBargainModalVisible(true)}
+                      className="bargain-button"
+                    >
+                      发起议价
+                    </Button>
+                  )}
                   <Button
                     size="large"
                     icon={<HeartOutlined />}
@@ -316,6 +351,75 @@ export default function ProductDetailPage() {
                 分享
               </Button>
             </div>
+
+            {/* 议价弹窗 */}
+            <Modal
+              title="发起议价"
+              open={bargainModalVisible}
+              onCancel={() => {
+                setBargainModalVisible(false);
+                form.resetFields();
+              }}
+              footer={null}
+              destroyOnClose
+            >
+              <Form
+                form={form}
+                layout="vertical"
+                onFinish={handleBargain}
+                initialValues={{ proposedPrice: product?.price }}
+              >
+                <Form.Item label="商品原价">
+                  <InputNumber
+                    value={product?.price}
+                    disabled
+                    style={{ width: '100%' }}
+                    formatter={(value) => `¥ ${value}`}
+                  />
+                </Form.Item>
+                <Form.Item
+                  name="proposedPrice"
+                  label="您的出价"
+                  rules={[
+                    { required: true, message: '请输入您的出价' },
+                    () => ({
+                      validator(_, value) {
+                        if (!value || value < product!.price) {
+                          return Promise.resolve();
+                        }
+                        return Promise.reject(new Error('出价必须低于原价'));
+                      },
+                    }),
+                  ]}
+                >
+                  <InputNumber
+                    min={0.01}
+                    max={product?.price}
+                    style={{ width: '100%' }}
+                    placeholder="请输入您的出价"
+                    formatter={(value) => `¥ ${value}`}
+                  />
+                </Form.Item>
+                <Form.Item
+                  name="message"
+                  label="留言（可选）"
+                >
+                  <Input.TextArea
+                    rows={3}
+                    maxLength={200}
+                    placeholder="可以告诉卖家为什么是这个价格..."
+                  />
+                </Form.Item>
+                <Form.Item>
+                  <Space style={{ width: '100%', justifyContent: 'flex-end' }}>
+                    <Button onClick={() => setBargainModalVisible(false)}>取消</Button>
+                    <Button type="primary" htmlType="submit" loading={bargainLoading}>
+                      发起议价
+                    </Button>
+                  </Space>
+                </Form.Item>
+              </Form>
+            </Modal>
           </div>
         </Col>
       </Row>
