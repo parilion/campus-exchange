@@ -28,12 +28,12 @@
 
   {"id": 26, "category": "搜索与筛选", "module": "search", "description": "关键词搜索/分类/价格区间/状态/排序 API", "priority": "P1", "passes": true},
   {"id": 27, "category": "搜索与筛选", "module": "search", "description": "高级筛选 + 新旧程度筛选 + 结果高亮/统计", "priority": "P1", "passes": true},
-  {"id": 28, "category": "搜索与筛选", "module": "search", "description": "搜索结果页面 UI + 自动补全/历史记录/热门推荐", "priority": "P1", "passes": false},
+  {"id": 28, "category": "搜索与筛选", "module": "search", "description": "搜索结果页面 UI + 自动补全/历史记录/热门推荐", "priority": "P1", "passes": true},
 
-  {"id": 29, "category": "交易流程", "module": "order", "description": "下单/购买 + 取消订单 + 确认收货 + 发货 API", "priority": "P0", "passes": false},
-  {"id": 30, "category": "交易流程", "module": "order", "description": "订单状态流转 + 订单编号生成 + 自动取消", "priority": "P0", "passes": false},
-  {"id": 31, "category": "交易流程", "module": "order", "description": "订单列表/详情 API + 买家/卖家订单页面 UI", "priority": "P0", "passes": false},
-  {"id": 32, "category": "交易流程", "module": "order", "description": "线下交易/交易方式/议价/交易安全提示", "priority": "P1", "passes": false},
+  {"id": 29, "category": "交易流程", "module": "order", "description": "下单/购买 + 取消订单 + 确认收货 + 发货 API", "priority": "P0", "passes": true},
+  {"id": 30, "category": "交易流程", "module": "order", "description": "订单状态流转 + 订单编号生成 + 自动取消", "priority": "P0", "passes": true},
+  {"id": 31, "category": "交易流程", "module": "order", "description": "订单列表/详情 API + 买家/卖家订单页面 UI", "priority": "P0", "passes": true},
+  {"id": 32, "category": "交易流程", "module": "order", "description": "线下交易/交易方式/议价/交易安全提示", "priority": "P1", "passes": true},
   {"id": 33, "category": "交易流程", "module": "order", "description": "订单状态通知/统计/退款/纠纷申诉", "priority": "P1", "passes": false},
 
   {"id": 34, "category": "消息系统", "module": "message", "description": "私信发送/接收/列表 API + 会话列表页面 UI", "priority": "P1", "passes": false},

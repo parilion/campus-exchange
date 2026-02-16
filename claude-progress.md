@@ -1,25 +1,83 @@
 # Campus Exchange - 开发进度
 
 ## 当前状态
-- 开发中模块: 搜索与筛选
-- 当前功能: ID#28 - 搜索结果页面 UI + 自动补全/历史记录/热门推荐
-- 进度: 27/190 (14.2%)
+- 开发中模块: 消息系统
+- 当前功能: ID#34 - 私信发送/接收/列表 API + 会话列表页面 UI
+- 进度: 32/190 (16.8%)
 
 ## 开发日志 (按时间倒序)
 
-### 2026-02-15 12:05:00 | 完成: 高级筛选 + 新旧程度筛选 (#27)
-- **开始时间**: 2026-02-15 11:40:00
-- **结束时间**: 2026-02-15 12:05:00
-- **Commit**: `feat: implement product condition filter in search API and UI`
+### 2026-02-16 14:00:00 | 完成: 线下交易/议价功能 (#32)
+- **开始时间**: 2026-02-16 13:30:00
+- **结束时间**: 2026-02-16 14:00:00
+- **Commit**: `feat: add bargain functionality with UI` + `feat: add bargain API and database schema`
 - **涉及文件**:
-  - backend/src/main/java/com/campus/exchange/dto/ProductPageRequest.java
+  - backend/src/main/java/com/campus/exchange/controller/BargainController.java
+  - backend/src/main/java/com/campus/exchange/service/BargainService.java
+  - backend/src/main/java/com/campus/exchange/mapper/BargainMapper.java
+  - backend/src/main/java/com/campus/exchange/model/Bargain.java
+  - backend/src/main/java/com/campus/exchange/dto/BargainRequest.java
+  - backend/src/main/java/com/campus/exchange/dto/BargainVO.java
+  - frontend/src/pages/BargainsPage.tsx
+  - frontend/src/pages/BargainsPage.css
+  - frontend/src/pages/ProductDetailPage.tsx
+  - frontend/src/services/bargain.ts
+  - frontend/src/App.tsx
+  - sql/add_bargain_table.sql
+- **备注**: 议价功能完整实现：发起议价/接受/拒绝/取消 + 议价列表页面 + 商品详情页议价按钮
+
+### 2026-02-15 13:00:00 | 完成: 订单列表/详情 API + 买家/卖家订单页面 UI (#31)
+- **开始时间**: 2026-02-15 12:50:00
+- **结束时间**: 2026-02-15 13:00:00
+- **Commit**: `feat: add order list and detail pages with UI`
+- **涉及文件**:
+  - frontend/src/services/order.ts
+  - frontend/src/pages/OrdersPage.tsx
+  - frontend/src/pages/OrderDetailPage.tsx
+  - frontend/src/pages/OrdersPage.css
+  - frontend/src/pages/OrderDetailPage.css
+  - frontend/src/App.tsx
+- **备注**: 订单列表页面（状态筛选/操作按钮）+ 订单详情页面（时间线）+ 支付/发货/确认收货/取消功能 + E2E测试验证
+
+### 2026-02-15 12:50:00 | 完成: 订单状态流转 + 订单编号生成 + 自动取消 (#30)
+- **开始时间**: 2026-02-15 12:40:00
+- **结束时间**: 2026-02-15 12:50:00
+- **Commit**: `feat: add order auto-cancel scheduled task`
+- **涉及文件**:
+  - backend/src/main/java/com/campus/exchange/task/OrderTask.java
+  - backend/src/main/java/com/campus/exchange/service/OrderService.java
+  - backend/src/main/java/com/campus/exchange/CampusExchangeApplication.java
+- **备注**: 定时任务每小时检查并取消24小时未支付订单 + 自动恢复商品状态
+
+### 2026-02-15 12:40:00 | 完成: 下单/购买 + 取消订单 + 确认收货 + 发货 API (#29)
+- **开始时间**: 2026-02-15 12:25:00
+- **结束时间**: 2026-02-15 12:40:00
+- **Commit**: `feat: implement order API with full transaction flow`
+- **涉及文件**:
+  - backend/src/main/java/com/campus/exchange/controller/OrderController.java
+  - backend/src/main/java/com/campus/exchange/service/OrderService.java
+  - backend/src/main/java/com/campus/exchange/mapper/OrderMapper.java
+  - backend/src/main/java/com/campus/exchange/dto/CreateOrderRequest.java
+  - backend/src/main/java/com/campus/exchange/dto/OrderVO.java
+  - backend/src/main/java/com/campus/exchange/dto/OrderPageRequest.java
+  - backend/src/main/java/com/campus/exchange/dto/OrderPageResponse.java
+- **备注**: 订单API完整实现：创建/取消/支付/发货/确认收货 + 订单列表查询 + 商品状态自动更新 + API测试验证
+
+### 2026-02-15 12:25:00 | 完成: 搜索结果页面 UI + 自动补全/历史记录/热门推荐 (#28)
+- **开始时间**: 2026-02-15 12:05:00
+- **结束时间**: 2026-02-15 12:25:00
+- **Commit**: `feat: implement search UI with autocomplete and history`
+- **涉及文件**:
+  - backend/src/main/java/com/campus/exchange/controller/ProductController.java
   - backend/src/main/java/com/campus/exchange/service/ProductService.java
+  - frontend/src/components/SearchBox.tsx
+  - frontend/src/components/SearchBox.css
   - frontend/src/pages/ProductListPage.tsx
   - frontend/src/services/product.ts
-  - frontend/src/types/index.ts
-- **备注**: 新旧程度筛选（全新/几乎全新/良好/一般/较差）+ 前端下拉框UI + E2E测试验证
+  - backend/src/main/java/com/campus/exchange/config/SecurityConfig.java
+- **备注**: 搜索自动补全 + 热门搜索推荐 + 搜索历史记录(localStorage) + 删除/清空历史 + E2E测试验证
 
-### 2026-02-15 11:34:10 | 完成: 关键词搜索/分类/价格区间/状态/排序 API (#26)
+### 2026-02-15 12:05:00 | 完成: 高级筛选 + 新旧程度筛选 (#27)
 - **开始时间**: 2026-02-15 11:22:13
 - **结束时间**: 2026-02-15 11:34:10
 - **Commit**: `feat: implement product search API with keyword and price range filter`
@@ -274,7 +332,13 @@
 ### 搜索与筛选 (P1)
 - [x] #26 关键词搜索/分类/价格区间/状态/排序 API (2026-02-15)
 - [x] #27 高级筛选 + 新旧程度筛选 + 结果高亮/统计 (2026-02-15)
-- [ ] #28 搜索结果页面 UI + 自动补全/历史记录/热门推荐
+- [x] #28 搜索结果页面 UI + 自动补全/历史记录/热门推荐 (2026-02-15)
+
+### 交易流程 (P0)
+- [x] #29 下单/购买 + 取消订单 + 确认收货 + 发货 API (2026-02-15)
+- [x] #30 订单状态流转 + 订单编号生成 + 自动取消 (2026-02-15)
+- [x] #31 订单列表/详情 API + 买家/卖家订单页面 UI (2026-02-15)
+- [x] #32 线下交易/交易方式/议价/交易安全提示 (2026-02-16)
 
 ## 技术债务
 - 无
