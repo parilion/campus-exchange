@@ -344,4 +344,4 @@
 - 无
 
 ## 阻塞项
-- 无
+- 议价功能测试：需要在MySQL中手动执行 `sql/add_bargain_table.sql` 创建 bargain 表
