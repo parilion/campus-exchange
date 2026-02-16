@@ -367,7 +367,7 @@ export default function ProductDetailPage() {
                 form={form}
                 layout="vertical"
                 onFinish={handleBargain}
-                initialValues={{ proposedPrice: product?.price }}
+                initialValues={{}}
               >
                 <Form.Item label="商品原价">
                   <InputNumber
@@ -398,6 +398,7 @@ export default function ProductDetailPage() {
                     style={{ width: '100%' }}
                     placeholder="请输入您的出价"
                     formatter={(value) => `¥ ${value}`}
+                    parser={(value) => Number(value?.replace(/¥\s?/g, ''))}
                   />
                 </Form.Item>
                 <Form.Item

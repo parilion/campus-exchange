@@ -34,30 +34,30 @@ export interface BargainRequest {
 
 // 发起议价
 export function createBargain(data: BargainRequest) {
-  return request.post<Bargain>('/api/bargains', data);
+  return request.post<Bargain>('/bargains', data);
 }
 
 // 获取商品的所有议价记录
 export function getBargainsByProduct(productId: number) {
-  return request.get<Bargain[]>(`/api/bargains/product/${productId}`);
+  return request.get<Bargain[]>(`/bargains/product/${productId}`);
 }
 
 // 获取当前用户的议价列表
 export function getUserBargains(page: number = 1, size: number = 10) {
-  return request.get<PageResponse<Bargain>>('/api/bargains', { params: { page, size } });
+  return request.get<PageResponse<Bargain>>('/bargains', { params: { page, size } });
 }
 
 // 接受议价
 export function acceptBargain(id: number) {
-  return request.post<Bargain>(`/api/bargains/${id}/accept`);
+  return request.post<Bargain>(`/bargains/${id}/accept`);
 }
 
 // 拒绝议价
 export function rejectBargain(id: number) {
-  return request.post<Bargain>(`/api/bargains/${id}/reject`);
+  return request.post<Bargain>(`/bargains/${id}/reject`);
 }
 
 // 取消议价
 export function cancelBargain(id: number) {
-  return request.post<Bargain>(`/api/bargains/${id}/cancel`);
+  return request.post<Bargain>(`/bargains/${id}/cancel`);
 }
