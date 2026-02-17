@@ -89,9 +89,10 @@ export default function ProductDetailPage() {
       message.success('已发送商品卡片，等待卖家回复');
       // 跳转到聊天页面
       navigate(`/chat/${product.sellerId}`);
-    } catch (error) {
+    } catch (error: any) {
       console.error('Failed to send message:', error);
-      message.error('发送消息失败');
+      const errorMsg = error.response?.data?.message || '发送消息失败';
+      message.error(errorMsg);
     }
   };
 

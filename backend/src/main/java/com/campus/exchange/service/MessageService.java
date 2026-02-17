@@ -1,6 +1,7 @@
 package com.campus.exchange.service;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.campus.exchange.config.MessageWebSocketHandler;
 import com.campus.exchange.dto.ConversationVO;
 import com.campus.exchange.dto.MessageVO;
 import com.campus.exchange.dto.SendMessageRequest;
