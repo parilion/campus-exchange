@@ -2,10 +2,30 @@
 
 ## 当前状态
 - 开发中模块: 消息系统
-- 当前功能: ID#36 - WebSocket 实时消息 + 消息通知提醒/快捷回复/聊天记录搜索/屏蔽用户
-- 进度: 34/190 (17.9%)
+- 当前功能: ID#37 - 从商品详情页发起聊天 + 系统消息展示
+- 进度: 35/190 (18.4%)
 
 ## 开发日志 (按时间倒序)
+
+### 2026-02-17 17:15:00 | 完成: WebSocket 实时消息 + 消息通知提醒/快捷回复/聊天记录搜索/屏蔽用户 (#36)
+- **开始时间**: 2026-02-17 16:30:00
+- **结束时间**: 2026-02-17 17:15:00
+- **Commit**: `feat: implement WebSocket real-time messaging and chat UI enhancements`
+- **涉及文件**:
+  - backend/pom.xml
+  - backend/src/main/java/com/campus/exchange/config/MessageWebSocketHandler.java
+  - backend/src/main/java/com/campus/exchange/config/WebSocketConfig.java
+  - backend/src/main/java/com/campus/exchange/mapper/UserBlockMapper.java
+  - backend/src/main/java/com/campus/exchange/model/UserBlock.java
+  - backend/src/main/java/com/campus/exchange/controller/MessageController.java
+  - backend/src/main/java/com/campus/exchange/service/MessageService.java
+  - frontend/src/components/MessageNotification.tsx
+  - frontend/src/utils/websocket.ts
+  - frontend/src/pages/ChatPage.tsx
+  - frontend/src/pages/ChatPage.css
+  - frontend/src/services/messages.ts
+  - sql/add_user_block_table.sql
+- **备注**: WebSocket实时消息推送 + 消息通知组件(未读计数/通知提醒) + 快捷回复面板 + 聊天记录搜索弹窗 + 屏蔽用户功能 + user_block表
 
 ### 2026-02-17 15:28:00 | 完成: 聊天详情页面 UI + 未读计数/已读标记/商品卡片消息 (#35)
 - **开始时间**: 2026-02-17 15:13:28
@@ -375,9 +395,10 @@
 ### 消息系统 (P1)
 - [x] #34 私信发送/接收/列表 API + 会话列表页面 UI (2026-02-17)
 - [x] #35 聊天详情页面 UI + 未读计数/已读标记/商品卡片消息 (2026-02-17)
+- [x] #36 WebSocket 实时消息 + 消息通知提醒/快捷回复/聊天记录搜索/屏蔽用户 (2026-02-17)
 
 ## 技术债务
 - 无
 
 ## 阻塞项
-- 议价功能测试：需要在MySQL中手动执行 `sql/add_bargain_table.sql` 创建 bargain 表
+- 无
