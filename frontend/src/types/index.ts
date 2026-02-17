@@ -57,6 +57,11 @@ export interface User {
   createdAt: string;
 }
 
+// 商品信息（带收藏状态）
+export interface ProductVO extends Product {
+  isFavorited?: boolean;
+}
+
 // 商品信息
 export interface Product {
   id: number;

@@ -538,4 +538,16 @@ public class ProductService {
         productMapper.updateById(product);
         return getProductVO(product);
     }
+
+    /**
+     * 根据ID列表获取商品列表（用于收藏列表）
+     */
+    public Page<Product> getProductListByIds(List<Long> productIds, Integer pageNum, Integer pageSize) {
+        Page<Product> page = new Page<>(pageNum, pageSize);
+        LambdaQueryWrapper<Product> queryWrapper = new LambdaQueryWrapper<>();
+        queryWrapper.in(Product::getId, productIds);
+        queryWrapper.eq(Product::getStatus, "ON_SALE");
+        queryWrapper.orderByDesc(Product::getCreatedAt);
+        return productMapper.selectPage(page, queryWrapper);
+    }
 }

@@ -1,5 +1,5 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
-import { ConfigProvider } from 'antd';
+import { ConfigProvider, Layout } from 'antd';
 import zhCN from 'antd/locale/zh_CN';
 import LoginPage from './pages/LoginPage';
 import RegisterPage from './pages/RegisterPage';
@@ -13,71 +13,85 @@ import OrderDetailPage from './pages/OrderDetailPage';
 import BargainsPage from './pages/BargainsPage';
 import MessagesPage from './pages/MessagesPage';
 import ChatPage from './pages/ChatPage';
+import FavoritesPage from './pages/FavoritesPage';
 import AuthRoute from './components/AuthRoute';
+import AppHeader from './components/AppHeader';
+
+const { Content } = Layout;
 
 function App() {
   return (
     <ConfigProvider locale={zhCN}>
       <BrowserRouter>
-        <Routes>
-          <Route path="/login" element={<LoginPage />} />
-          <Route path="/register" element={<RegisterPage />} />
-          <Route path="/publish" element={
-            <AuthRoute>
-              <PublishPage />
-            </AuthRoute>
-          } />
-          <Route path="/products" element={
-            <AuthRoute>
-              <ProductListPage />
-            </AuthRoute>
-          } />
-          <Route path="/" element={
-            <AuthRoute>
-              <ProductListPage />
-            </AuthRoute>
-          } />
-          <Route path="/products/:id" element={
-            <AuthRoute>
-              <ProductDetailPage />
-            </AuthRoute>
-          } />
-          <Route path="/products/:id/edit" element={
-            <AuthRoute>
-              <EditProductPage />
-            </AuthRoute>
-          } />
-          <Route path="/my-products" element={
-            <AuthRoute>
-              <MyProductsPage />
-            </AuthRoute>
-          } />
-          <Route path="/orders" element={
-            <AuthRoute>
-              <OrdersPage />
-            </AuthRoute>
-          } />
-          <Route path="/orders/:id" element={
-            <AuthRoute>
-              <OrderDetailPage />
-            </AuthRoute>
-          } />
-          <Route path="/bargains" element={
-            <AuthRoute>
-              <BargainsPage />
-            </AuthRoute>
-          } />
-          <Route path="/messages" element={
-            <AuthRoute>
-              <MessagesPage />
-            </AuthRoute>
-          } />
-          <Route path="/chat/:partnerId" element={
-            <AuthRoute>
-              <ChatPage />
-            </AuthRoute>
-          } />
-        </Routes>
+        <Layout style={{ minHeight: '100vh' }}>
+          <AppHeader />
+          <Content>
+            <Routes>
+              <Route path="/login" element={<LoginPage />} />
+              <Route path="/register" element={<RegisterPage />} />
+              <Route path="/publish" element={
+                <AuthRoute>
+                  <PublishPage />
+                </AuthRoute>
+              } />
+              <Route path="/products" element={
+                <AuthRoute>
+                  <ProductListPage />
+                </AuthRoute>
+              } />
+              <Route path="/" element={
+                <AuthRoute>
+                  <ProductListPage />
+                </AuthRoute>
+              } />
+              <Route path="/products/:id" element={
+                <AuthRoute>
+                  <ProductDetailPage />
+                </AuthRoute>
+              } />
+              <Route path="/products/:id/edit" element={
+                <AuthRoute>
+                  <EditProductPage />
+                </AuthRoute>
+              } />
+              <Route path="/my-products" element={
+                <AuthRoute>
+                  <MyProductsPage />
+                </AuthRoute>
+              } />
+              <Route path="/orders" element={
+                <AuthRoute>
+                  <OrdersPage />
+                </AuthRoute>
+              } />
+              <Route path="/orders/:id" element={
+                <AuthRoute>
+                  <OrderDetailPage />
+                </AuthRoute>
+              } />
+              <Route path="/bargains" element={
+                <AuthRoute>
+                  <BargainsPage />
+                </AuthRoute>
+              } />
+              <Route path="/messages" element={
+                <AuthRoute>
+                  <MessagesPage />
+                </AuthRoute>
+              } />
+              <Route path="/chat/:partnerId" element={
+                <AuthRoute>
+                  <ChatPage />
+                </AuthRoute>
+              } />
+              <Route path="/favorites" element={
+                <AuthRoute>
+                  <FavoritesPage />
+                </AuthRoute>
+              } />
+            </Routes>
+          </Content>
+        </Layout>
       </BrowserRouter>
     </ConfigProvider>
   );

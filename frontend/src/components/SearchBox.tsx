@@ -23,7 +23,7 @@ export default function SearchBox({ defaultValue = '', onSearch }: SearchBoxProp
   const [searchHistory, setSearchHistory] = useState<string[]>([]);
   const [activeTab, setActiveTab] = useState<'history' | 'popular'>('history');
   const wrapperRef = useRef<HTMLDivElement>(null);
-  const debounceRef = useRef<NodeJS.Timeout | null>(null);
+  const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   // 加载搜索历史
   useEffect(() => {

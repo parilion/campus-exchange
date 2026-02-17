@@ -1,10 +1,11 @@
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { Row, Col, Card, Image, Tag, Button, Descriptions, Avatar, Space, Typography, Spin, Divider, message, Alert, Modal, Form, InputNumber, Input } from 'antd';
-import { ArrowLeftOutlined, EyeOutlined, HeartOutlined, MessageOutlined, ShareAltOutlined, WarningOutlined, EditOutlined, DeleteOutlined, DollarOutlined } from '@ant-design/icons';
+import { ArrowLeftOutlined, EyeOutlined, HeartOutlined, HeartFilled, MessageOutlined, ShareAltOutlined, WarningOutlined, EditOutlined, DeleteOutlined, DollarOutlined } from '@ant-design/icons';
 import { getProduct, deleteProduct } from '../services/product';
 import { createBargain } from '../services/bargain';
 import { sendMessage } from '../services/messages';
+import { addFavorite, removeFavorite, checkFavorite } from '../services/favorite';
 import { useUserStore } from '../stores/userStore';
 import type { Product } from '../types';
 import './ProductDetailPage.css';
@@ -48,10 +49,12 @@ export default function ProductDetailPage() {
   const [selectedImage, setSelectedImage] = useState(0);
   const [bargainModalVisible, setBargainModalVisible] = useState(false);
   const [bargainLoading, setBargainLoading] = useState(false);
+  const [isFavorited, setIsFavorited] = useState(false);
+  const [favoriteLoading, setFavoriteLoading] = useState(false);
   const [form] = Form.useForm();
   const userId = useUserStore((state) => state.user?.id);
 
-  // 加载商品详情
+  // 加载商品详情和收藏状态
   useEffect(() => {
     const loadProduct = async () => {
       if (!id) return;
@@ -59,6 +62,16 @@ export default function ProductDetailPage() {
       try {
         const data = await getProduct(Number(id));
         setProduct(data);
+
+        // 检查是否已收藏
+        if (userId) {
+          try {
+            const favorited = await checkFavorite(Number(id));
+            setIsFavorited(favorited);
+          } catch (e) {
+            // 未登录时不检查收藏状态
+          }
+        }
       } catch (error) {
         console.error('Failed to load product:', error);
         message.error('商品不存在或已被删除');
@@ -69,7 +82,33 @@ export default function ProductDetailPage() {
     };
 
     loadProduct();
-  }, [id, navigate]);
+  }, [id, navigate, userId]);
+
+  // 处理收藏/取消收藏
+  const handleFavorite = async () => {
+    if (!product || !userId) {
+      message.warning('请先登录');
+      navigate('/login');
+      return;
+    }
+
+    setFavoriteLoading(true);
+    try {
+      if (isFavorited) {
+        await removeFavorite(product.id);
+        message.success('已取消收藏');
+        setIsFavorited(false);
+      } else {
+        await addFavorite(product.id);
+        message.success('收藏成功');
+        setIsFavorited(true);
+      }
+    } catch (error: any) {
+      message.error(error.response?.data?.message || '操作失败');
+    } finally {
+      setFavoriteLoading(false);
+    }
+  };
 
   // 处理联系卖家 - 发送商品卡片消息
   const handleContactSeller = async () => {
@@ -350,10 +389,13 @@ export default function ProductDetailPage() {
                   )}
                   <Button
                     size="large"
-                    icon={<HeartOutlined />}
+                    icon={isFavorited ? <HeartFilled /> : <HeartOutlined />}
+                    onClick={handleFavorite}
+                    loading={favoriteLoading}
                     className="favorite-button"
+                    style={{ color: isFavorited ? '#ff4d4f' : undefined }}
                   >
-                    收藏
+                    {isFavorited ? '已收藏' : '收藏'}
                   </Button>
                 </>
               ) : (

@@ -73,6 +73,9 @@ public class ProductVO {
     /** 是否草稿：0-已发布，1-草稿 */
     private Boolean isDraft;
 
+    /** 是否已收藏 */
+    private Boolean isFavorited;
+
     private LocalDateTime createdAt;
 
     private LocalDateTime updatedAt;
