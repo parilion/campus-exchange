@@ -2,10 +2,29 @@
 
 ## 当前状态
 - 开发中模块: 消息系统
-- 当前功能: ID#34 - 私信发送/接收/列表 API + 会话列表页面 UI
-- 进度: 32/190 (16.8%)
+- 当前功能: ID#35 - 聊天详情页面 UI + 未读计数/已读标记/商品卡片消息
+- 进度: 33/190 (17.4%)
 
 ## 开发日志 (按时间倒序)
+
+### 2026-02-17 15:05:00 | 完成: 私信发送/接收/列表 API + 会话列表页面 UI (#34)
+- **开始时间**: 2026-02-17 14:46:54
+- **结束时间**: 2026-02-17 15:05:00
+- **Commit**: `feat: add private message API and UI pages`
+- **涉及文件**:
+  - backend/src/main/java/com/campus/exchange/controller/MessageController.java
+  - backend/src/main/java/com/campus/exchange/service/MessageService.java
+  - backend/src/main/java/com/campus/exchange/mapper/MessageMapper.java
+  - backend/src/main/java/com/campus/exchange/dto/MessageVO.java
+  - backend/src/main/java/com/campus/exchange/dto/ConversationVO.java
+  - backend/src/main/java/com/campus/exchange/dto/SendMessageRequest.java
+  - frontend/src/pages/MessagesPage.tsx
+  - frontend/src/pages/MessagesPage.css
+  - frontend/src/pages/ChatPage.tsx
+  - frontend/src/pages/ChatPage.css
+  - frontend/src/services/messages.ts
+  - frontend/src/App.tsx
+- **备注**: 私信功能完整实现：发送/接收/列表API + 会话列表页面 + 聊天详情页面 + E2E测试验证
 
 ### 2026-02-16 14:00:00 | 完成: 线下交易/议价功能 (#32)
 - **开始时间**: 2026-02-16 13:30:00
@@ -339,6 +358,9 @@
 - [x] #30 订单状态流转 + 订单编号生成 + 自动取消 (2026-02-15)
 - [x] #31 订单列表/详情 API + 买家/卖家订单页面 UI (2026-02-15)
 - [x] #32 线下交易/交易方式/议价/交易安全提示 (2026-02-16)
+
+### 消息系统 (P1)
+- [x] #34 私信发送/接收/列表 API + 会话列表页面 UI (2026-02-17)
 
 ## 技术债务
 - 无
