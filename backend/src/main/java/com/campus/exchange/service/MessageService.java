@@ -48,6 +48,7 @@ public class MessageService {
         message.setReceiverId(request.getReceiverId());
         message.setContent(request.getContent());
         message.setType(request.getType() != null ? request.getType() : "TEXT");
+        message.setProductId(request.getProductId());
         message.setRead(false);
         message.setCreatedAt(LocalDateTime.now());
 
@@ -175,6 +176,7 @@ public class MessageService {
         vo.setType(message.getType());
         vo.setRead(message.getRead());
         vo.setCreatedAt(message.getCreatedAt());
+        vo.setProductId(message.getProductId());
 
         // 获取发送者信息
         User sender = userMapper.selectById(message.getSenderId());
@@ -188,6 +190,19 @@ public class MessageService {
         if (receiver != null) {
             vo.setReceiverNickname(receiver.getNickname());
             vo.setReceiverAvatar(receiver.getAvatar());
+        }
+
+        // 获取商品信息（商品卡片消息时）
+        if (message.getProductId() != null) {
+            Product product = productMapper.selectById(message.getProductId());
+            if (product != null) {
+                vo.setProductTitle(product.getTitle());
+                // 取第一张图片
+                if (product.getImages() != null && !product.getImages().isEmpty()) {
+                    String[] images = product.getImages().split(",");
+                    vo.setProductImage(images[0].trim());
+                }
+            }
         }
 
         return vo;

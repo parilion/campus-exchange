@@ -37,7 +37,7 @@
   {"id": 33, "category": "交易流程", "module": "order", "description": "订单状态通知/统计/退款/纠纷申诉", "priority": "P1", "passes": false},
 
   {"id": 34, "category": "消息系统", "module": "message", "description": "私信发送/接收/列表 API + 会话列表页面 UI", "priority": "P1", "passes": true},
-  {"id": 35, "category": "消息系统", "module": "message", "description": "聊天详情页面 UI + 未读计数/已读标记/商品卡片消息", "priority": "P1", "passes": false},
+  {"id": 35, "category": "消息系统", "module": "message", "description": "聊天详情页面 UI + 未读计数/已读标记/商品卡片消息", "priority": "P1", "passes": true},
   {"id": 36, "category": "消息系统", "module": "message", "description": "WebSocket 实时消息 + 消息通知提醒/快捷回复/聊天记录搜索/屏蔽用户", "priority": "P1", "passes": false},
   {"id": 37, "category": "消息系统", "module": "message", "description": "从商品详情页发起聊天 + 系统消息展示", "priority": "P1", "passes": false},
 

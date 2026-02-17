@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { Input, Button, Avatar, Typography, Spin, List, message } from 'antd';
-import { ArrowLeftOutlined, SendOutlined, UserOutlined } from '@ant-design/icons';
+import { Input, Button, Avatar, Typography, Spin, List, message, Card } from 'antd';
+import { ArrowLeftOutlined, SendOutlined, UserOutlined, ShoppingOutlined } from '@ant-design/icons';
 import { getConversation, sendMessage, markAsRead, type Message } from '../services/messages';
 import './ChatPage.css';
 
@@ -40,11 +40,11 @@ export default function ChatPage() {
 
       // 获取对方昵称
       if (msgs.length > 0) {
-        const partnerMsg = msgs.find(m => m.senderId !== currentUserId);
+        const partnerMsg = msgs.find((m: Message) => m.senderId !== currentUserId);
         if (partnerMsg) {
           setPartnerName(partnerMsg.senderNickname);
         } else {
-          const myMsg = msgs.find(m => m.senderId === currentUserId);
+          const myMsg = msgs.find((m: Message) => m.senderId === currentUserId);
           if (myMsg) {
             setPartnerName(myMsg.receiverNickname);
           }
@@ -132,6 +132,7 @@ export default function ChatPage() {
               dataSource={messages}
               renderItem={(item) => {
                 const isMe = item.senderId === currentUserId;
+                const isProductCard = item.type === 'PRODUCT_CARD';
                 return (
                   <List.Item className={`message-item ${isMe ? 'message-mine' : 'message-other'}`}>
                     <div className="message-content">
@@ -141,8 +142,33 @@ export default function ChatPage() {
                         </Avatar>
                       )}
                       <div className={`message-bubble ${isMe ? 'bubble-mine' : 'bubble-other'}`}>
-                        <div className="message-text">{item.content}</div>
-                        <div className="message-time">{formatTime(item.createdAt)}</div>
+                        {isProductCard && item.productId ? (
+                          <div className="product-card-message">
+                            <Card size="small" className="product-card-in-chat">
+                              <div className="product-card-content">
+                                {item.productImage && (
+                                  <img
+                                    src={item.productImage}
+                                    alt={item.productTitle}
+                                    className="product-card-image"
+                                  />
+                                )}
+                                <div className="product-card-info">
+                                  <div className="product-card-title">
+                                    <ShoppingOutlined /> {item.productTitle}
+                                  </div>
+                                  <div className="product-card-text">{item.content}</div>
+                                </div>
+                              </div>
+                            </Card>
+                            <div className="message-time">{formatTime(item.createdAt)}</div>
+                          </div>
+                        ) : (
+                          <>
+                            <div className="message-text">{item.content}</div>
+                            <div className="message-time">{formatTime(item.createdAt)}</div>
+                          </>
+                        )}
                       </div>
                       {isMe && (
                         <Avatar size={36} className="message-avatar">

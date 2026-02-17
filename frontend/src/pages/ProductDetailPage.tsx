@@ -4,6 +4,7 @@ import { Row, Col, Card, Image, Tag, Button, Descriptions, Avatar, Space, Typogr
 import { ArrowLeftOutlined, EyeOutlined, HeartOutlined, MessageOutlined, ShareAltOutlined, WarningOutlined, EditOutlined, DeleteOutlined, DollarOutlined } from '@ant-design/icons';
 import { getProduct, deleteProduct } from '../services/product';
 import { createBargain } from '../services/bargain';
+import { sendMessage } from '../services/messages';
 import { useUserStore } from '../stores/userStore';
 import type { Product } from '../types';
 import './ProductDetailPage.css';
@@ -70,9 +71,28 @@ export default function ProductDetailPage() {
     loadProduct();
   }, [id, navigate]);
 
-  // 处理联系卖家
-  const handleContactSeller = () => {
-    message.info('聊天功能开发中...');
+  // 处理联系卖家 - 发送商品卡片消息
+  const handleContactSeller = async () => {
+    if (!product) return;
+    if (userId === product.sellerId) {
+      message.warning('不能与自己聊天');
+      return;
+    }
+    try {
+      // 发送商品卡片消息
+      await sendMessage({
+        receiverId: product.sellerId,
+        content: `我想咨询商品：${product.title}`,
+        type: 'PRODUCT_CARD',
+        productId: product.id,
+      });
+      message.success('已发送商品卡片，等待卖家回复');
+      // 跳转到聊天页面
+      navigate(`/chat/${product.sellerId}`);
+    } catch (error) {
+      console.error('Failed to send message:', error);
+      message.error('发送消息失败');
+    }
   };
 
   // 处理发起议价

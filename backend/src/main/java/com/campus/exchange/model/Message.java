@@ -21,6 +21,9 @@ public class Message {
     /** TEXT, IMAGE, PRODUCT_CARD */
     private String type;
 
+    /** 商品ID，商品卡片消息时使用 */
+    private Long productId;
+
     @TableField("`read`")
     private Boolean read;
 
