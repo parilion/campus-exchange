@@ -6,10 +6,15 @@ import com.campus.exchange.dto.MessageVO;
 import com.campus.exchange.dto.SendMessageRequest;
 import com.campus.exchange.mapper.MessageMapper;
 import com.campus.exchange.mapper.ProductMapper;
+import com.campus.exchange.mapper.UserBlockMapper;
 import com.campus.exchange.mapper.UserMapper;
 import com.campus.exchange.model.Message;
 import com.campus.exchange.model.Product;
 import com.campus.exchange.model.User;
+import com.campus.exchange.model.UserBlock;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -19,14 +24,19 @@ import java.util.stream.Collectors;
 @Service
 public class MessageService {
 
+    private static final Logger logger = LoggerFactory.getLogger(MessageService.class);
+
     private final MessageMapper messageMapper;
     private final UserMapper userMapper;
     private final ProductMapper productMapper;
+    private final UserBlockMapper userBlockMapper;
+    private static final ObjectMapper objectMapper = new ObjectMapper();
 
-    public MessageService(MessageMapper messageMapper, UserMapper userMapper, ProductMapper productMapper) {
+    public MessageService(MessageMapper messageMapper, UserMapper userMapper, ProductMapper productMapper, UserBlockMapper userBlockMapper) {
         this.messageMapper = messageMapper;
         this.userMapper = userMapper;
         this.productMapper = productMapper;
+        this.userBlockMapper = userBlockMapper;
     }
 
     /**
@@ -43,6 +53,11 @@ public class MessageService {
             throw new RuntimeException("接收者不存在");
         }
 
+        // 检查是否被对方屏蔽
+        if (isBlocked(request.getReceiverId(), senderId)) {
+            throw new RuntimeException("对方已将您屏蔽，无法发送消息");
+        }
+
         Message message = new Message();
         message.setSenderId(senderId);
         message.setReceiverId(request.getReceiverId());
@@ -54,7 +69,17 @@ public class MessageService {
 
         messageMapper.insert(message);
 
-        return convertToVO(message);
+        MessageVO messageVO = convertToVO(message);
+
+        // 通过 WebSocket 推送消息给接收者
+        try {
+            String jsonMessage = objectMapper.writeValueAsString(messageVO);
+            MessageWebSocketHandler.sendMessageToUser(String.valueOf(request.getReceiverId()), jsonMessage);
+        } catch (Exception e) {
+            logger.error("WebSocket推送失败: {}", e.getMessage());
+        }
+
+        return messageVO;
     }
 
     /**
@@ -206,5 +231,94 @@ public class MessageService {
         }
 
         return vo;
+    }
+
+    /**
+     * 屏蔽用户
+     */
+    public void blockUser(Long userId, Long blockedUserId) {
+        if (userId.equals(blockedUserId)) {
+            throw new RuntimeException("不能屏蔽自己");
+        }
+
+        // 检查是否已经屏蔽
+        if (isBlocked(userId, blockedUserId)) {
+            throw new RuntimeException("已屏蔽该用户");
+        }
+
+        UserBlock block = new UserBlock();
+        block.setUserId(userId);
+        block.setBlockedUserId(blockedUserId);
+        block.setCreatedAt(LocalDateTime.now());
+
+        userBlockMapper.insert(block);
+    }
+
+    /**
+     * 取消屏蔽用户
+     */
+    public void unblockUser(Long userId, Long blockedUserId) {
+        LambdaQueryWrapper<UserBlock> wrapper = new LambdaQueryWrapper<>();
+        wrapper.eq(UserBlock::getUserId, userId)
+                .eq(UserBlock::getBlockedUserId, blockedUserId);
+        userBlockMapper.delete(wrapper);
+    }
+
+    /**
+     * 检查是否屏蔽了指定用户
+     */
+    public boolean isBlocked(Long userId, Long blockedUserId) {
+        LambdaQueryWrapper<UserBlock> wrapper = new LambdaQueryWrapper<>();
+        wrapper.eq(UserBlock::getUserId, userId)
+                .eq(UserBlock::getBlockedUserId, blockedUserId);
+        return userBlockMapper.selectCount(wrapper) > 0;
+    }
+
+    /**
+     * 获取屏蔽的用户列表
+     */
+    public List<User> getBlockedUsers(Long userId) {
+        LambdaQueryWrapper<UserBlock> wrapper = new LambdaQueryWrapper<>();
+        wrapper.eq(UserBlock::getUserId, userId);
+        List<UserBlock> blocks = userBlockMapper.selectList(wrapper);
+
+        List<User> blockedUsers = new ArrayList<>();
+        for (UserBlock block : blocks) {
+            User user = userMapper.selectById(block.getBlockedUserId());
+            if (user != null) {
+                blockedUsers.add(user);
+            }
+        }
+        return blockedUsers;
+    }
+
+    /**
+     * 搜索聊天记录
+     */
+    public List<MessageVO> searchMessages(Long userId, String keyword, int page, int size) {
+        if (keyword == null || keyword.trim().isEmpty()) {
+            return new ArrayList<>();
+        }
+
+        // 查询与指定用户的聊天记录中包含关键字的消息
+        LambdaQueryWrapper<Message> wrapper = new LambdaQueryWrapper<>();
+        wrapper.and(w -> w
+                .eq(Message::getSenderId, userId)
+                .or()
+                .eq(Message::getReceiverId, userId)
+        ).like(Message::getContent, keyword.trim())
+         .orderByDesc(Message::getCreatedAt);
+
+        List<Message> messages = messageMapper.selectList(wrapper);
+
+        // 分页
+        int start = (page - 1) * size;
+        int end = Math.min(start + size, messages.size());
+        if (start >= messages.size()) {
+            return new ArrayList<>();
+        }
+
+        List<Message> pagedMessages = messages.subList(start, end);
+        return pagedMessages.stream().map(this::convertToVO).collect(Collectors.toList());
     }
 }

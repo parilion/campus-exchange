@@ -58,3 +58,32 @@ export function getUnreadCount() {
 export function markAsRead(partnerId: number) {
   return request.put<void>(`/messages/read/${partnerId}`);
 }
+
+// 搜索聊天记录
+export function searchMessages(keyword: string, page: number = 1, size: number = 20) {
+  return request.get<Message[]>('/messages/search', { params: { keyword, page, size } });
+}
+
+// 屏蔽用户
+export function blockUser(blockedUserId: number) {
+  return request.post<void>(`/messages/block/${blockedUserId}`);
+}
+
+// 取消屏蔽用户
+export function unblockUser(blockedUserId: number) {
+  return request.delete<void>(`/messages/block/${blockedUserId}`);
+}
+
+// 获取屏蔽的用户列表
+export function getBlockedUsers() {
+  return request.get<User[]>('/messages/blocks');
+}
+
+// 用户类型
+interface User {
+  id: number;
+  username: string;
+  nickname: string;
+  avatar: string | null;
+  email: string;
+}

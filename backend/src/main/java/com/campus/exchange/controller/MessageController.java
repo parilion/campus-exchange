@@ -3,6 +3,7 @@ package com.campus.exchange.controller;
 import com.campus.exchange.dto.ConversationVO;
 import com.campus.exchange.dto.MessageVO;
 import com.campus.exchange.dto.SendMessageRequest;
+import com.campus.exchange.model.User;
 import com.campus.exchange.service.MessageService;
 import com.campus.exchange.util.Result;
 import org.springframework.security.core.Authentication;
@@ -73,6 +74,49 @@ public class MessageController {
         Long userId = getCurrentUserId();
         messageService.markAsRead(partnerId, userId);
         return Result.success(null);
+    }
+
+    /**
+     * 搜索聊天记录
+     */
+    @GetMapping("/search")
+    public Result<List<MessageVO>> searchMessages(
+            @RequestParam String keyword,
+            @RequestParam(defaultValue = "1") int page,
+            @RequestParam(defaultValue = "20") int size) {
+        Long userId = getCurrentUserId();
+        List<MessageVO> messages = messageService.searchMessages(userId, keyword, page, size);
+        return Result.success(messages);
+    }
+
+    /**
+     * 屏蔽用户
+     */
+    @PostMapping("/block/{blockedUserId}")
+    public Result<Void> blockUser(@PathVariable Long blockedUserId) {
+        Long userId = getCurrentUserId();
+        messageService.blockUser(userId, blockedUserId);
+        return Result.success(null);
+    }
+
+    /**
+     * 取消屏蔽用户
+     */
+    @DeleteMapping("/block/{blockedUserId}")
+    public Result<Void> unblockUser(@PathVariable Long blockedUserId) {
+        Long userId = getCurrentUserId();
+        messageService.unblockUser(userId, blockedUserId);
+        return Result.success(null);
+    }
+
+    /**
+     * 获取屏蔽的用户列表
+     */
+    @GetMapping("/blocks")
+    public Result<List<User>> getBlockedUsers() {
+        Long userId = getCurrentUserId();
+        List<User> users = messageService.getBlockedUsers(userId);
+        return Result.success(users);
     }
 
     private Long getCurrentUserId() {

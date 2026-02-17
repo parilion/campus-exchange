@@ -43,6 +43,7 @@ public class SecurityConfig {
                 .antMatchers(HttpMethod.POST, "/api/images/upload-multiple").authenticated()
                 .antMatchers(HttpMethod.DELETE, "/api/images").authenticated()
                 .antMatchers("/uploads/**").permitAll()
+                .antMatchers("/ws/**").permitAll()
                 .anyRequest().authenticated()
             .and()
             .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);

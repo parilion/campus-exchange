@@ -1,11 +1,21 @@
 import { useState, useEffect, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { Input, Button, Avatar, Typography, Spin, List, message, Card } from 'antd';
-import { ArrowLeftOutlined, SendOutlined, UserOutlined, ShoppingOutlined } from '@ant-design/icons';
-import { getConversation, sendMessage, markAsRead, type Message } from '../services/messages';
+import { Input, Button, Avatar, Typography, Spin, List, message, Card, Modal, Popconfirm, Tooltip, Dropdown } from 'antd';
+import { ArrowLeftOutlined, SendOutlined, UserOutlined, ShoppingOutlined, SearchOutlined, StopOutlined, MoreOutlined, MessageOutlined } from '@ant-design/icons';
+import { getConversation, sendMessage, markAsRead, searchMessages, blockUser, type Message } from '../services/messages';
+import { wsClient } from '../utils/websocket';
 import './ChatPage.css';
 
 const { Text } = Typography;
+
+// 快捷回复语
+const QUICK_REPLIES = [
+  '好的，我考虑一下',
+  '可以再便宜一点吗？',
+  '商品还在吗？',
+  '可以面交吗？',
+  '什么时候可以交易？',
+];
 
 export default function ChatPage() {
   const { partnerId } = useParams<{ partnerId: string }>();
@@ -15,6 +25,13 @@ export default function ChatPage() {
   const [messages, setMessages] = useState<Message[]>([]);
   const [inputValue, setInputValue] = useState('');
   const [partnerName, setPartnerName] = useState('');
+  const [showQuickReplies, setShowQuickReplies] = useState(false);
+  const [showSearch, setShowSearch] = useState(false);
+  const [searchKeyword, setSearchKeyword] = useState('');
+  const [searchResults, setSearchResults] = useState<Message[]>([]);
+  const [searching, setSearching] = useState(false);
+  const [blocking, setBlocking] = useState(false);
+  const [searchLoading, setSearchLoading] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   const [currentUserId] = useState(() => {
@@ -101,6 +118,61 @@ export default function ChatPage() {
     return date.toLocaleTimeString('zh-CN', { hour: '2-digit', minute: '2-digit' });
   };
 
+  // 快捷回复
+  const handleQuickReply = (reply: string) => {
+    setInputValue(reply);
+    setShowQuickReplies(false);
+  };
+
+  // 搜索聊天记录
+  const handleSearch = async () => {
+    if (!searchKeyword.trim()) return;
+    setSearchLoading(true);
+    try {
+      const res = await searchMessages(searchKeyword.trim());
+      const results = (res.data as any)?.data || [];
+      setSearchResults(results);
+    } catch (error) {
+      console.error('Search failed:', error);
+      message.error('搜索失败');
+    } finally {
+      setSearchLoading(false);
+    }
+  };
+
+  // 屏蔽用户
+  const handleBlockUser = async () => {
+    if (!partnerId) return;
+    setBlocking(true);
+    try {
+      await blockUser(parseInt(partnerId));
+      message.success('已屏蔽该用户');
+      navigate('/messages');
+    } catch (error: any) {
+      console.error('Block failed:', error);
+      message.error(error.response?.data?.message || '屏蔽失败');
+    } finally {
+      setBlocking(false);
+    }
+  };
+
+  // 更多操作菜单
+  const menuItems = [
+    {
+      key: 'search',
+      icon: <SearchOutlined />,
+      label: '搜索聊天记录',
+      onClick: () => setShowSearch(true),
+    },
+    {
+      key: 'block',
+      icon: <StopOutlined />,
+      label: '屏蔽该用户',
+      danger: true,
+      onClick: handleBlockUser,
+    },
+  ];
+
   return (
     <div className="chat-page">
       <div className="chat-container">
@@ -116,7 +188,89 @@ export default function ChatPage() {
             <Avatar icon={<UserOutlined />} src={null} />
             <Text strong>{partnerName || '聊天'}</Text>
           </div>
+          <div className="chat-header-actions">
+            <Tooltip title="快捷回复">
+              <Button
+                type="text"
+                icon={<MessageOutlined />}
+                onClick={() => setShowQuickReplies(!showQuickReplies)}
+              />
+            </Tooltip>
+            <Dropdown menu={{ items: menuItems }} trigger={['click']}>
+              <Button type="text" icon={<MoreOutlined />} />
+            </Dropdown>
+          </div>
         </div>
+
+        {/* 快捷回复面板 */}
+        {showQuickReplies && (
+          <div className="quick-replies-panel">
+            <div className="quick-replies-title">快捷回复</div>
+            <div className="quick-replies-list">
+              {QUICK_REPLIES.map((reply, index) => (
+                <Button
+                  key={index}
+                  type="default"
+                  size="small"
+                  className="quick-reply-btn"
+                  onClick={() => handleQuickReply(reply)}
+                >
+                  {reply}
+                </Button>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* 搜索聊天记录弹窗 */}
+        <Modal
+          title="搜索聊天记录"
+          open={showSearch}
+          onCancel={() => {
+            setShowSearch(false);
+            setSearchKeyword('');
+            setSearchResults([]);
+          }}
+          footer={null}
+          width={600}
+        >
+          <div className="search-chat-container">
+            <Input.Search
+              placeholder="输入关键词搜索聊天记录"
+              value={searchKeyword}
+              onChange={e => setSearchKeyword(e.target.value)}
+              onSearch={handleSearch}
+              loading={searchLoading}
+              enterButton="搜索"
+            />
+            {searchResults.length > 0 && (
+              <div className="search-results">
+                <Text type="secondary">找到 {searchResults.length} 条相关记录</Text>
+                <List
+                  size="small"
+                  dataSource={searchResults}
+                  renderItem={(item: Message) => {
+                    const isMe = item.senderId === currentUserId;
+                    return (
+                      <List.Item className="search-result-item">
+                        <div className="search-result-content">
+                          <Avatar size={24} icon={<UserOutlined />} />
+                          <div className="search-result-text">
+                            <Text type="secondary">{isMe ? '我' : item.senderNickname}: </Text>
+                            <Text>{item.content}</Text>
+                            <Text type="secondary" style={{ marginLeft: 8 }}>
+                              {new Date(item.createdAt).toLocaleString()}
+                            </Text>
+                          </div>
+                        </div>
+                      </List.Item>
+                    );
+                  }}
+                />
+              </div>
+            )}
+          </div>
+        </Modal>
 
         <div className="chat-messages">
           {loading ? (
