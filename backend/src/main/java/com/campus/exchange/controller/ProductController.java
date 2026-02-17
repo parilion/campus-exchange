@@ -103,6 +103,37 @@ public class ProductController {
         return Result.success(null);
     }
 
+    /**
+     * 获取草稿箱商品列表
+     */
+    @GetMapping("/drafts")
+    public Result<ProductPageResponse> getDrafts(@ModelAttribute ProductPageRequest request) {
+        Long userId = getCurrentUserId();
+        ProductPageResponse response = productService.getDrafts(userId, request);
+        return Result.success(response);
+    }
+
+    /**
+     * 设置商品置顶
+     * @param id 商品ID
+     * @param days 置顶天数，0或null表示取消置顶
+     */
+    @PostMapping("/{id}/top")
+    public Result<ProductVO> setProductTop(@PathVariable Long id, @RequestParam(required = false) Integer days) {
+        Long userId = getCurrentUserId();
+        ProductVO product = productService.setProductTop(id, userId, days);
+        return Result.success(product);
+    }
+
+    /**
+     * 增加商品浏览量
+     */
+    @PostMapping("/{id}/view")
+    public Result<Void> incrementViewCount(@PathVariable Long id) {
+        productService.incrementViewCount(id);
+        return Result.success(null);
+    }
+
     private Long getCurrentUserId() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         return (Long) authentication.getPrincipal();

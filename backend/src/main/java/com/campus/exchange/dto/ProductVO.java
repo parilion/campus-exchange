@@ -61,6 +61,18 @@ public class ProductVO {
 
     private Integer favoriteCount;
 
+    /** 是否置顶 */
+    private Boolean isTop;
+
+    /** 置顶过期时间 */
+    private LocalDateTime topExpireAt;
+
+    /** 标签列表 */
+    private List<String> tags;
+
+    /** 是否草稿：0-已发布，1-草稿 */
+    private Boolean isDraft;
+
     private LocalDateTime createdAt;
 
     private LocalDateTime updatedAt;

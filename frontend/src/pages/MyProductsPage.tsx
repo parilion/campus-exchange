@@ -1,8 +1,8 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Row, Col, Card, Select, Pagination, Empty, Image, Tag, Space, Typography, Button, Modal, message, Dropdown, Menu } from 'antd';
-import { PlusOutlined, ClockCircleOutlined, EyeOutlined, MoreOutlined, EditOutlined, DeleteOutlined, StopOutlined } from '@ant-design/icons';
-import { getMyProducts, deleteProduct } from '../services/product';
+import { Row, Col, Card, Select, Pagination, Empty, Image, Tag, Space, Typography, Button, Modal, message, Dropdown, Menu, Tabs } from 'antd';
+import { PlusOutlined, ClockCircleOutlined, EyeOutlined, MoreOutlined, EditOutlined, DeleteOutlined, StopOutlined, FileTextOutlined, PushpinOutlined } from '@ant-design/icons';
+import { getMyProducts, deleteProduct, getDrafts, setProductTop } from '../services/product';
 import type { Product, ProductPageResponse } from '../types';
 import './MyProductsPage.css';
 
@@ -48,11 +48,12 @@ const STATUS_COLORS: Record<string, string> = {
 };
 
 // 商品卡片组件
-const MyProductCard = ({ product, onEdit, onDelete, onStatusChange }: {
+const MyProductCard = ({ product, onEdit, onDelete, onStatusChange, onSetTop }: {
   product: Product;
   onEdit: () => void;
   onDelete: () => void;
   onStatusChange: (status: string) => void;
+  onSetTop: (days: number) => void;
 }) => {
   const imageUrl = product.images && product.images.length > 0
     ? product.images[0]
@@ -60,15 +61,26 @@ const MyProductCard = ({ product, onEdit, onDelete, onStatusChange }: {
 
   const menu = (
     <Menu>
+      <Menu.Item key="edit" icon={<EditOutlined />} onClick={onEdit}>
+        编辑商品
+      </Menu.Item>
       {product.status === 'ON_SALE' && (
         <>
-          <Menu.Item key="edit" icon={<EditOutlined />} onClick={onEdit}>
-            编辑商品
+          <Menu.Item key="top7" onClick={() => onSetTop(7)}>
+            置顶7天
+          </Menu.Item>
+          <Menu.Item key="top30" onClick={() => onSetTop(30)}>
+            置顶30天
           </Menu.Item>
           <Menu.Item key="offshelf" icon={<StopOutlined />} onClick={() => onStatusChange('OFF_SHELF')}>
             下架商品
           </Menu.Item>
         </>
+      )}
+      {product.isTop && (
+        <Menu.Item key="untop" onClick={() => onSetTop(0)}>
+          取消置顶
+        </Menu.Item>
       )}
       {product.status === 'OFF_SHELF' && (
         <Menu.Item key="onshelf" icon={<PlusOutlined />} onClick={() => onStatusChange('ON_SALE')}>
@@ -105,6 +117,11 @@ const MyProductCard = ({ product, onEdit, onDelete, onStatusChange }: {
           >
             {STATUS_LABELS[product.status] || product.status}
           </Tag>
+          {product.isTop && (
+            <Tag color="red" className="top-tag" style={{ position: 'absolute', top: 8, left: 8 }}>
+              <PushpinOutlined /> 置顶
+            </Tag>
+          )}
         </div>
       }
     >
@@ -120,6 +137,17 @@ const MyProductCard = ({ product, onEdit, onDelete, onStatusChange }: {
         }
         description={
           <div className="product-info">
+            {/* 显示标签 */}
+            {product.tags && product.tags.length > 0 && (
+              <Space wrap size={4} style={{ marginBottom: 8 }}>
+                {product.tags.slice(0, 3).map((tag, index) => (
+                  <Tag key={index} color="blue" style={{ fontSize: 12, padding: '0 4px' }}>{tag}</Tag>
+                ))}
+                {product.tags.length > 3 && (
+                  <Tag style={{ fontSize: 12, padding: '0 4px' }}>+{product.tags.length - 3}</Tag>
+                )}
+              </Space>
+            )}
             <div className="price-row">
               <span className="current-price">¥{product.price.toFixed(2)}</span>
               {product.originalPrice && product.originalPrice > product.price && (
@@ -148,16 +176,25 @@ export default function MyProductsPage() {
     totalPages: 0,
   });
   const [statusFilter, setStatusFilter] = useState<string | undefined>(undefined);
+  const [activeTab, setActiveTab] = useState('products');
 
   // 加载商品列表
   const loadProducts = async () => {
     setLoading(true);
     try {
-      const data: ProductPageResponse = await getMyProducts({
-        page: pagination.page,
-        pageSize: pagination.pageSize,
-        status: statusFilter,
-      });
+      let data: ProductPageResponse;
+      if (activeTab === 'drafts') {
+        data = await getDrafts({
+          page: pagination.page,
+          pageSize: pagination.pageSize,
+        });
+      } else {
+        data = await getMyProducts({
+          page: pagination.page,
+          pageSize: pagination.pageSize,
+          status: statusFilter,
+        });
+      }
       setProducts(data.list);
       setPagination(prev => ({
         ...prev,
@@ -173,7 +210,7 @@ export default function MyProductsPage() {
 
   useEffect(() => {
     loadProducts();
-  }, [pagination.page, statusFilter]);
+  }, [pagination.page, statusFilter, activeTab]);
 
   // 处理状态筛选变化
   const handleFilterStatusChange = (value: string | undefined) => {
@@ -224,6 +261,18 @@ export default function MyProductsPage() {
     }
   };
 
+  // 置顶商品
+  const handleSetTop = async (id: number, days: number) => {
+    try {
+      await setProductTop(id, days);
+      message.success(days > 0 ? `商品已置顶${days}天` : '商品已取消置顶');
+      loadProducts();
+    } catch (error) {
+      const errorMsg = error instanceof Error ? error.message : '操作失败';
+      message.error(errorMsg);
+    }
+  };
+
   return (
     <div className="my-products-page">
       {/* 页面头部 */}
@@ -243,15 +292,25 @@ export default function MyProductsPage() {
 
       {/* 筛选栏 */}
       <div className="filter-bar">
-        <Select
-          style={{ width: 200 }}
-          value={statusFilter}
-          onChange={handleFilterStatusChange}
-          options={STATUS_OPTIONS}
-          placeholder="选择状态"
+        <Tabs
+          activeKey={activeTab}
+          onChange={setActiveTab}
+          items={[
+            { key: 'products', label: <span><PushpinOutlined /> 我的发布</span> },
+            { key: 'drafts', label: <span><FileTextOutlined /> 草稿箱</span> },
+          ]}
         />
+        {activeTab === 'products' && (
+          <Select
+            style={{ width: 200 }}
+            value={statusFilter}
+            onChange={handleFilterStatusChange}
+            options={STATUS_OPTIONS}
+            placeholder="选择状态"
+          />
+        )}
         <Text type="secondary">
-          共 {pagination.total} 件商品
+          共 {pagination.total} 件{activeTab === 'drafts' ? '草稿' : '商品'}
         </Text>
       </div>
 
@@ -290,6 +349,7 @@ export default function MyProductsPage() {
                   onEdit={() => handleEdit(product.id)}
                   onDelete={() => handleDelete(product.id)}
                   onStatusChange={(status) => handleProductStatusChange(product.id, status)}
+                  onSetTop={(days) => handleSetTop(product.id, days)}
                 />
               </Col>
             ))}

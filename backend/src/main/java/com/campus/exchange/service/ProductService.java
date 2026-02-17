@@ -56,10 +56,13 @@ public class ProductService {
         product.setOriginalPrice(request.getOriginalPrice());
         product.setCategoryId(request.getCategoryId());
         product.setCondition(request.getCondition());
-        product.setStatus("ON_SALE");
+        // 如果是草稿，状态为DRAFT，否则为ON_SALE
+        product.setStatus(request.getIsDraft() != null && request.getIsDraft() ? "DRAFT" : "ON_SALE");
         product.setSellerId(sellerId);
         product.setViewCount(0);
         product.setFavoriteCount(0);
+        product.setIsTop(false);
+        product.setIsDraft(request.getIsDraft() != null && request.getIsDraft());
 
         // 将图片列表转换为JSON字符串存储
         if (request.getImages() != null && !request.getImages().isEmpty()) {
@@ -70,6 +73,17 @@ public class ProductService {
             }
         } else {
             product.setImages("[]");
+        }
+
+        // 将标签列表转换为JSON字符串存储
+        if (request.getTags() != null && !request.getTags().isEmpty()) {
+            try {
+                product.setTags(objectMapper.writeValueAsString(request.getTags()));
+            } catch (JsonProcessingException e) {
+                product.setTags("[]");
+            }
+        } else {
+            product.setTags("[]");
         }
 
         // 保存商品
@@ -87,7 +101,27 @@ public class ProductService {
         if (product == null) {
             throw new IllegalArgumentException("商品不存在");
         }
+        // 增加浏览量
+        if (product.getViewCount() == null) {
+            product.setViewCount(0);
+        }
+        product.setViewCount(product.getViewCount() + 1);
+        productMapper.updateById(product);
         return getProductVO(product);
+    }
+
+    /**
+     * 增加商品浏览量
+     */
+    public void incrementViewCount(Long productId) {
+        Product product = productMapper.selectById(productId);
+        if (product != null) {
+            if (product.getViewCount() == null) {
+                product.setViewCount(0);
+            }
+            product.setViewCount(product.getViewCount() + 1);
+            productMapper.updateById(product);
+        }
     }
 
     /**
@@ -128,6 +162,11 @@ public class ProductService {
             queryWrapper.eq(Product::getCondition, request.getCondition());
         }
 
+        // 草稿筛选
+        if (request.getIsDraft() != null) {
+            queryWrapper.eq(Product::getIsDraft, request.getIsDraft());
+        }
+
         // 排序
         String sortBy = request.getSortBy();
         boolean isAsc = "asc".equalsIgnoreCase(request.getSortOrder());
@@ -136,6 +175,11 @@ public class ProductService {
             queryWrapper.orderBy(true, isAsc, Product::getPrice);
         } else if ("viewCount".equals(sortBy)) {
             queryWrapper.orderBy(true, isAsc, Product::getViewCount);
+        } else if ("top".equals(sortBy)) {
+            // 置顶商品排在最前面，然后按置顶过期时间排序
+            queryWrapper.orderByDesc(Product::getIsTop);
+            queryWrapper.orderByAsc(Product::getTopExpireAt);
+            queryWrapper.orderByDesc(Product::getCreatedAt);
         } else {
             // 默认按创建时间排序
             queryWrapper.orderBy(true, isAsc, Product::getCreatedAt);
@@ -268,6 +312,21 @@ public class ProductService {
             }
         }
 
+        // 更新标签
+        if (request.getTags() != null) {
+            try {
+                product.setTags(objectMapper.writeValueAsString(request.getTags()));
+            } catch (JsonProcessingException e) {
+                // 忽略
+            }
+        }
+
+        // 更新草稿状态
+        if (request.getIsDraft() != null) {
+            product.setIsDraft(request.getIsDraft());
+            // 草稿状态不改变主状态，保持原有状态
+        }
+
         // 保存更新
         productMapper.updateById(product);
 
@@ -363,6 +422,10 @@ public class ProductService {
         vo.setSellerId(product.getSellerId());
         vo.setViewCount(product.getViewCount());
         vo.setFavoriteCount(product.getFavoriteCount());
+        vo.setIsTop(product.getIsTop() != null ? product.getIsTop() : false);
+        vo.setTopExpireAt(product.getTopExpireAt());
+        vo.setTags(parseTags(product.getTags()));
+        vo.setIsDraft(product.getIsDraft() != null ? product.getIsDraft() : false);
         vo.setCreatedAt(product.getCreatedAt());
         vo.setUpdatedAt(product.getUpdatedAt());
 
@@ -397,5 +460,82 @@ public class ProductService {
         } catch (JsonProcessingException e) {
             return Collections.emptyList();
         }
+    }
+
+    /**
+     * 解析JSON标签字符串为列表
+     */
+    private List<String> parseTags(String tagsJson) {
+        if (tagsJson == null || tagsJson.isEmpty()) {
+            return Collections.emptyList();
+        }
+        try {
+            return objectMapper.readValue(tagsJson,
+                    objectMapper.getTypeFactory().constructCollectionType(List.class, String.class));
+        } catch (JsonProcessingException e) {
+            return Collections.emptyList();
+        }
+    }
+
+    /**
+     * 获取用户的草稿箱商品列表
+     */
+    public ProductPageResponse getDrafts(Long userId, ProductPageRequest request) {
+        // 创建分页对象
+        Page<Product> page = new Page<>(request.getPage(), request.getPageSize());
+
+        // 构建查询条件：查询当前用户的草稿
+        LambdaQueryWrapper<Product> queryWrapper = new LambdaQueryWrapper<>();
+        queryWrapper.eq(Product::getSellerId, userId);
+        queryWrapper.eq(Product::getIsDraft, true);
+
+        // 排序：默认按创建时间倒序
+        queryWrapper.orderBy(true, false, Product::getCreatedAt);
+
+        // 执行分页查询
+        IPage<Product> productPage = productMapper.selectPage(page, queryWrapper);
+
+        // 转换为VO列表
+        List<ProductVO> productVOList = productPage.getRecords().stream()
+                .map(this::getProductVO)
+                .collect(Collectors.toList());
+
+        // 构建响应
+        ProductPageResponse response = new ProductPageResponse();
+        response.setList(productVOList);
+        response.setPage((int) productPage.getCurrent());
+        response.setPageSize((int) productPage.getSize());
+        response.setTotal(productPage.getTotal());
+        response.setTotalPages((int) productPage.getPages());
+
+        return response;
+    }
+
+    /**
+     * 设置/取消商品置顶
+     */
+    public ProductVO setProductTop(Long productId, Long userId, Integer days) {
+        Product product = productMapper.selectById(productId);
+        if (product == null) {
+            throw new IllegalArgumentException("商品不存在");
+        }
+
+        // 校验权限（只有卖家可以置顶自己的商品）
+        if (!product.getSellerId().equals(userId)) {
+            throw new IllegalArgumentException("无权限操作此商品");
+        }
+
+        if (days != null && days > 0) {
+            // 置顶
+            product.setIsTop(true);
+            product.setTopExpireAt(java.time.LocalDateTime.now().plusDays(days));
+        } else {
+            // 取消置顶
+            product.setIsTop(false);
+            product.setTopExpireAt(null);
+        }
+
+        productMapper.updateById(product);
+        return getProductVO(product);
     }
 }

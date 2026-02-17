@@ -52,4 +52,14 @@ public class UpdateProductRequest {
      * 商品状态：ON_SALE, SOLD, OFF_SHELF
      */
     private String status;
+
+    /**
+     * 标签列表
+     */
+    private List<String> tags;
+
+    /**
+     * 是否草稿：0-已发布，1-草稿
+     */
+    private Boolean isDraft;
 }

@@ -40,6 +40,7 @@ export interface ProductPageParams {
   minPrice?: number;
   maxPrice?: number;
   condition?: string;
+  isDraft?: boolean;
 }
 
 // 用户信息
@@ -66,7 +67,7 @@ export interface Product {
   categoryId: number;
   categoryName?: string;
   condition: 'NEW' | 'LIKE_NEW' | 'GOOD' | 'FAIR' | 'POOR';
-  status: 'ON_SALE' | 'SOLD' | 'OFF_SHELF';
+  status: 'ON_SALE' | 'SOLD' | 'OFF_SHELF' | 'DRAFT';
   tradeType?: 'ONLINE' | 'OFFLINE';
   tradeLocation?: string;
   images: string[];
@@ -75,6 +76,10 @@ export interface Product {
   sellerAvatar?: string;
   viewCount: number;
   favoriteCount: number;
+  isTop?: boolean;
+  topExpireAt?: string;
+  tags?: string[];
+  isDraft?: boolean;
   createdAt: string;
   updatedAt: string;
 }

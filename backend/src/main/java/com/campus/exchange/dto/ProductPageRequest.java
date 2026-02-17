@@ -63,4 +63,9 @@ public class ProductPageRequest {
      * 新旧程度筛选：NEW, LIKE_NEW, GOOD, FAIR, POOR
      */
     private String condition;
+
+    /**
+     * 草稿筛选：true-只查询草稿
+     */
+    private Boolean isDraft;
 }

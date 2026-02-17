@@ -11,6 +11,8 @@ export interface CreateProductRequest {
   images?: string[];
   tradeType?: 'ONLINE' | 'OFFLINE';
   tradeLocation?: string;
+  tags?: string[];
+  isDraft?: boolean;
 }
 
 // 发布商品
@@ -83,4 +85,29 @@ export async function getSearchSuggestions(keyword: string): Promise<string[]> {
 export async function getPopularSearches(): Promise<string[]> {
   const res = await request.get<Result<string[]>>('/products/popular-searches');
   return res.data.data || [];
+}
+
+// 获取草稿箱商品列表
+export async function getDrafts(params: ProductPageParams = {}) {
+  const res = await request.get<Result<ProductPageResponse>>('/products/drafts', {
+    params: {
+      page: params.page || 1,
+      pageSize: params.pageSize || 10
+    }
+  });
+  return res.data.data;
+}
+
+// 设置商品置顶
+export async function setProductTop(id: number, days: number) {
+  const res = await request.post<Result<Product>>(`/products/${id}/top`, null, {
+    params: { days }
+  });
+  return res.data.data;
+}
+
+// 增加商品浏览量
+export async function incrementViewCount(id: number) {
+  const res = await request.post<Result<void>>(`/products/${id}/view`);
+  return res.data.data;
 }

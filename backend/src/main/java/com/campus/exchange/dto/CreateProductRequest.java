@@ -50,4 +50,14 @@ public class CreateProductRequest {
      * 交易地点（线下交易时使用）
      */
     private String tradeLocation;
+
+    /**
+     * 标签列表
+     */
+    private List<String> tags;
+
+    /**
+     * 是否草稿：0-已发布，1-草稿
+     */
+    private Boolean isDraft;
 }

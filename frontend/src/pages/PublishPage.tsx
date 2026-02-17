@@ -12,6 +12,7 @@ import {
   Row,
   Col,
   Space,
+  Tag,
 } from 'antd';
 import { PlusOutlined, LoadingOutlined } from '@ant-design/icons';
 import { useNavigate } from 'react-router-dom';
@@ -59,6 +60,8 @@ export default function PublishPage() {
   const [loading, setLoading] = useState(false);
   const [uploading, setUploading] = useState(false);
   const [imageList, setImageList] = useState<PreviewImage[]>([]);
+  const [tags, setTags] = useState<string[]>([]);
+  const [tagInput, setTagInput] = useState('');
   const navigate = useNavigate();
 
   const onFinish = async (values: CreateProductRequest) => {
@@ -75,17 +78,36 @@ export default function PublishPage() {
         images: imageList.length > 0 ? imageList.map((img) => img.uploadUrl) : undefined,
         tradeType: values.tradeType,
         tradeLocation: values.tradeLocation,
+        tags: tags.length > 0 ? tags : undefined,
+        isDraft: values.isDraft || false,
       };
 
       await createProduct(data);
-      message.success('发布成功');
-      navigate('/');
+      message.success(values.isDraft ? '已保存到草稿箱' : '发布成功');
+      navigate('/my-products');
     } catch (err: unknown) {
       const errorMsg = err instanceof Error ? err.message : '发布失败';
       message.error(errorMsg);
     } finally {
       setLoading(false);
     }
+  };
+
+  // 处理标签输入
+  const handleTagInput = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Enter' || e.key === ',') {
+      e.preventDefault();
+      const value = tagInput.trim();
+      if (value && !tags.includes(value) && tags.length < 5) {
+        setTags([...tags, value]);
+      }
+      setTagInput('');
+    }
+  };
+
+  // 移除标签
+  const removeTag = (tag: string) => {
+    setTags(tags.filter((t) => t !== tag));
   };
 
   // 处理图片上传
@@ -331,16 +353,51 @@ export default function PublishPage() {
                 }}
               </Form.Item>
 
+              {/* 商品标签 */}
+              <Form.Item label="商品标签（选填）">
+                <div style={{ marginBottom: 8 }}>
+                  {tags.map((tag) => (
+                    <Tag
+                      key={tag}
+                      closable
+                      onClose={() => removeTag(tag)}
+                      style={{ marginBottom: 4 }}
+                    >
+                      {tag}
+                    </Tag>
+                  ))}
+                </div>
+                <Input
+                  value={tagInput}
+                  onChange={(e) => setTagInput(e.target.value)}
+                  onKeyDown={handleTagInput}
+                  placeholder="输入标签后按回车添加，最多5个标签"
+                  disabled={tags.length >= 5}
+                />
+                <Text type="secondary" style={{ fontSize: 12 }}>
+                  例如：包邮、可小刀、大一新
+                </Text>
+              </Form.Item>
+
               {/* 提交按钮 */}
               <Form.Item>
-                <Space style={{ width: '100%', justifyContent: 'center' }}>
+                <Space style={{ width: '100%', justifyContent: 'center' }} wrap>
                   <Button
                     type="primary"
                     htmlType="submit"
                     loading={loading}
-                    style={{ width: 200 }}
+                    onClick={() => form.setFieldsValue({ isDraft: false })}
+                    style={{ width: 160 }}
                   >
                     发布商品
+                  </Button>
+                  <Button
+                    htmlType="submit"
+                    loading={loading}
+                    onClick={() => form.setFieldsValue({ isDraft: true })}
+                    style={{ width: 160 }}
+                  >
+                    保存草稿
                   </Button>
                 </Space>
               </Form.Item>
