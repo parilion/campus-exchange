@@ -11,6 +11,8 @@ import MyProductsPage from './pages/MyProductsPage';
 import OrdersPage from './pages/OrdersPage';
 import OrderDetailPage from './pages/OrderDetailPage';
 import BargainsPage from './pages/BargainsPage';
+import MessagesPage from './pages/MessagesPage';
+import ChatPage from './pages/ChatPage';
 import AuthRoute from './components/AuthRoute';
 
 function App() {
@@ -63,6 +65,16 @@ function App() {
           <Route path="/bargains" element={
             <AuthRoute>
               <BargainsPage />
+            </AuthRoute>
+          } />
+          <Route path="/messages" element={
+            <AuthRoute>
+              <MessagesPage />
+            </AuthRoute>
+          } />
+          <Route path="/chat/:partnerId" element={
+            <AuthRoute>
+              <ChatPage />
             </AuthRoute>
           } />
         </Routes>
