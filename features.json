@@ -22,7 +22,7 @@
   {"id": 20, "category": "商品管理", "module": "product", "description": "编辑商品/删除商品/状态管理/分类体系 API", "priority": "P0", "passes": true},
   {"id": 21, "category": "商品管理", "module": "product", "description": "发布商品/编辑商品页面 UI + 新旧程度/多图上传", "priority": "P0", "passes": true},
   {"id": 22, "category": "商品管理", "module": "product", "description": "商品列表/详情页面 UI + 图片预览轮播", "priority": "P0", "passes": true},
-  {"id": 23, "category": "商品管理", "module": "product", "description": "商品置顶推荐/浏览量统计/价格区间/标签/草稿箱", "priority": "P1", "passes": false},
+  {"id": 23, "category": "商品管理", "module": "product", "description": "商品置顶推荐/浏览量统计/价格区间/标签/草稿箱", "priority": "P0", "passes": true},
   {"id": 24, "category": "商品管理", "module": "product", "description": "商品收藏 API + 页面 UI", "priority": "P1", "passes": false},
   {"id": 25, "category": "商品管理", "module": "product", "description": "我的发布列表页面 + 商品举报功能", "priority": "P0", "passes": true},
 

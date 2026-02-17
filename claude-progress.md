@@ -1,11 +1,30 @@
 # Campus Exchange - 开发进度
 
 ## 当前状态
-- 开发中模块: 消息系统
-- 当前功能: ID#37 - 从商品详情页发起聊天 + 系统消息展示
-- 进度: 35/190 (18.4%)
+- 开发中模块: 商品管理
+- 当前功能: ID#23 - 商品置顶推荐/浏览量统计/标签/草稿箱
+- 进度: 36/190 (18.9%)
 
 ## 开发日志 (按时间倒序)
+
+### 2026-02-17 17:49:00 | 完成: 商品置顶推荐/浏览量统计/标签/草稿箱 (#23)
+- **开始时间**: 2026-02-17 17:43:05
+- **结束时间**: 2026-02-17 17:49:11
+- **Commit**: `feat: add product top/draft/tags functionality`
+- **涉及文件**:
+  - sql/add_product_top_draft.sql
+  - backend/src/main/java/com/campus/exchange/model/Product.java
+  - backend/src/main/java/com/campus/exchange/dto/CreateProductRequest.java
+  - backend/src/main/java/com/campus/exchange/dto/UpdateProductRequest.java
+  - backend/src/main/java/com/campus/exchange/dto/ProductVO.java
+  - backend/src/main/java/com/campus/exchange/dto/ProductPageRequest.java
+  - backend/src/main/java/com/campus/exchange/service/ProductService.java
+  - backend/src/main/java/com/campus/exchange/controller/ProductController.java
+  - frontend/src/services/product.ts
+  - frontend/src/types/index.ts
+  - frontend/src/pages/MyProductsPage.tsx
+  - frontend/src/pages/PublishPage.tsx
+- **备注**: 添加is_top/top_expire_at/tags/is_draft字段 + 置顶API/草稿箱API + 发布页标签输入/草稿保存 + 我的发布页标签展示/置顶功能/草稿箱Tab
 
 ### 2026-02-17 17:15:00 | 完成: WebSocket 实时消息 + 消息通知提醒/快捷回复/聊天记录搜索/屏蔽用户 (#36)
 - **开始时间**: 2026-02-17 16:30:00
@@ -380,6 +399,7 @@
 - [x] #21 发布商品/编辑商品页面 UI + 新旧程度/多图上传 (2026-02-13)
 - [x] #22 商品列表/详情页面 UI + 图片预览轮播 (2026-02-13)
 - [x] #25 我的发布列表页面 + 商品举报功能 (2026-02-14)
+- [x] #23 商品置顶推荐/浏览量统计/标签/草稿箱 (2026-02-17)
 
 ### 搜索与筛选 (P1)
 - [x] #26 关键词搜索/分类/价格区间/状态/排序 API (2026-02-15)
