@@ -2,10 +2,30 @@
 
 ## 当前状态
 - 开发中模块: 商品管理
-- 当前功能: ID#23 - 商品置顶推荐/浏览量统计/标签/草稿箱
-- 进度: 36/190 (18.9%)
+- 当前功能: ID#24 - 商品收藏 API + 页面 UI
+- 进度: 37/190 (19.5%)
 
 ## 开发日志 (按时间倒序)
+
+### 2026-02-17 18:58:00 | 完成: 商品收藏 API + 页面 UI (#24)
+- **开始时间**: 2026-02-17 17:50:00
+- **结束时间**: 2026-02-17 18:58:00
+- **Commit**: `feat: add product favorite functionality with UI`
+- **涉及文件**:
+  - sql/add_product_favorite.sql
+  - backend/src/main/java/com/campus/exchange/controller/ProductFavoriteController.java
+  - backend/src/main/java/com/campus/exchange/mapper/ProductFavoriteMapper.java
+  - backend/src/main/java/com/campus/exchange/model/ProductFavorite.java
+  - backend/src/main/java/com/campus/exchange/service/ProductFavoriteService.java
+  - backend/src/main/java/com/campus/exchange/dto/ProductVO.java
+  - backend/src/main/java/com/campus/exchange/service/ProductService.java
+  - frontend/src/services/favorite.ts
+  - frontend/src/pages/FavoritesPage.tsx
+  - frontend/src/components/AppHeader.tsx
+  - frontend/src/pages/ProductDetailPage.tsx
+  - frontend/src/App.tsx
+  - frontend/src/types/index.ts
+- **备注**: 收藏表 + 后端CRUD API + 收藏页面UI + 商品详情页收藏按钮 + 全局头部导航(用户菜单)
 
 ### 2026-02-17 17:49:00 | 完成: 商品置顶推荐/浏览量统计/标签/草稿箱 (#23)
 - **开始时间**: 2026-02-17 17:43:05
@@ -400,6 +420,7 @@
 - [x] #22 商品列表/详情页面 UI + 图片预览轮播 (2026-02-13)
 - [x] #25 我的发布列表页面 + 商品举报功能 (2026-02-14)
 - [x] #23 商品置顶推荐/浏览量统计/标签/草稿箱 (2026-02-17)
+- [x] #24 商品收藏 API + 页面 UI (2026-02-17)
 
 ### 搜索与筛选 (P1)
 - [x] #26 关键词搜索/分类/价格区间/状态/排序 API (2026-02-15)
