@@ -2,10 +2,24 @@
 
 ## 当前状态
 - 开发中模块: 用户认证
-- 当前功能: ID#11 - 忘记密码 - 邮箱重置
-- 进度: 38/190 (20.0%)
+- 当前功能: ID#12 - 修改密码
+- 进度: 39/190 (20.5%)
 
 ## 开发日志 (按时间倒序)
+
+### 2026-02-18 12:30:00 | 完成: 修改密码 (#12)
+- **开始时间**: 2026-02-18 12:20:00
+- **结束时间**: 2026-02-18 12:35:00
+- **Commit**: `feat: add change password functionality`
+- **涉及文件**:
+  - backend/src/main/java/com/campus/exchange/dto/ChangePasswordRequest.java
+  - backend/src/main/java/com/campus/exchange/service/AuthService.java
+  - backend/src/main/java/com/campus/exchange/controller/AuthController.java
+  - frontend/src/services/auth.ts
+  - frontend/src/pages/ChangePasswordPage.tsx
+  - frontend/src/components/AppHeader.tsx
+  - frontend/src/App.tsx
+- **备注**: 修改密码功能：验证旧密码 + 新密码不能与旧密码相同 + 修改成功后跳转登录页 + 用户菜单入口
 
 ### 2026-02-18 10:00:00 | 完成: 忘记密码 - 邮箱重置 (#11)
 - **开始时间**: 2026-02-18 09:30:00
@@ -422,6 +436,7 @@
 
 ### 用户认证 (P1)
 - [x] #11 忘记密码 - 邮箱重置 (2026-02-18)
+- [x] #12 修改密码 (2026-02-18)
 
 ### 安全与性能 (P0) ✓
 - [x] #166 Spring Security 安全配置 (2026-02-13)
