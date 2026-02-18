@@ -1,11 +1,27 @@
 # Campus Exchange - 开发进度
 
 ## 当前状态
-- 开发中模块: 交易流程
-- 当前功能: ID#33 - 订单状态通知/统计/退款/纠纷申诉
-- 进度: 41/190 (21.6%)
+- 开发中模块: 用户中心
+- 当前功能: ID#38 - 个人资料查看/编辑/头像上传 + 资料编辑页面 UI
+- 进度: 42/190 (22.1%)
 
 ## 开发日志 (按时间倒序)
+
+### 2026-02-19 02:40:00 | 完成: 个人资料查看/编辑/头像上传 + 资料编辑页面 UI (#38)
+- **开始时间**: 2026-02-19 02:00:00
+- **结束时间**: 2026-02-19 02:40:00
+- **Commit**: `feat: add user profile page with edit and avatar upload`
+- **涉及文件**:
+  - backend/src/main/java/com/campus/exchange/controller/UserController.java
+  - backend/src/main/java/com/campus/exchange/dto/UpdateProfileRequest.java
+  - backend/src/main/java/com/campus/exchange/service/UserService.java
+  - backend/src/main/java/com/campus/exchange/config/SecurityConfig.java
+  - backend/src/main/java/com/campus/exchange/config/WebMvcConfig.java
+  - frontend/src/pages/ProfilePage.tsx
+  - frontend/src/services/user.ts
+  - frontend/src/components/AppHeader.tsx
+  - frontend/src/App.tsx
+- **备注**: 用户资料API(获取/更新/头像上传) + 资料编辑页面(昵称/邮箱/手机号) + 头像上传预览 + 头部菜单入口
 
 ### 2026-02-19 00:15:00 | 完成: 订单状态通知/统计/退款/纠纷申诉 (#33)
 - **开始时间**: 2026-02-18 14:00:00
@@ -511,6 +527,9 @@
 - [x] #34 私信发送/接收/列表 API + 会话列表页面 UI (2026-02-17)
 - [x] #35 聊天详情页面 UI + 未读计数/已读标记/商品卡片消息 (2026-02-17)
 - [x] #36 WebSocket 实时消息 + 消息通知提醒/快捷回复/聊天记录搜索/屏蔽用户 (2026-02-17)
+
+### 用户中心 (P1)
+- [x] #38 个人资料查看/编辑/头像上传 + 资料编辑页面 UI (2026-02-19)
 
 ## 技术债务
 - 无
