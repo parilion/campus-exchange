@@ -1,7 +1,7 @@
 import React from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Layout, Menu, Button, Space, Avatar, Dropdown } from 'antd';
-import { UserOutlined, HeartOutlined, FileTextOutlined, ShoppingOutlined, MessageOutlined, LogoutOutlined, LoginOutlined, LockOutlined, CheckCircleOutlined } from '@ant-design/icons';
+import { UserOutlined, HeartOutlined, FileTextOutlined, ShoppingOutlined, MessageOutlined, LogoutOutlined, LoginOutlined, LockOutlined, CheckCircleOutlined, SettingOutlined } from '@ant-design/icons';
 import { useUserStore } from '../stores/userStore';
 
 const { Header } = Layout;
@@ -17,6 +17,12 @@ const AppHeader: React.FC = () => {
   };
 
   const userMenuItems = [
+    {
+      key: 'profile',
+      icon: <SettingOutlined />,
+      label: '个人资料',
+      onClick: () => navigate('/profile'),
+    },
     {
       key: 'my-products',
       icon: <FileTextOutlined />,

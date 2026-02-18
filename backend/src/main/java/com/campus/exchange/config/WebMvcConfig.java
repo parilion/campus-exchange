@@ -20,5 +20,10 @@ public class WebMvcConfig implements WebMvcConfigurer {
         registry.addResourceHandler("/uploads/**")
                 .addResourceLocations("file:" + uploadPath + "/")
                 .setCachePeriod(3600); // 缓存1小时
+
+        // 头像静态资源映射
+        registry.addResourceHandler("/api/images/avatars/**")
+                .addResourceLocations("file:" + uploadPath + "/avatars/")
+                .setCachePeriod(3600);
     }
 }
