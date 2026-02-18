@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Card, Table, Tag, Button, Space, Typography, Tabs, Empty, Image, Modal, message } from 'antd';
-import { EyeOutlined, CloseCircleOutlined, CarOutlined, CheckCircleOutlined } from '@ant-design/icons';
+import { EyeOutlined, CloseCircleOutlined, CarOutlined, CheckCircleOutlined, ExclamationCircleOutlined, WarningOutlined } from '@ant-design/icons';
 import { getOrderList, cancelOrder, payOrder, shipOrder, confirmOrder } from '../services/order';
 import type { Order, OrderPageResponse } from '../services/order';
 import './OrdersPage.css';
@@ -15,6 +15,22 @@ const STATUS_MAP: Record<string, { color: string; text: string }> = {
   SHIPPED: { color: 'cyan', text: '已发货' },
   COMPLETED: { color: 'green', text: '已完成' },
   CANCELLED: { color: 'red', text: '已取消' },
+};
+
+// 退款状态映射
+const REFUND_STATUS_MAP: Record<string, { color: string; text: string }> = {
+  NONE: { color: 'default', text: '无退款' },
+  APPLYING: { color: 'orange', text: '退款中' },
+  APPROVED: { color: 'green', text: '已退款' },
+  REJECTED: { color: 'red', text: '退款被拒' },
+};
+
+// 纠纷状态映射
+const DISPUTE_STATUS_MAP: Record<string, { color: string; text: string }> = {
+  NONE: { color: 'default', text: '无纠纷' },
+  APPLYING: { color: 'orange', text: '纠纷中' },
+  PROCESSING: { color: 'blue', text: '处理中' },
+  RESOLVED: { color: 'green', text: '已解决' },
 };
 
 export default function OrdersPage() {
@@ -204,10 +220,22 @@ export default function OrdersPage() {
       dataIndex: 'status',
       key: 'status',
       width: 100,
-      render: (status: string) => (
-        <Tag color={STATUS_MAP[status]?.color || 'default'}>
-          {STATUS_MAP[status]?.text || status}
-        </Tag>
+      render: (status: string, record: Order) => (
+        <Space direction="vertical" size={0}>
+          <Tag color={STATUS_MAP[status]?.color || 'default'}>
+            {STATUS_MAP[status]?.text || status}
+          </Tag>
+          {record.refundStatus && record.refundStatus !== 'NONE' && (
+            <Tag color={REFUND_STATUS_MAP[record.refundStatus]?.color || 'default'} style={{ fontSize: 10 }}>
+              {REFUND_STATUS_MAP[record.refundStatus]?.text}
+            </Tag>
+          )}
+          {record.disputeStatus && record.disputeStatus !== 'NONE' && (
+            <Tag color={DISPUTE_STATUS_MAP[record.disputeStatus]?.color || 'default'} style={{ fontSize: 10 }}>
+              {DISPUTE_STATUS_MAP[record.disputeStatus]?.text}
+            </Tag>
+          )}
+        </Space>
       ),
     },
     {
@@ -233,6 +261,8 @@ export default function OrdersPage() {
     { key: 'SHIPPED', label: '待收货' },
     { key: 'COMPLETED', label: '已完成' },
     { key: 'CANCELLED', label: '已取消' },
+    { key: 'REFUNDING', label: <><ExclamationCircleOutlined /> 退款中</> },
+    { key: 'DISPUTING', label: <><WarningOutlined /> 纠纷中</> },
   ];
 
   return (

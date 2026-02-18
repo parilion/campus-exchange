@@ -3,9 +3,7 @@ package com.campus.exchange.service;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.campus.exchange.dto.CreateOrderRequest;
-import com.campus.exchange.dto.OrderPageRequest;
-import com.campus.exchange.dto.OrderPageResponse;
+import com.campus.exchange.dto.*;
 import com.campus.exchange.dto.OrderVO;
 import com.campus.exchange.mapper.OrderMapper;
 import com.campus.exchange.mapper.ProductMapper;
@@ -397,6 +395,273 @@ public class OrderService {
             vo.setSellerNickname(seller.getNickname());
         }
 
+        // 退款和纠纷信息
+        vo.setRefundStatus(order.getRefundStatus());
+        vo.setRefundReason(order.getRefundReason());
+        vo.setRefundTime(order.getRefundTime());
+        vo.setDisputeStatus(order.getDisputeStatus());
+        vo.setDisputeReason(order.getDisputeReason());
+        vo.setDisputeEvidence(order.getDisputeEvidence());
+        vo.setDisputeResult(order.getDisputeResult());
+        vo.setDisputeTime(order.getDisputeTime());
+        vo.setResolveTime(order.getResolveTime());
+
         return vo;
+    }
+
+    /**
+     * 申请退款（买家）
+     */
+    @Transactional
+    public OrderVO applyRefund(Long orderId, Long buyerId, String reason) {
+        Order order = orderMapper.selectById(orderId);
+        if (order == null) {
+            throw new IllegalArgumentException("订单不存在");
+        }
+
+        // 只有买家可以申请退款
+        if (!order.getBuyerId().equals(buyerId)) {
+            throw new IllegalArgumentException("无权限操作此订单");
+        }
+
+        // 只有已支付的订单可以申请退款
+        if (!"PAID".equals(order.getStatus()) && !"SHIPPED".equals(order.getStatus())) {
+            throw new IllegalArgumentException("只有已支付或已发货的订单可以申请退款");
+        }
+
+        // 检查是否有进行中的退款或纠纷
+        if ("APPLYING".equals(order.getRefundStatus())) {
+            throw new IllegalArgumentException("订单已有退款申请");
+        }
+        if (order.getDisputeStatus() != null && !"NONE".equals(order.getDisputeStatus()) && !"RESOLVED".equals(order.getDisputeStatus())) {
+            throw new IllegalArgumentException("订单已有纠纷处理中");
+        }
+
+        order.setRefundStatus("APPLYING");
+        order.setRefundReason(reason);
+        orderMapper.updateById(order);
+
+        return getOrderVO(order);
+    }
+
+    /**
+     * 同意退款（卖家）
+     */
+    @Transactional
+    public OrderVO approveRefund(Long orderId, Long sellerId) {
+        Order order = orderMapper.selectById(orderId);
+        if (order == null) {
+            throw new IllegalArgumentException("订单不存在");
+        }
+
+        // 只有卖家可以同意退款
+        if (!order.getSellerId().equals(sellerId)) {
+            throw new IllegalArgumentException("无权限操作此订单");
+        }
+
+        // 检查退款状态
+        if (!"APPLYING".equals(order.getRefundStatus())) {
+            throw new IllegalArgumentException("订单没有退款申请");
+        }
+
+        // 同意退款
+        order.setRefundStatus("APPROVED");
+        order.setRefundTime(LocalDateTime.now());
+        order.setStatus("CANCELLED");
+        orderMapper.updateById(order);
+
+        // 恢复商品状态
+        Product product = productMapper.selectById(order.getProductId());
+        if (product != null) {
+            product.setStatus("ON_SALE");
+            productMapper.updateById(product);
+        }
+
+        return getOrderVO(order);
+    }
+
+    /**
+     * 拒绝退款（卖家）
+     */
+    @Transactional
+    public OrderVO rejectRefund(Long orderId, Long sellerId) {
+        Order order = orderMapper.selectById(orderId);
+        if (order == null) {
+            throw new IllegalArgumentException("订单不存在");
+        }
+
+        // 只有卖家可以拒绝退款
+        if (!order.getSellerId().equals(sellerId)) {
+            throw new IllegalArgumentException("无权限操作此订单");
+        }
+
+        // 检查退款状态
+        if (!"APPLYING".equals(order.getRefundStatus())) {
+            throw new IllegalArgumentException("订单没有退款申请");
+        }
+
+        order.setRefundStatus("REJECTED");
+        orderMapper.updateById(order);
+
+        return getOrderVO(order);
+    }
+
+    /**
+     * 发起纠纷申诉（买家或卖家）
+     */
+    @Transactional
+    public OrderVO applyDispute(Long orderId, Long userId, String reason, String evidence) {
+        Order order = orderMapper.selectById(orderId);
+        if (order == null) {
+            throw new IllegalArgumentException("订单不存在");
+        }
+
+        // 只有买家或卖家可以发起纠纷
+        if (!order.getBuyerId().equals(userId) && !order.getSellerId().equals(userId)) {
+            throw new IllegalArgumentException("无权限操作此订单");
+        }
+
+        // 只有已支付、已发货、已完成的订单可以发起纠纷
+        if (!"PAID".equals(order.getStatus()) && !"SHIPPED".equals(order.getStatus()) && !"COMPLETED".equals(order.getStatus())) {
+            throw new IllegalArgumentException("订单状态不允许发起纠纷");
+        }
+
+        // 检查是否有进行中的纠纷
+        if (order.getDisputeStatus() != null && !"NONE".equals(order.getDisputeStatus()) && !"RESOLVED".equals(order.getDisputeStatus())) {
+            throw new IllegalArgumentException("订单已有纠纷处理中");
+        }
+
+        order.setDisputeStatus("APPLYING");
+        order.setDisputeReason(reason);
+        order.setDisputeEvidence(evidence);
+        order.setDisputeTime(LocalDateTime.now());
+        orderMapper.updateById(order);
+
+        return getOrderVO(order);
+    }
+
+    /**
+     * 处理纠纷（管理员）
+     */
+    @Transactional
+    public OrderVO resolveDispute(Long orderId, String result) {
+        Order order = orderMapper.selectById(orderId);
+        if (order == null) {
+            throw new IllegalArgumentException("订单不存在");
+        }
+
+        // 检查纠纷状态
+        if (order.getDisputeStatus() == null || "NONE".equals(order.getDisputeStatus()) || "RESOLVED".equals(order.getDisputeStatus())) {
+            throw new IllegalArgumentException("订单没有纠纷需要处理");
+        }
+
+        order.setDisputeStatus("RESOLVED");
+        order.setDisputeResult(result);
+        order.setResolveTime(LocalDateTime.now());
+
+        // 根据处理结果更新订单状态
+        if (result.contains("退款") || result.contains("取消")) {
+            order.setStatus("CANCELLED");
+            // 恢复商品状态
+            Product product = productMapper.selectById(order.getProductId());
+            if (product != null) {
+                product.setStatus("ON_SALE");
+                productMapper.updateById(product);
+            }
+        }
+
+        orderMapper.updateById(order);
+
+        return getOrderVO(order);
+    }
+
+    /**
+     * 获取订单统计
+     */
+    public OrderStatisticsVO getOrderStatistics(Long userId) {
+        OrderStatisticsVO stats = new OrderStatisticsVO();
+
+        // 总订单数
+        LambdaQueryWrapper<Order> totalWrapper = new LambdaQueryWrapper<>();
+        totalWrapper.and(wrapper -> wrapper
+                .eq(Order::getBuyerId, userId)
+                .or()
+                .eq(Order::getSellerId, userId));
+        stats.setTotalCount(orderMapper.selectCount(totalWrapper));
+
+        // 待支付
+        LambdaQueryWrapper<Order> pendingWrapper = new LambdaQueryWrapper<>();
+        pendingWrapper.and(wrapper -> wrapper
+                .eq(Order::getBuyerId, userId)
+                .or()
+                .eq(Order::getSellerId, userId))
+                .eq(Order::getStatus, "PENDING");
+        stats.setPendingCount(orderMapper.selectCount(pendingWrapper));
+
+        // 已支付
+        LambdaQueryWrapper<Order> paidWrapper = new LambdaQueryWrapper<>();
+        paidWrapper.and(wrapper -> wrapper
+                .eq(Order::getBuyerId, userId)
+                .or()
+                .eq(Order::getSellerId, userId))
+                .eq(Order::getStatus, "PAID");
+        stats.setPaidCount(orderMapper.selectCount(paidWrapper));
+
+        // 已发货
+        LambdaQueryWrapper<Order> shippedWrapper = new LambdaQueryWrapper<>();
+        shippedWrapper.and(wrapper -> wrapper
+                .eq(Order::getBuyerId, userId)
+                .or()
+                .eq(Order::getSellerId, userId))
+                .eq(Order::getStatus, "SHIPPED");
+        stats.setShippedCount(orderMapper.selectCount(shippedWrapper));
+
+        // 已完成
+        LambdaQueryWrapper<Order> completedWrapper = new LambdaQueryWrapper<>();
+        completedWrapper.and(wrapper -> wrapper
+                .eq(Order::getBuyerId, userId)
+                .or()
+                .eq(Order::getSellerId, userId))
+                .eq(Order::getStatus, "COMPLETED");
+        stats.setCompletedCount(orderMapper.selectCount(completedWrapper));
+
+        // 已取消
+        LambdaQueryWrapper<Order> cancelledWrapper = new LambdaQueryWrapper<>();
+        cancelledWrapper.and(wrapper -> wrapper
+                .eq(Order::getBuyerId, userId)
+                .or()
+                .eq(Order::getSellerId, userId))
+                .eq(Order::getStatus, "CANCELLED");
+        stats.setCancelledCount(orderMapper.selectCount(cancelledWrapper));
+
+        // 退款中
+        LambdaQueryWrapper<Order> refundingWrapper = new LambdaQueryWrapper<>();
+        refundingWrapper.and(wrapper -> wrapper
+                .eq(Order::getBuyerId, userId)
+                .or()
+                .eq(Order::getSellerId, userId))
+                .eq(Order::getRefundStatus, "APPLYING");
+        stats.setRefundingCount(orderMapper.selectCount(refundingWrapper));
+
+        // 纠纷中
+        LambdaQueryWrapper<Order> disputingWrapper = new LambdaQueryWrapper<>();
+        disputingWrapper.and(wrapper -> wrapper
+                .eq(Order::getBuyerId, userId)
+                .or()
+                .eq(Order::getSellerId, userId))
+                .in(Order::getDisputeStatus, "APPLYING", "PROCESSING");
+        stats.setDisputingCount(orderMapper.selectCount(disputingWrapper));
+
+        // 买家订单数
+        LambdaQueryWrapper<Order> buyerWrapper = new LambdaQueryWrapper<>();
+        buyerWrapper.eq(Order::getBuyerId, userId);
+        stats.setBuyerCount(orderMapper.selectCount(buyerWrapper));
+
+        // 卖家订单数
+        LambdaQueryWrapper<Order> sellerWrapper = new LambdaQueryWrapper<>();
+        sellerWrapper.eq(Order::getSellerId, userId);
+        stats.setSellerCount(orderMapper.selectCount(sellerWrapper));
+
+        return stats;
     }
 }

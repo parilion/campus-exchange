@@ -112,6 +112,65 @@ public class OrderController {
         return Result.success(order);
     }
 
+    /**
+     * 申请退款（买家）
+     */
+    @PostMapping("/{id}/refund")
+    public Result<OrderVO> applyRefund(@PathVariable Long id, @RequestBody RefundRequest request) {
+        Long userId = getCurrentUserId();
+        OrderVO order = orderService.applyRefund(id, userId, request.getReason());
+        return Result.success(order);
+    }
+
+    /**
+     * 同意退款（卖家）
+     */
+    @PostMapping("/{id}/refund/approve")
+    public Result<OrderVO> approveRefund(@PathVariable Long id) {
+        Long userId = getCurrentUserId();
+        OrderVO order = orderService.approveRefund(id, userId);
+        return Result.success(order);
+    }
+
+    /**
+     * 拒绝退款（卖家）
+     */
+    @PostMapping("/{id}/refund/reject")
+    public Result<OrderVO> rejectRefund(@PathVariable Long id) {
+        Long userId = getCurrentUserId();
+        OrderVO order = orderService.rejectRefund(id, userId);
+        return Result.success(order);
+    }
+
+    /**
+     * 发起纠纷申诉
+     */
+    @PostMapping("/{id}/dispute")
+    public Result<OrderVO> applyDispute(@PathVariable Long id, @RequestBody DisputeRequest request) {
+        Long userId = getCurrentUserId();
+        OrderVO order = orderService.applyDispute(id, userId, request.getReason(), request.getEvidence());
+        return Result.success(order);
+    }
+
+    /**
+     * 处理纠纷（管理员）
+     */
+    @PostMapping("/{id}/dispute/resolve")
+    public Result<OrderVO> resolveDispute(@PathVariable Long id, @RequestBody DisputeResolveRequest request) {
+        OrderVO order = orderService.resolveDispute(id, request.getResult());
+        return Result.success(order);
+    }
+
+    /**
+     * 获取订单统计
+     */
+    @GetMapping("/statistics")
+    public Result<OrderStatisticsVO> getOrderStatistics() {
+        Long userId = getCurrentUserId();
+        OrderStatisticsVO stats = orderService.getOrderStatistics(userId);
+        return Result.success(stats);
+    }
+
     private Long getCurrentUserId() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         return (Long) authentication.getPrincipal();

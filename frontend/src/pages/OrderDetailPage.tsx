@@ -1,8 +1,8 @@
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { Card, Descriptions, Tag, Button, Space, Typography, Image, Spin, Modal, message, Timeline, Empty } from 'antd';
-import { ArrowLeftOutlined, CloseCircleOutlined, CarOutlined, CheckCircleOutlined, PayCircleOutlined } from '@ant-design/icons';
-import { getOrder, cancelOrder, payOrder, shipOrder, confirmOrder } from '../services/order';
+import { Card, Descriptions, Tag, Button, Space, Typography, Image, Spin, Modal, message, Timeline, Empty, Form, Input, Alert } from 'antd';
+import { ArrowLeftOutlined, CloseCircleOutlined, CarOutlined, CheckCircleOutlined, PayCircleOutlined, ExclamationCircleOutlined, WarningOutlined } from '@ant-design/icons';
+import { getOrder, cancelOrder, payOrder, shipOrder, confirmOrder, applyRefund, approveRefund, rejectRefund, applyDispute } from '../services/order';
 import type { Order } from '../services/order';
 import './OrderDetailPage.css';
 
@@ -17,11 +17,29 @@ const STATUS_MAP: Record<string, { color: string; text: string }> = {
   CANCELLED: { color: 'red', text: '已取消' },
 };
 
+const REFUND_STATUS_MAP: Record<string, { color: string; text: string }> = {
+  NONE: { color: 'default', text: '无退款' },
+  APPLYING: { color: 'orange', text: '退款申请中' },
+  APPROVED: { color: 'green', text: '已退款' },
+  REJECTED: { color: 'red', text: '退款被拒绝' },
+};
+
+const DISPUTE_STATUS_MAP: Record<string, { color: string; text: string }> = {
+  NONE: { color: 'default', text: '无纠纷' },
+  APPLYING: { color: 'orange', text: '纠纷申诉中' },
+  PROCESSING: { color: 'blue', text: '纠纷处理中' },
+  RESOLVED: { color: 'green', text: '纠纷已解决' },
+};
+
 export default function OrderDetailPage() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
   const [order, setOrder] = useState<Order | null>(null);
+  const [refundModalVisible, setRefundModalVisible] = useState(false);
+  const [disputeModalVisible, setDisputeModalVisible] = useState(false);
+  const [refundForm] = Form.useForm();
+  const [disputeForm] = Form.useForm();
   const [currentUserId] = useState(() => {
     const token = localStorage.getItem('token');
     if (token) {
@@ -104,6 +122,70 @@ export default function OrderDetailPage() {
     }
   };
 
+  // 申请退款
+  const handleApplyRefund = async (values: { reason: string }) => {
+    if (!order) return;
+    try {
+      await applyRefund(order.id, values.reason);
+      message.success('退款申请已提交');
+      setRefundModalVisible(false);
+      refundForm.resetFields();
+      loadOrder();
+    } catch (error: any) {
+      message.error(error.message || '操作失败');
+    }
+  };
+
+  // 同意退款
+  const handleApproveRefund = async () => {
+    if (!order) return;
+    Modal.confirm({
+      title: '确认退款',
+      content: '确定要同意此退款申请吗？退款后订单将被取消。',
+      onOk: async () => {
+        try {
+          await approveRefund(order.id);
+          message.success('已同意退款');
+          loadOrder();
+        } catch (error: any) {
+          message.error(error.message || '操作失败');
+        }
+      },
+    });
+  };
+
+  // 拒绝退款
+  const handleRejectRefund = async () => {
+    if (!order) return;
+    Modal.confirm({
+      title: '拒绝退款',
+      content: '确定要拒绝此退款申请吗？',
+      onOk: async () => {
+        try {
+          await rejectRefund(order.id);
+          message.success('已拒绝退款');
+          loadOrder();
+        } catch (error: any) {
+          message.error(error.message || '操作失败');
+        }
+      },
+    });
+  };
+
+  // 发起纠纷
+  const handleApplyDispute = async (values: { reason: string; evidence: string }) => {
+    if (!order) return;
+    try {
+      await applyDispute(order.id, values.reason, values.evidence);
+      message.success('纠纷申诉已提交');
+      setDisputeModalVisible(false);
+      disputeForm.resetFields();
+      loadOrder();
+    } catch (error: any) {
+      message.error(error.message || '操作失败');
+    }
+  };
+
   // 获取订单操作按钮
   const getActions = () => {
     if (!order) return [];
@@ -147,6 +229,49 @@ export default function OrderDetailPage() {
           取消订单
         </Button>
       );
+    }
+
+    // 已支付/已发货 - 买家可申请退款和纠纷
+    if ((order.status === 'PAID' || order.status === 'SHIPPED') && order.buyerId === currentUserId) {
+      if (!order.refundStatus || order.refundStatus === 'NONE' || order.refundStatus === 'REJECTED') {
+        actions.push(
+          <Button key="refund" size="large" icon={<ExclamationCircleOutlined />} onClick={() => setRefundModalVisible(true)}>
+            申请退款
+          </Button>
+        );
+      }
+      if (!order.disputeStatus || order.disputeStatus === 'NONE' || order.disputeStatus === 'RESOLVED') {
+        actions.push(
+          <Button key="dispute" danger size="large" icon={<WarningOutlined />} onClick={() => setDisputeModalVisible(true)}>
+            发起纠纷
+          </Button>
+        );
+      }
+    }
+
+    // 已支付/已发货 - 卖家可处理退款
+    if ((order.status === 'PAID' || order.status === 'SHIPPED') && order.sellerId === currentUserId) {
+      if (order.refundStatus === 'APPLYING') {
+        actions.push(
+          <Button key="approveRefund" type="primary" size="large" icon={<CheckCircleOutlined />} onClick={handleApproveRefund}>
+            同意退款
+          </Button>,
+          <Button key="rejectRefund" danger size="large" icon={<CloseCircleOutlined />} onClick={handleRejectRefund}>
+            拒绝退款
+          </Button>
+        );
+      }
+    }
+
+    // 已完成订单 - 买家可发起纠纷
+    if (order.status === 'COMPLETED' && order.buyerId === currentUserId) {
+      if (!order.disputeStatus || order.disputeStatus === 'NONE' || order.disputeStatus === 'RESOLVED') {
+        actions.push(
+          <Button key="dispute" danger size="large" icon={<WarningOutlined />} onClick={() => setDisputeModalVisible(true)}>
+            发起纠纷
+          </Button>
+        );
+      }
     }
 
     return actions;
@@ -267,6 +392,111 @@ export default function OrderDetailPage() {
       <Card className="order-timeline-card" title="订单流程">
         <Timeline items={getTimelineItems()} />
       </Card>
+
+      {/* 退款状态 */}
+      {order.refundStatus && order.refundStatus !== 'NONE' && (
+        <Card className="order-refund-card" title="退款信息">
+          <Alert
+            message={`退款状态: ${REFUND_STATUS_MAP[order.refundStatus]?.text || '未知'}`}
+            description={order.refundReason ? `退款原因: ${order.refundReason}` : undefined}
+            type={order.refundStatus === 'APPROVED' ? 'success' : order.refundStatus === 'REJECTED' ? 'error' : 'warning'}
+            showIcon
+          />
+          {order.refundTime && (
+            <p style={{ marginTop: 12, color: '#888' }}>退款时间: {new Date(order.refundTime).toLocaleString()}</p>
+          )}
+        </Card>
+      )}
+
+      {/* 纠纷状态 */}
+      {order.disputeStatus && order.disputeStatus !== 'NONE' && (
+        <Card className="order-dispute-card" title="纠纷信息">
+          <Alert
+            message={`纠纷状态: ${DISPUTE_STATUS_MAP[order.disputeStatus]?.text || '未知'}`}
+            description={
+              <>
+                {order.disputeReason && <p>纠纷原因: {order.disputeReason}</p>}
+                {order.disputeEvidence && <p>纠纷证据: {order.disputeEvidence}</p>}
+                {order.disputeResult && <p>处理结果: {order.disputeResult}</p>}
+              </>
+            }
+            type={order.disputeStatus === 'RESOLVED' ? 'success' : 'error'}
+            showIcon
+          />
+          {order.disputeTime && (
+            <p style={{ marginTop: 12, color: '#888' }}>申诉时间: {new Date(order.disputeTime).toLocaleString()}</p>
+          )}
+          {order.resolveTime && (
+            <p style={{ color: '#888' }}>解决时间: {new Date(order.resolveTime).toLocaleString()}</p>
+          )}
+        </Card>
+      )}
+
+      {/* 退款申请弹窗 */}
+      <Modal
+        title="申请退款"
+        open={refundModalVisible}
+        onCancel={() => {
+          setRefundModalVisible(false);
+          refundForm.resetFields();
+        }}
+        footer={null}
+      >
+        <Form form={refundForm} onFinish={handleApplyRefund} layout="vertical">
+          <Form.Item
+            name="reason"
+            label="退款原因"
+            rules={[{ required: true, message: '请输入退款原因' }]}
+          >
+            <Input.TextArea rows={4} placeholder="请详细描述退款原因..." />
+          </Form.Item>
+          <Form.Item>
+            <Space>
+              <Button type="primary" htmlType="submit">
+                提交退款申请
+              </Button>
+              <Button onClick={() => setRefundModalVisible(false)}>取消</Button>
+            </Space>
+          </Form.Item>
+        </Form>
+      </Modal>
+
+      {/* 纠纷申请弹窗 */}
+      <Modal
+        title="发起纠纷"
+        open={disputeModalVisible}
+        onCancel={() => {
+          setDisputeModalVisible(false);
+          disputeForm.resetFields();
+        }}
+        footer={null}
+        width={600}
+      >
+        <Form form={disputeForm} onFinish={handleApplyDispute} layout="vertical">
+          <Form.Item
+            name="reason"
+            label="纠纷原因"
+            rules={[{ required: true, message: '请输入纠纷原因' }]}
+          >
+            <Input.TextArea rows={3} placeholder="请详细描述纠纷原因..." />
+          </Form.Item>
+          <Form.Item
+            name="evidence"
+            label="证据描述"
+            rules={[{ required: true, message: '请描述您的证据' }]}
+          >
+            <Input.TextArea rows={3} placeholder="请描述您掌握的证据..." />
+          </Form.Item>
+          <Form.Item>
+            <Space>
+              <Button type="primary" htmlType="submit">
+                提交纠纷申诉
+              </Button>
+              <Button onClick={() => setDisputeModalVisible(false)}>取消</Button>
+            </Space>
+          </Form.Item>
+        </Form>
+      </Modal>
     </div>
   );
 }

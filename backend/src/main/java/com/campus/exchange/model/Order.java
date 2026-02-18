@@ -36,6 +36,33 @@ public class Order {
     @TableLogic
     private Integer deleted;
 
+    /** 退款状态: NONE, APPLYING, APPROVED, REJECTED */
+    private String refundStatus;
+
+    /** 退款原因 */
+    private String refundReason;
+
+    /** 退款时间 */
+    private LocalDateTime refundTime;
+
+    /** 纠纷状态: NONE, APPLYING, PROCESSING, RESOLVED */
+    private String disputeStatus;
+
+    /** 纠纷原因 */
+    private String disputeReason;
+
+    /** 纠纷证据 */
+    private String disputeEvidence;
+
+    /** 纠纷处理结果 */
+    private String disputeResult;
+
+    /** 申诉时间 */
+    private LocalDateTime disputeTime;
+
+    /** 解决时间 */
+    private LocalDateTime resolveTime;
+
     @TableField(fill = FieldFill.INSERT)
     private LocalDateTime createdAt;
 
