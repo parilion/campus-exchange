@@ -2,10 +2,26 @@
 
 ## 当前状态
 - 开发中模块: 用户认证
-- 当前功能: ID#12 - 修改密码
-- 进度: 39/190 (20.5%)
+- 当前功能: ID#13 - 学生身份认证
+- 进度: 40/190 (21.1%)
 
 ## 开发日志 (按时间倒序)
+
+### 2026-02-18 13:30:00 | 完成: 学生身份认证 (#13)
+- **开始时间**: 2026-02-18 13:00:00
+- **结束时间**: 2026-02-18 13:30:00
+- **Commit**: `feat: add student identity authentication functionality`
+- **涉及文件**:
+  - backend/src/main/java/com/campus/exchange/dto/RegisterRequest.java
+  - backend/src/main/java/com/campus/exchange/dto/StudentAuthRequest.java
+  - backend/src/main/java/com/campus/exchange/service/AuthService.java
+  - backend/src/main/java/com/campus/exchange/controller/AuthController.java
+  - frontend/src/services/auth.ts
+  - frontend/src/pages/StudentAuthPage.tsx
+  - frontend/src/pages/RegisterPage.tsx
+  - frontend/src/components/AppHeader.tsx
+  - frontend/src/App.tsx
+- **备注**: 学号注册时可选 + 学生认证页面 + 学号唯一性检查 + verified状态自动更新 + 头部菜单认证入口
 
 ### 2026-02-18 12:30:00 | 完成: 修改密码 (#12)
 - **开始时间**: 2026-02-18 12:20:00
@@ -437,6 +453,7 @@
 ### 用户认证 (P1)
 - [x] #11 忘记密码 - 邮箱重置 (2026-02-18)
 - [x] #12 修改密码 (2026-02-18)
+- [x] #13 学生身份认证 (2026-02-18)
 
 ### 安全与性能 (P0) ✓
 - [x] #166 Spring Security 安全配置 (2026-02-13)

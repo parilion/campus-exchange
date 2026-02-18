@@ -11,7 +11,7 @@
   {"id": 10, "category": "用户认证", "module": "auth", "description": "路由守卫 - 未登录跳转", "priority": "P0", "passes": true},
   {"id": 11, "category": "用户认证", "module": "auth", "description": "忘记密码 - 邮箱重置", "priority": "P1", "passes": true},
   {"id": 12, "category": "用户认证", "module": "auth", "description": "修改密码", "priority": "P1", "passes": true},
-  {"id": 13, "category": "用户认证", "module": "auth", "description": "学生身份认证（学号验证）", "priority": "P1", "passes": false},
+  {"id": 13, "category": "用户认证", "module": "auth", "description": "学生身份认证（学号验证）", "priority": "P1", "passes": true},
   {"id": 14, "category": "用户认证", "module": "auth", "description": "登录日志记录", "priority": "P2", "passes": false},
   {"id": 15, "category": "用户认证", "module": "auth", "description": "账号封禁/解封", "priority": "P2", "passes": false},
 
