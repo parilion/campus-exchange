@@ -41,32 +41,34 @@ public class OrderVO {
 
     private String remark;
 
+    /* 退款/纠纷字段需在执行 sql/add_order_refund_dispute.sql 后启用
     /** 退款状态: NONE, APPLYING, APPROVED, REJECTED */
-    private String refundStatus;
+    // private String refundStatus;
 
     /** 退款原因 */
-    private String refundReason;
+    // private String refundReason;
 
     /** 退款时间 */
-    private LocalDateTime refundTime;
+    // private LocalDateTime refundTime;
 
     /** 纠纷状态: NONE, APPLYING, PROCESSING, RESOLVED */
-    private String disputeStatus;
+    // private String disputeStatus;
 
     /** 纠纷原因 */
-    private String disputeReason;
+    // private String disputeReason;
 
     /** 纠纷证据 */
-    private String disputeEvidence;
+    // private String disputeEvidence;
 
     /** 纠纷处理结果 */
-    private String disputeResult;
+    // private String disputeResult;
 
     /** 申诉时间 */
-    private LocalDateTime disputeTime;
+    // private LocalDateTime disputeTime;
 
     /** 解决时间 */
-    private LocalDateTime resolveTime;
+    // private LocalDateTime resolveTime;
+    */
 
     private LocalDateTime createdAt;
 
