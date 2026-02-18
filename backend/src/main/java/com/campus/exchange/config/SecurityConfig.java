@@ -34,7 +34,8 @@ public class SecurityConfig {
             .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
             .and()
             .authorizeRequests()
-                .antMatchers("/api/auth/register", "/api/auth/login", "/api/auth/test").permitAll()
+                .antMatchers("/api/auth/register", "/api/auth/login", "/api/auth/test",
+                        "/api/auth/forgot-password/**").permitAll()
                 .antMatchers("/api/health").permitAll()
                 .antMatchers(HttpMethod.GET, "/api/products").permitAll()
                 .antMatchers(HttpMethod.GET, "/api/products/**").permitAll()

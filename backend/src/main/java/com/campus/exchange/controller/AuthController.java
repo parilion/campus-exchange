@@ -3,6 +3,8 @@ package com.campus.exchange.controller;
 import com.campus.exchange.dto.LoginRequest;
 import com.campus.exchange.dto.LoginResponse;
 import com.campus.exchange.dto.RegisterRequest;
+import com.campus.exchange.dto.ResetPasswordRequest;
+import com.campus.exchange.dto.SendResetCodeRequest;
 import com.campus.exchange.model.User;
 import com.campus.exchange.service.AuthService;
 import com.campus.exchange.util.Result;
@@ -65,6 +67,24 @@ public class AuthController {
      */
     @PostMapping("/logout")
     public Result<Void> logout() {
+        return Result.success();
+    }
+
+    /**
+     * 发送密码重置验证码（无需登录）
+     */
+    @PostMapping("/forgot-password/send-code")
+    public Result<Void> sendPasswordResetCode(@Valid @RequestBody SendResetCodeRequest request) {
+        authService.sendPasswordResetCode(request.getEmail());
+        return Result.success();
+    }
+
+    /**
+     * 验证验证码并重置密码（无需登录）
+     */
+    @PostMapping("/forgot-password/reset")
+    public Result<Void> resetPassword(@Valid @RequestBody ResetPasswordRequest request) {
+        authService.resetPassword(request);
         return Result.success();
     }
 

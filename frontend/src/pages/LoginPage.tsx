@@ -72,9 +72,12 @@ export default function LoginPage() {
             </Button>
           </Form.Item>
 
-          <div style={{ textAlign: 'center' }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between' }}>
             <Text>还没有账号？</Text>
             <Link to="/register">立即注册</Link>
+          </div>
+          <div style={{ textAlign: 'center', marginTop: 8 }}>
+            <Link to="/forgot-password">忘记密码？</Link>
           </div>
         </Form>
       </Card>
