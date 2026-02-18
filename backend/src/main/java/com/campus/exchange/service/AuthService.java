@@ -6,6 +6,7 @@ import com.campus.exchange.dto.LoginRequest;
 import com.campus.exchange.dto.LoginResponse;
 import com.campus.exchange.dto.RegisterRequest;
 import com.campus.exchange.dto.ResetPasswordRequest;
+import com.campus.exchange.dto.StudentAuthRequest;
 import com.campus.exchange.mapper.PasswordResetCodeMapper;
 import com.campus.exchange.mapper.UserMapper;
 import com.campus.exchange.model.PasswordResetCode;
@@ -61,9 +62,10 @@ public class AuthService {
         user.setEmail(request.getEmail());
         user.setPhone(request.getPhone());
         user.setNickname(request.getNickname() != null ? request.getNickname() : request.getUsername());
+        user.setStudentId(request.getStudentId());
         user.setRole("USER");
         user.setEnabled(true);
-        user.setVerified(false);
+        user.setVerified(request.getStudentId() != null && !request.getStudentId().isEmpty());
         userMapper.insert(user);
 
         // 生成 Token 并返回
@@ -216,6 +218,31 @@ public class AuthService {
 
         // 更新密码
         user.setPassword(passwordEncoder.encode(newPassword));
+        userMapper.updateById(user);
+    }
+
+    /**
+     * 学生身份认证
+     */
+    public void studentAuth(Long userId, StudentAuthRequest request) {
+        User user = userMapper.selectById(userId);
+        if (user == null) {
+            throw new IllegalArgumentException("用户不存在");
+        }
+
+        // 检查学号是否已被其他用户使用
+        User existing = userMapper.selectOne(
+                new LambdaQueryWrapper<User>()
+                        .eq(User::getStudentId, request.getStudentId())
+                        .ne(User::getId, userId)
+        );
+        if (existing != null) {
+            throw new IllegalArgumentException("该学号已被其他用户绑定");
+        }
+
+        // 更新用户学号和认证状态
+        user.setStudentId(request.getStudentId());
+        user.setVerified(true); // 直接认证成功（简化版，实际项目可增加审核流程）
         userMapper.updateById(user);
     }
 }

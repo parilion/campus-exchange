@@ -6,6 +6,7 @@ import com.campus.exchange.dto.LoginResponse;
 import com.campus.exchange.dto.RegisterRequest;
 import com.campus.exchange.dto.ResetPasswordRequest;
 import com.campus.exchange.dto.SendResetCodeRequest;
+import com.campus.exchange.dto.StudentAuthRequest;
 import com.campus.exchange.model.User;
 import com.campus.exchange.service.AuthService;
 import com.campus.exchange.util.Result;
@@ -96,6 +97,16 @@ public class AuthController {
     public Result<Void> changePassword(@Valid @RequestBody ChangePasswordRequest request) {
         Long userId = getCurrentUserId();
         authService.changePassword(userId, request.getOldPassword(), request.getNewPassword());
+        return Result.success();
+    }
+
+    /**
+     * 学生身份认证（需要登录）
+     */
+    @PostMapping("/student-auth")
+    public Result<Void> studentAuth(@Valid @RequestBody StudentAuthRequest request) {
+        Long userId = getCurrentUserId();
+        authService.studentAuth(userId, request);
         return Result.success();
     }
 

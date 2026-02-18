@@ -12,6 +12,13 @@ export interface RegisterRequest {
   email: string;
   phone?: string;
   nickname?: string;
+  studentId?: string;
+}
+
+export interface StudentAuthRequest {
+  studentId: string;
+  realName?: string;
+  department?: string;
 }
 
 export interface LoginResponse {
@@ -74,5 +81,11 @@ export async function changePassword(oldPassword: string, newPassword: string) {
     oldPassword,
     newPassword,
   });
+  return res.data;
+}
+
+// 学生身份认证（需要登录）
+export async function studentAuth(data: StudentAuthRequest) {
+  const res = await request.post<Result<void>>('/auth/student-auth', data);
   return res.data;
 }

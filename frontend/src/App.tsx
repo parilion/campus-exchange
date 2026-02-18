@@ -16,6 +16,7 @@ import MessagesPage from './pages/MessagesPage';
 import ChatPage from './pages/ChatPage';
 import FavoritesPage from './pages/FavoritesPage';
 import ChangePasswordPage from './pages/ChangePasswordPage';
+import StudentAuthPage from './pages/StudentAuthPage';
 import AuthRoute from './components/AuthRoute';
 import AppHeader from './components/AppHeader';
 
@@ -95,6 +96,11 @@ function App() {
               <Route path="/change-password" element={
                 <AuthRoute>
                   <ChangePasswordPage />
+                </AuthRoute>
+              } />
+              <Route path="/student-auth" element={
+                <AuthRoute>
+                  <StudentAuthPage />
                 </AuthRoute>
               } />
             </Routes>

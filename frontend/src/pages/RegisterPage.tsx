@@ -17,6 +17,7 @@ export default function RegisterPage() {
     password: string;
     email: string;
     nickname?: string;
+    studentId?: string;
   }) => {
     setLoading(true);
     try {
@@ -81,6 +82,15 @@ export default function RegisterPage() {
             name="nickname"
           >
             <Input prefix={<UserOutlined />} placeholder="昵称（选填）" />
+          </Form.Item>
+
+          <Form.Item
+            name="studentId"
+            rules={[
+              { pattern: /^[0-9]{8,12}$/, message: '学号格式不正确' },
+            ]}
+          >
+            <Input prefix={<UserOutlined />} placeholder="学号（选填，认证后享受更多权益）" />
           </Form.Item>
 
           <Form.Item
