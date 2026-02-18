@@ -1,11 +1,30 @@
 # Campus Exchange - 开发进度
 
 ## 当前状态
-- 开发中模块: 商品管理
-- 当前功能: ID#24 - 商品收藏 API + 页面 UI
-- 进度: 37/190 (19.5%)
+- 开发中模块: 用户认证
+- 当前功能: ID#11 - 忘记密码 - 邮箱重置
+- 进度: 38/190 (20.0%)
 
 ## 开发日志 (按时间倒序)
+
+### 2026-02-18 10:00:00 | 完成: 忘记密码 - 邮箱重置 (#11)
+- **开始时间**: 2026-02-18 09:30:00
+- **结束时间**: 2026-02-18 10:00:00
+- **Commit**: `feat: add password reset functionality with email verification`
+- **涉及文件**:
+  - sql/add_password_reset_code.sql
+  - backend/src/main/java/com/campus/exchange/config/SecurityConfig.java
+  - backend/src/main/java/com/campus/exchange/controller/AuthController.java
+  - backend/src/main/java/com/campus/exchange/service/AuthService.java
+  - backend/src/main/java/com/campus/exchange/dto/SendResetCodeRequest.java
+  - backend/src/main/java/com/campus/exchange/dto/ResetPasswordRequest.java
+  - backend/src/main/java/com/campus/exchange/mapper/PasswordResetCodeMapper.java
+  - backend/src/main/java/com/campus/exchange/model/PasswordResetCode.java
+  - frontend/src/pages/ForgotPasswordPage.tsx
+  - frontend/src/pages/LoginPage.tsx
+  - frontend/src/services/auth.ts
+  - frontend/src/App.tsx
+- **备注**: 密码重置功能完整实现：验证码发送/验证 + 密码重置 + 前端分步UI + Security白名单
 
 ### 2026-02-17 18:58:00 | 完成: 商品收藏 API + 页面 UI (#24)
 - **开始时间**: 2026-02-17 17:50:00
@@ -400,6 +419,9 @@
 - [x] #8 注册页面 UI (2026-02-13)
 - [x] #9 前端 Token 存储与自动携带 (2026-02-13)
 - [x] #10 路由守卫 - 未登录跳转 (2026-02-13)
+
+### 用户认证 (P1)
+- [x] #11 忘记密码 - 邮箱重置 (2026-02-18)
 
 ### 安全与性能 (P0) ✓
 - [x] #166 Spring Security 安全配置 (2026-02-13)
