@@ -1,11 +1,30 @@
 # Campus Exchange - 开发进度
 
 ## 当前状态
-- 开发中模块: 用户认证
-- 当前功能: ID#13 - 学生身份认证
-- 进度: 40/190 (21.1%)
+- 开发中模块: 交易流程
+- 当前功能: ID#33 - 订单状态通知/统计/退款/纠纷申诉
+- 进度: 41/190 (21.6%)
 
 ## 开发日志 (按时间倒序)
+
+### 2026-02-19 00:15:00 | 完成: 订单状态通知/统计/退款/纠纷申诉 (#33)
+- **开始时间**: 2026-02-18 14:00:00
+- **结束时间**: 2026-02-19 00:15:00
+- **Commit**: `feat: add order refund and dispute functionality with UI`
+- **涉及文件**:
+  - backend/src/main/java/com/campus/exchange/dto/RefundRequest.java
+  - backend/src/main/java/com/campus/exchange/dto/DisputeRequest.java
+  - backend/src/main/java/com/campus/exchange/dto/DisputeResolveRequest.java
+  - backend/src/main/java/com/campus/exchange/dto/OrderStatisticsVO.java
+  - backend/src/main/java/com/campus/exchange/model/Order.java
+  - backend/src/main/java/com/campus/exchange/dto/OrderVO.java
+  - backend/src/main/java/com/campus/exchange/service/OrderService.java
+  - backend/src/main/java/com/campus/exchange/controller/OrderController.java
+  - frontend/src/services/order.ts
+  - frontend/src/pages/OrderDetailPage.tsx
+  - frontend/src/pages/OrdersPage.tsx
+  - sql/add_order_refund_dispute.sql
+- **备注**: 退款API(申请/同意/拒绝) + 纠纷API(发起/处理) + 订单统计API + 订单详情页退款/纠纷弹窗 + 订单列表页退款/纠纷Tab + 数据库迁移SQL
 
 ### 2026-02-18 13:30:00 | 完成: 学生身份认证 (#13)
 - **开始时间**: 2026-02-18 13:00:00
@@ -486,6 +505,7 @@
 - [x] #30 订单状态流转 + 订单编号生成 + 自动取消 (2026-02-15)
 - [x] #31 订单列表/详情 API + 买家/卖家订单页面 UI (2026-02-15)
 - [x] #32 线下交易/交易方式/议价/交易安全提示 (2026-02-16)
+- [x] #33 订单状态通知/统计/退款/纠纷申诉 (2026-02-19)
 
 ### 消息系统 (P1)
 - [x] #34 私信发送/接收/列表 API + 会话列表页面 UI (2026-02-17)
