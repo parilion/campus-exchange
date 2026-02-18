@@ -1,5 +1,6 @@
 package com.campus.exchange.controller;
 
+import com.campus.exchange.dto.ChangePasswordRequest;
 import com.campus.exchange.dto.LoginRequest;
 import com.campus.exchange.dto.LoginResponse;
 import com.campus.exchange.dto.RegisterRequest;
@@ -85,6 +86,16 @@ public class AuthController {
     @PostMapping("/forgot-password/reset")
     public Result<Void> resetPassword(@Valid @RequestBody ResetPasswordRequest request) {
         authService.resetPassword(request);
+        return Result.success();
+    }
+
+    /**
+     * 修改密码（需要登录）
+     */
+    @PostMapping("/change-password")
+    public Result<Void> changePassword(@Valid @RequestBody ChangePasswordRequest request) {
+        Long userId = getCurrentUserId();
+        authService.changePassword(userId, request.getOldPassword(), request.getNewPassword());
         return Result.success();
     }
 

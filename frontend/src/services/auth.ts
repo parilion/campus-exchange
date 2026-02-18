@@ -67,3 +67,12 @@ export async function resetPassword(email: string, code: string, newPassword: st
   });
   return res.data;
 }
+
+// 修改密码（需要登录）
+export async function changePassword(oldPassword: string, newPassword: string) {
+  const res = await request.post<Result<void>>('/auth/change-password', {
+    oldPassword,
+    newPassword,
+  });
+  return res.data;
+}

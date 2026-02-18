@@ -15,6 +15,7 @@ import BargainsPage from './pages/BargainsPage';
 import MessagesPage from './pages/MessagesPage';
 import ChatPage from './pages/ChatPage';
 import FavoritesPage from './pages/FavoritesPage';
+import ChangePasswordPage from './pages/ChangePasswordPage';
 import AuthRoute from './components/AuthRoute';
 import AppHeader from './components/AppHeader';
 
@@ -89,6 +90,11 @@ function App() {
               <Route path="/favorites" element={
                 <AuthRoute>
                   <FavoritesPage />
+                </AuthRoute>
+              } />
+              <Route path="/change-password" element={
+                <AuthRoute>
+                  <ChangePasswordPage />
                 </AuthRoute>
               } />
             </Routes>

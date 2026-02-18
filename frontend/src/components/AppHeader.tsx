@@ -1,7 +1,7 @@
 import React from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Layout, Menu, Button, Space, Avatar, Dropdown } from 'antd';
-import { UserOutlined, HeartOutlined, FileTextOutlined, ShoppingOutlined, MessageOutlined, LogoutOutlined, LoginOutlined } from '@ant-design/icons';
+import { UserOutlined, HeartOutlined, FileTextOutlined, ShoppingOutlined, MessageOutlined, LogoutOutlined, LoginOutlined, LockOutlined } from '@ant-design/icons';
 import { useUserStore } from '../stores/userStore';
 
 const { Header } = Layout;
@@ -49,6 +49,12 @@ const AppHeader: React.FC = () => {
     },
     {
       type: 'divider' as const,
+    },
+    {
+      key: 'change-password',
+      icon: <LockOutlined />,
+      label: '修改密码',
+      onClick: () => navigate('/change-password'),
     },
     {
       key: 'logout',

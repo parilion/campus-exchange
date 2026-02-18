@@ -194,4 +194,28 @@ public class AuthService {
         resetCode.setUsed(true);
         passwordResetCodeMapper.updateById(resetCode);
     }
+
+    /**
+     * 修改密码（需要登录）
+     */
+    public void changePassword(Long userId, String oldPassword, String newPassword) {
+        User user = userMapper.selectById(userId);
+        if (user == null) {
+            throw new IllegalArgumentException("用户不存在");
+        }
+
+        // 验证旧密码
+        if (!passwordEncoder.matches(oldPassword, user.getPassword())) {
+            throw new IllegalArgumentException("旧密码错误");
+        }
+
+        // 新密码不能与旧密码相同
+        if (passwordEncoder.matches(newPassword, user.getPassword())) {
+            throw new IllegalArgumentException("新密码不能与旧密码相同");
+        }
+
+        // 更新密码
+        user.setPassword(passwordEncoder.encode(newPassword));
+        userMapper.updateById(user);
+    }
 }
