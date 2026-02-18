@@ -44,12 +44,12 @@ export default function OrdersPage() {
     totalPages: 0,
   });
   const [activeTab, setActiveTab] = useState('all');
-  const [currentUserId] = useState(() => {
+  const [currentUserId] = useState<number | null>(() => {
     const token = localStorage.getItem('token');
     if (token) {
       try {
         const payload = JSON.parse(atob(token.split('.')[1]));
-        return payload.userId;
+        return Number(payload.userId);
       } catch {
         return null;
       }
