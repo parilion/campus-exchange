@@ -1,7 +1,8 @@
 import { useState, useEffect } from 'react';
 import { List, Card, Tag, Button, Empty, Spin, Badge, Space, Modal, Typography } from 'antd';
 import { BellOutlined, DeleteOutlined, CheckOutlined, CheckCircleOutlined } from '@ant-design/icons';
-import { getSystemMessages, getSystemUnreadCount, markSystemMessageAsRead, markAllSystemMessagesAsRead, deleteSystemMessage, SystemMessage } from '../services/messages';
+import { getSystemMessages, getSystemUnreadCount, markSystemMessageAsRead, markAllSystemMessagesAsRead, deleteSystemMessage } from '../services/messages';
+import type { SystemMessage } from '../services/messages';
 
 const { Title, Text, Paragraph } = Typography;
 

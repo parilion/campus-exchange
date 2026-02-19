@@ -1,5 +1,5 @@
 server:
-  port: 8080
+  port: 8081
 
 spring:
   datasource:
@@ -47,3 +47,4 @@ file:
 logging:
   level:
     com.campus.exchange: debug
+    com.baomidou.mybatisplus: debug
