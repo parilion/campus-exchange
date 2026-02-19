@@ -60,3 +60,18 @@ export const uploadAvatar = (file: File) => {
     },
   });
 };
+
+// 获取浏览历史
+export const getBrowseHistory = (limit: number = 20) => {
+  return request.get<any[]>(`/users/browse-history?limit=${limit}`);
+};
+
+// 清空浏览历史
+export const clearBrowseHistory = () => {
+  return request.delete<void>('/users/browse-history');
+};
+
+// 删除单条浏览记录
+export const deleteBrowseHistory = (productId: number) => {
+  return request.delete<void>(`/users/browse-history/${productId}`);
+};

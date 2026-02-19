@@ -5,6 +5,7 @@ import com.campus.exchange.dto.ProductPageRequest;
 import com.campus.exchange.dto.ProductPageResponse;
 import com.campus.exchange.dto.ProductVO;
 import com.campus.exchange.dto.UpdateProductRequest;
+import com.campus.exchange.service.BrowseHistoryService;
 import com.campus.exchange.service.ProductService;
 import com.campus.exchange.util.Result;
 import org.springframework.security.core.Authentication;
@@ -22,9 +23,11 @@ import java.util.List;
 public class ProductController {
 
     private final ProductService productService;
+    private final BrowseHistoryService browseHistoryService;
 
-    public ProductController(ProductService productService) {
+    public ProductController(ProductService productService, BrowseHistoryService browseHistoryService) {
         this.productService = productService;
+        this.browseHistoryService = browseHistoryService;
     }
 
     /**
@@ -89,6 +92,18 @@ public class ProductController {
     @GetMapping("/{id}")
     public Result<ProductVO> getProduct(@PathVariable Long id) {
         ProductVO product = productService.getProductById(id);
+
+        // 记录浏览历史（如果用户已登录）
+        try {
+            Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+            if (auth != null && auth.isAuthenticated() && auth.getPrincipal() instanceof Long) {
+                Long userId = (Long) auth.getPrincipal();
+                browseHistoryService.addBrowseHistory(userId, id);
+            }
+        } catch (Exception ignored) {
+            // 忽略浏览历史记录失败
+        }
+
         return Result.success(product);
     }
 

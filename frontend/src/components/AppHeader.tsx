@@ -1,7 +1,7 @@
 import React from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Layout, Menu, Button, Space, Avatar, Dropdown } from 'antd';
-import { UserOutlined, HeartOutlined, FileTextOutlined, ShoppingOutlined, MessageOutlined, LogoutOutlined, LoginOutlined, LockOutlined, CheckCircleOutlined, SettingOutlined } from '@ant-design/icons';
+import { UserOutlined, HeartOutlined, FileTextOutlined, ShoppingOutlined, MessageOutlined, LogoutOutlined, LoginOutlined, LockOutlined, CheckCircleOutlined, SettingOutlined, EyeOutlined } from '@ant-design/icons';
 import { useUserStore } from '../stores/userStore';
 
 const { Header } = Layout;
@@ -34,6 +34,12 @@ const AppHeader: React.FC = () => {
       icon: <HeartOutlined />,
       label: '我的收藏',
       onClick: () => navigate('/favorites'),
+    },
+    {
+      key: 'browse-history',
+      icon: <EyeOutlined />,
+      label: '浏览历史',
+      onClick: () => navigate('/browse-history'),
     },
     {
       key: 'orders',

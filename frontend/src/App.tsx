@@ -20,6 +20,7 @@ import StudentAuthPage from './pages/StudentAuthPage';
 import ProfilePage from './pages/ProfilePage';
 import UserProfilePage from './pages/UserProfilePage';
 import HomePage from './pages/HomePage';
+import BrowseHistoryPage from './pages/BrowseHistoryPage';
 import AuthRoute from './components/AuthRoute';
 import AppHeader from './components/AppHeader';
 
@@ -94,6 +95,11 @@ function App() {
               <Route path="/favorites" element={
                 <AuthRoute>
                   <FavoritesPage />
+                </AuthRoute>
+              } />
+              <Route path="/browse-history" element={
+                <AuthRoute>
+                  <BrowseHistoryPage />
                 </AuthRoute>
               } />
               <Route path="/change-password" element={

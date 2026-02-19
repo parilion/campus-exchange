@@ -1,8 +1,10 @@
 package com.campus.exchange.controller;
 
+import com.campus.exchange.dto.ProductVO;
 import com.campus.exchange.dto.UpdateProfileRequest;
 import com.campus.exchange.dto.UserPublicProfileVO;
 import com.campus.exchange.model.User;
+import com.campus.exchange.service.BrowseHistoryService;
 import com.campus.exchange.service.UserService;
 import com.campus.exchange.util.Result;
 import org.springframework.security.core.Authentication;
@@ -13,6 +15,7 @@ import org.springframework.web.multipart.MultipartFile;
 import javax.validation.Valid;
 import java.io.File;
 import java.io.IOException;
+import java.util.List;
 import java.util.UUID;
 
 @RestController
@@ -20,9 +23,11 @@ import java.util.UUID;
 public class UserController {
 
     private final UserService userService;
+    private final BrowseHistoryService browseHistoryService;
 
-    public UserController(UserService userService) {
+    public UserController(UserService userService, BrowseHistoryService browseHistoryService) {
         this.userService = userService;
+        this.browseHistoryService = browseHistoryService;
     }
 
     /**
@@ -115,6 +120,41 @@ public class UserController {
 
     private Long getCurrentUserId() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        return (Long) authentication.getPrincipal();
+        Object principal = authentication.getPrincipal();
+        if (principal instanceof Long) {
+            return (Long) principal;
+        }
+        // 如果是匿名用户，抛出异常
+        throw new IllegalArgumentException("用户未登录");
+    }
+
+    /**
+     * 获取浏览历史列表
+     */
+    @GetMapping("/browse-history")
+    public Result<List<ProductVO>> getBrowseHistory(@RequestParam(defaultValue = "20") Integer limit) {
+        Long userId = getCurrentUserId();
+        List<ProductVO> history = browseHistoryService.getBrowseHistory(userId, limit);
+        return Result.success(history);
+    }
+
+    /**
+     * 清空浏览历史
+     */
+    @DeleteMapping("/browse-history")
+    public Result<Void> clearBrowseHistory() {
+        Long userId = getCurrentUserId();
+        browseHistoryService.clearBrowseHistory(userId);
+        return Result.success();
+    }
+
+    /**
+     * 删除单条浏览记录
+     */
+    @DeleteMapping("/browse-history/{productId}")
+    public Result<Void> deleteBrowseHistory(@PathVariable Long productId) {
+        Long userId = getCurrentUserId();
+        browseHistoryService.deleteBrowseHistory(userId, productId);
+        return Result.success();
     }
 }
