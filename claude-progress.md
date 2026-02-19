@@ -1,11 +1,32 @@
 # Campus Exchange - 开发进度
 
 ## 当前状态
-- 开发中模块: 评价系统
-- 当前功能: ID#43 - 评价回复/图片上传/标签/匿名评价/举报/提醒功能
-- 进度: 48/190 (25.3%)
+- 开发中模块: 管理后台
+- 当前功能: ID#44 - 管理员登录 + 权限控制 + 布局 UI
+- 进度: 49/190 (25.8%)
 
 ## 开发日志 (按时间倒序)
+
+### 2026-02-19 17:30:00 | 完成: 评价回复/标签/举报/提醒功能 (#43)
+- **开始时间**: 2026-02-19 17:26:05
+- **结束时间**: 2026-02-19 17:30:16
+- **Commit**: `feat: add review reply, tags, report and notification features`
+- **涉及文件**:
+  - sql/add_review_extend.sql
+  - backend/src/main/java/com/campus/exchange/model/Review.java
+  - backend/src/main/java/com/campus/exchange/model/ReviewReport.java
+  - backend/src/main/java/com/campus/exchange/mapper/ReviewReportMapper.java
+  - backend/src/main/java/com/campus/exchange/dto/ReplyReviewRequest.java
+  - backend/src/main/java/com/campus/exchange/dto/CreateReviewReportRequest.java
+  - backend/src/main/java/com/campus/exchange/dto/ReviewReportVO.java
+  - backend/src/main/java/com/campus/exchange/dto/ReviewVO.java
+  - backend/src/main/java/com/campus/exchange/dto/CreateReviewRequest.java
+  - backend/src/main/java/com/campus/exchange/service/ReviewService.java
+  - backend/src/main/java/com/campus/exchange/controller/ReviewController.java
+  - frontend/src/services/review.ts
+  - frontend/src/pages/MyReviewsPage.tsx
+  - frontend/src/pages/ReviewFormPage.tsx
+- **备注**: 添加reply/tags字段 + ReviewReport举报模型 + 回复API + 举报API + 标签选择UI + 回复/举报按钮 + 系统消息提醒 + 数据库迁移SQL（需手动执行）
 
 ### 2026-02-19 17:20:00 | 完成: 交易评价 API/列表/评分计算 + 评价页面 UI (#42)
 - **开始时间**: 2026-02-19 17:00:00
@@ -635,6 +656,7 @@
 
 ### 评价系统 (P2)
 - [x] #42 交易评价 API/列表/评分计算 + 评价页面 UI (2026-02-19)
+- [x] #43 评价回复/图片上传/标签/匿名评价/举报/提醒功能 (2026-02-19)
 
 ### 用户中心 (P1)
 - [x] #38 个人资料查看/编辑/头像上传 + 资料编辑页面 UI (2026-02-19)
