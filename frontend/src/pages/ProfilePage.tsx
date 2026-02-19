@@ -34,12 +34,12 @@ const ProfilePage: React.FC = () => {
   const loadProfile = async () => {
     try {
       const res = await getProfile();
-      setUserProfile(res.data.data);
+      setUserProfile(res.data);
       form.setFieldsValue({
-        nickname: res.data.data.nickname,
-        email: res.data.data.email,
-        phone: res.data.data.phone,
-        username: res.data.data.username,
+        nickname: res.data.nickname,
+        email: res.data.email,
+        phone: res.data.phone,
+        username: res.data.username,
       });
     } catch (error) {
       message.error('加载用户资料失败');

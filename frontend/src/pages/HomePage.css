@@ -1,0 +1,264 @@
+/* 首页样式 */
+
+.home-page {
+  background-color: #f5f5f5;
+  min-height: 100vh;
+}
+
+/* 轮播图区域 */
+.home-banner {
+  margin-bottom: 0;
+}
+
+.home-banner-slide {
+  cursor: pointer;
+  height: 400px;
+}
+
+.home-banner-image {
+  height: 400px;
+  background-size: cover;
+  background-position: center;
+  display: flex;
+  align-items: center;
+  position: relative;
+}
+
+.home-banner-image::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(90deg, rgba(0,0,0,0.6) 0%, rgba(0,0,0,0.2) 100%);
+}
+
+.home-banner-content {
+  position: relative;
+  z-index: 1;
+  padding-left: 10%;
+  color: #fff;
+}
+
+.home-banner-title {
+  color: #fff !important;
+  margin-bottom: 8px !important;
+  font-size: 36px !important;
+  text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+}
+
+.home-banner-description {
+  color: rgba(255,255,255,0.9) !important;
+  font-size: 18px;
+}
+
+.home-dots {
+  bottom: 20px;
+}
+
+/* 搜索区域 */
+.home-search-section {
+  background: #fff;
+  padding: 24px 0;
+  margin-bottom: 24px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+}
+
+.home-search-container {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 0 24px;
+}
+
+/* 分类导航 */
+.home-category-section {
+  background: #fff;
+  padding: 24px 0;
+  margin-bottom: 24px;
+}
+
+.home-section-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 24px;
+}
+
+.home-category-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  cursor: pointer;
+  transition: transform 0.2s;
+  padding: 12px;
+  border-radius: 8px;
+}
+
+.home-category-item:hover {
+  transform: translateY(-4px);
+  background: #f5f5f5;
+}
+
+.home-category-icon {
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 24px;
+  color: #fff;
+  margin-bottom: 8px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+}
+
+.home-category-name {
+  font-size: 14px;
+  color: #333;
+}
+
+/* 区块通用样式 */
+.home-section {
+  padding: 24px 0;
+}
+
+.home-section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.home-section-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0 !important;
+}
+
+.home-fire-icon {
+  color: #ff4d4f;
+}
+
+.home-clock-icon {
+  color: #1890ff;
+}
+
+.home-section-more {
+  cursor: pointer;
+  color: #1890ff;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  transition: color 0.2s;
+}
+
+.home-section-more:hover {
+  color: #40a9ff;
+}
+
+/* 商品卡片 */
+.home-product-card {
+  border-radius: 8px;
+  overflow: hidden;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.home-product-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 16px rgba(0,0,0,0.1);
+}
+
+.home-product-image-wrapper {
+  position: relative;
+  overflow: hidden;
+}
+
+.home-condition-tag {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+}
+
+.home-product-info {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.home-price-container {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+}
+
+.home-current-price {
+  font-size: 18px;
+  font-weight: bold;
+  color: #ff4d4f;
+}
+
+.home-original-price {
+  font-size: 12px;
+  color: #999;
+  text-decoration: line-through;
+}
+
+.home-product-stats {
+  font-size: 12px;
+  color: #999;
+}
+
+/* 底部提示 */
+.home-footer-tips {
+  background: #fff;
+  padding: 40px 0;
+  margin-top: 24px;
+}
+
+.home-tip-item {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  text-align: left;
+}
+
+.home-tip-icon {
+  font-size: 36px;
+}
+
+.home-tip-content h5 {
+  margin-bottom: 4px !important;
+}
+
+/* 响应式调整 */
+@media (max-width: 768px) {
+  .home-banner-slide,
+  .home-banner-image {
+    height: 200px;
+  }
+
+  .home-banner-title {
+    font-size: 24px !important;
+  }
+
+  .home-banner-description {
+    font-size: 14px;
+  }
+
+  .home-banner-content {
+    padding-left: 24px;
+  }
+
+  .home-category-icon {
+    width: 48px;
+    height: 48px;
+    font-size: 20px;
+  }
+
+  .home-tip-item {
+    justify-content: center;
+    text-align: center;
+    flex-direction: column;
+  }
+}

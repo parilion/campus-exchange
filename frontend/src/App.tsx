@@ -18,6 +18,7 @@ import FavoritesPage from './pages/FavoritesPage';
 import ChangePasswordPage from './pages/ChangePasswordPage';
 import StudentAuthPage from './pages/StudentAuthPage';
 import ProfilePage from './pages/ProfilePage';
+import HomePage from './pages/HomePage';
 import AuthRoute from './components/AuthRoute';
 import AppHeader from './components/AppHeader';
 
@@ -46,7 +47,7 @@ function App() {
               } />
               <Route path="/" element={
                 <AuthRoute>
-                  <ProductListPage />
+                  <HomePage />
                 </AuthRoute>
               } />
               <Route path="/products/:id" element={

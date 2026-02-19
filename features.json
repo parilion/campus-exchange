@@ -59,7 +59,7 @@
   {"id": 50, "category": "通知系统", "module": "notification", "description": "站内通知 API/列表/已读未读/类型分类/角标/全部已读", "priority": "P2", "passes": false},
   {"id": 51, "category": "通知系统", "module": "notification", "description": "邮件通知 + 偏好设置 + 商品降价/系统公告通知", "priority": "P2", "passes": false},
 
-  {"id": 52, "category": "UI/UX", "module": "ui", "description": "首页布局/推荐展示/分类导航/搜索框 + 全局导航栏组件", "priority": "P1", "passes": false},
+  {"id": 52, "category": "UI/UX", "module": "ui", "description": "首页布局/推荐展示/分类导航/搜索框 + 全局导航栏组件", "priority": "P1", "passes": true},
   {"id": 53, "category": "UI/UX", "module": "ui", "description": "商品卡片/价格显示/用户头像/标签/轮播图组件", "priority": "P1", "passes": false},
   {"id": 54, "category": "UI/UX", "module": "ui", "description": "骨架屏/空状态/错误页面/Toast/确认弹窗/图片懒加载", "priority": "P1", "passes": false},
   {"id": 55, "category": "UI/UX", "module": "ui", "description": "下拉刷新/上拉加载 + 底部信息栏 + 响应式布局 + 暗色模式", "priority": "P1", "passes": false},
