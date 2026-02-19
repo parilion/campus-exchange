@@ -1,11 +1,28 @@
 # Campus Exchange - 开发进度
 
 ## 当前状态
-- 开发中模块: 消息系统
-- 当前功能: ID#37 - 商品详情页消息入口 + 系统消息展示
-- 进度: 46/190 (24.2%)
+- 开发中模块: 评价系统
+- 当前功能: ID#42 - 交易评价 API/列表/评分计算 + 评价页面 UI
+- 进度: 47/190 (24.7%)
 
 ## 开发日志 (按时间倒序)
+
+### 2026-02-19 15:55:00 | 完成: 从商品详情页发起聊天 + 系统消息展示 (#37)
+- **开始时间**: 2026-02-19 15:55:44
+- **结束时间**: 2026-02-19 16:05:00
+- **Commit**: `feat: add system message functionality with UI`
+- **涉及文件**:
+  - sql/add_system_message.sql
+  - backend/src/main/java/com/campus/exchange/model/SystemMessage.java
+  - backend/src/main/java/com/campus/exchange/mapper/SystemMessageMapper.java
+  - backend/src/main/java/com/campus/exchange/service/SystemMessageService.java
+  - backend/src/main/java/com/campus/exchange/controller/SystemMessageController.java
+  - backend/src/main/java/com/campus/exchange/config/SecurityConfig.java
+  - frontend/src/pages/SystemMessagesPage.tsx
+  - frontend/src/services/messages.ts
+  - frontend/src/App.tsx
+  - frontend/src/components/AppHeader.tsx
+- **备注**: 系统消息表+CRUD API + 前端消息页面(列表/详情弹窗/已读/删除) + 导航菜单入口 + 已实现商品详情页联系卖家按钮
 
 ### 2026-02-19 15:28:00 | 完成: 收货地址管理 + 卖家信用展示 + 账号安全设置 + 用户协议 (#41)
 - **开始时间**: 2026-02-19 14:50:00
@@ -594,6 +611,7 @@
 - [x] #34 私信发送/接收/列表 API + 会话列表页面 UI (2026-02-17)
 - [x] #35 聊天详情页面 UI + 未读计数/已读标记/商品卡片消息 (2026-02-17)
 - [x] #36 WebSocket 实时消息 + 消息通知提醒/快捷回复/聊天记录搜索/屏蔽用户 (2026-02-17)
+- [x] #37 从商品详情页发起聊天 + 系统消息展示 (2026-02-19)
 
 ### 用户中心 (P1)
 - [x] #38 个人资料查看/编辑/头像上传 + 资料编辑页面 UI (2026-02-19)
