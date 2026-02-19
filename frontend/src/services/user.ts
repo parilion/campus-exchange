@@ -14,6 +14,20 @@ export interface UserProfile {
   createdAt: string;
 }
 
+export interface UserPublicProfile {
+  id: number;
+  username: string;
+  nickname?: string;
+  avatar?: string;
+  verified: boolean;
+  studentId?: string;
+  createdAt: string;
+  productCount: number;
+  soldCount: number;
+  positiveRate: number;
+  creditLevel: number;
+}
+
 export interface UpdateProfileRequest {
   nickname?: string;
   phone?: string;
@@ -27,6 +41,10 @@ export const getProfile = () => {
 
 export const getUserById = (userId: number) => {
   return request.get<UserProfile>(`/users/${userId}`);
+};
+
+export const getUserPublicProfile = (userId: number) => {
+  return request.get<UserPublicProfile>(`/users/${userId}/public`);
 };
 
 export const updateProfile = (data: UpdateProfileRequest) => {

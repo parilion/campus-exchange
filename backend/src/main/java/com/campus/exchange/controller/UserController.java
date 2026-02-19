@@ -1,6 +1,7 @@
 package com.campus.exchange.controller;
 
 import com.campus.exchange.dto.UpdateProfileRequest;
+import com.campus.exchange.dto.UserPublicProfileVO;
 import com.campus.exchange.model.User;
 import com.campus.exchange.service.UserService;
 import com.campus.exchange.util.Result;
@@ -41,6 +42,15 @@ public class UserController {
     public Result<User> getUserById(@PathVariable Long userId) {
         User user = userService.getUserById(userId);
         return Result.success(user);
+    }
+
+    /**
+     * 获取用户公开主页信息
+     */
+    @GetMapping("/{userId}/public")
+    public Result<UserPublicProfileVO> getUserPublicProfile(@PathVariable Long userId) {
+        UserPublicProfileVO profile = userService.getPublicProfile(userId);
+        return Result.success(profile);
     }
 
     /**

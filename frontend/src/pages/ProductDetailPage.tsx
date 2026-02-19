@@ -346,7 +346,11 @@ export default function ProductDetailPage() {
             <div className="seller-section">
               <Text strong>卖家信息</Text>
               <Card className="seller-card" size="small">
-                <div className="seller-info">
+                <div
+                  className="seller-info"
+                  style={{ cursor: 'pointer' }}
+                  onClick={() => navigate(`/user/${product.sellerId}`)}
+                >
                   <Avatar
                     size={48}
                     src={product.sellerAvatar}
@@ -355,7 +359,9 @@ export default function ProductDetailPage() {
                     {product.sellerNickname?.charAt(0) || 'U'}
                   </Avatar>
                   <div className="seller-details">
-                    <Text strong>{product.sellerNickname || '匿名用户'}</Text>
+                    <Text strong style={{ color: '#1890ff' }}>
+                      {product.sellerNickname || '匿名用户'}
+                    </Text>
                     <Text type="secondary" className="seller-id">
                       ID: {product.sellerId}
                     </Text>

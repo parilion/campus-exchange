@@ -550,4 +550,24 @@ public class ProductService {
         queryWrapper.orderByDesc(Product::getCreatedAt);
         return productMapper.selectPage(page, queryWrapper);
     }
+
+    /**
+     * 获取指定用户发布的商品列表（用于公开主页）
+     */
+    public List<ProductVO> getProductsByUserId(Long userId) {
+        // 查询用户发布的在售商品（非草稿）
+        LambdaQueryWrapper<Product> queryWrapper = new LambdaQueryWrapper<>();
+        queryWrapper.eq(Product::getSellerId, userId);
+        queryWrapper.eq(Product::getStatus, "ON_SALE");
+        queryWrapper.ne(Product::getIsDraft, true);
+        queryWrapper.orderByDesc(Product::getCreatedAt);
+        queryWrapper.last("LIMIT 20");
+
+        List<Product> products = productMapper.selectList(queryWrapper);
+
+        // 转换为VO列表
+        return products.stream()
+                .map(this::getProductVO)
+                .collect(Collectors.toList());
+    }
 }

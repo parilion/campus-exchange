@@ -75,6 +75,15 @@ public class ProductController {
     }
 
     /**
+     * 获取指定用户发布的商品列表
+     */
+    @GetMapping("/user/{userId}")
+    public Result<List<ProductVO>> getProductsByUser(@PathVariable Long userId) {
+        List<ProductVO> products = productService.getProductsByUserId(userId);
+        return Result.success(products);
+    }
+
+    /**
      * 获取商品详情
      */
     @GetMapping("/{id}")

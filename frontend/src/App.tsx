@@ -18,6 +18,7 @@ import FavoritesPage from './pages/FavoritesPage';
 import ChangePasswordPage from './pages/ChangePasswordPage';
 import StudentAuthPage from './pages/StudentAuthPage';
 import ProfilePage from './pages/ProfilePage';
+import UserProfilePage from './pages/UserProfilePage';
 import HomePage from './pages/HomePage';
 import AuthRoute from './components/AuthRoute';
 import AppHeader from './components/AppHeader';
@@ -108,6 +109,11 @@ function App() {
               <Route path="/profile" element={
                 <AuthRoute>
                   <ProfilePage />
+                </AuthRoute>
+              } />
+              <Route path="/user/:userId" element={
+                <AuthRoute>
+                  <UserProfilePage />
                 </AuthRoute>
               } />
             </Routes>

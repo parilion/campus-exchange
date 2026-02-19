@@ -111,3 +111,9 @@ export async function incrementViewCount(id: number) {
   const res = await request.post<Result<void>>(`/products/${id}/view`);
   return res.data.data;
 }
+
+// 获取指定用户的商品列表
+export async function getProductsByUser(userId: number) {
+  const res = await request.get<Result<Product[]>>('/products/user/' + userId);
+  return res.data;
+}
