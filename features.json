@@ -349,7 +349,7 @@
     "module": "admin",
     "description": "管理员登录 + 权限控制 + 布局 UI",
     "priority": "P2",
-    "passes": false
+    "passes": true
   },
   {
     "id": 45,

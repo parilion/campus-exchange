@@ -1,9 +1,12 @@
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { ConfigProvider, Layout } from 'antd';
 import zhCN from 'antd/locale/zh_CN';
 import LoginPage from './pages/LoginPage';
 import RegisterPage from './pages/RegisterPage';
 import ForgotPasswordPage from './pages/ForgotPasswordPage';
+import AdminLoginPage from './pages/AdminLoginPage';
+import AdminLayout from './pages/AdminLayout';
+import AdminDashboardPage from './pages/AdminDashboardPage';
 import PublishPage from './pages/PublishPage';
 import EditProductPage from './pages/EditProductPage';
 import ProductListPage from './pages/ProductListPage';
@@ -149,6 +152,18 @@ function App() {
               } />
               <Route path="/user/:userId/reviews" element={<MyReviewsPage />} />
               <Route path="/agreement" element={<UserAgreementPage />} />
+              <Route path="/admin/login" element={<AdminLoginPage />} />
+              <Route path="/admin/dashboard" element={
+                <AdminLayout>
+                  <AdminDashboardPage />
+                </AdminLayout>
+              } />
+              <Route path="/admin" element={<Navigate to="/admin/dashboard" replace />} />
+              <Route path="/admin/*" element={
+                <AdminLayout>
+                  <AdminDashboardPage />
+                </AdminLayout>
+              } />
             </Routes>
           </Content>
         </Layout>
