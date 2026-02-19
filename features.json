@@ -42,7 +42,7 @@
   {"id": 37, "category": "消息系统", "module": "message", "description": "从商品详情页发起聊天 + 系统消息展示", "priority": "P1", "passes": false},
 
   {"id": 38, "category": "用户中心", "module": "user", "description": "个人资料查看/编辑/头像上传 + 资料编辑页面 UI", "priority": "P1", "passes": true},
-  {"id": 39, "category": "用户中心", "module": "user", "description": "个人主页 UI + 用户公开主页/实名认证展示/统计数据", "priority": "P1", "passes": false},
+  {"id": 39, "category": "用户中心", "module": "user", "description": "个人主页 UI + 用户公开主页/实名认证展示/统计数据", "priority": "P1", "passes": true},
   {"id": 40, "category": "用户中心", "module": "user", "description": "我的收藏列表 + 订单汇总 + 浏览历史", "priority": "P1", "passes": false},
   {"id": 41, "category": "用户中心", "module": "user", "description": "收货地址管理 + 卖家信用展示 + 账号安全设置 + 用户协议", "priority": "P1", "passes": false},
 

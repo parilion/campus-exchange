@@ -1,11 +1,29 @@
 # Campus Exchange - 开发进度
 
 ## 当前状态
-- 开发中模块: UI/UX
-- 当前功能: ID#52 - 首页布局/推荐展示/分类导航/搜索框 + 全局导航栏组件
-- 进度: 43/190 (22.6%)
+- 开发中模块: 用户中心
+- 当前功能: ID#40 - 我的收藏列表 + 订单汇总 + 浏览历史
+- 进度: 44/190 (23.2%)
 
 ## 开发日志 (按时间倒序)
+
+### 2026-02-19 12:50:00 | 完成: 个人主页 UI + 用户公开主页/实名认证展示/统计数据 (#39)
+- **开始时间**: 2026-02-19 12:28:04
+- **结束时间**: 2026-02-19 12:50:00
+- **Commit**: `feat: add user public profile page with statistics`
+- **涉及文件**:
+  - backend/src/main/java/com/campus/exchange/dto/UserPublicProfileVO.java
+  - backend/src/main/java/com/campus/exchange/controller/UserController.java
+  - backend/src/main/java/com/campus/exchange/controller/ProductController.java
+  - backend/src/main/java/com/campus/exchange/service/UserService.java
+  - backend/src/main/java/com/campus/exchange/service/ProductService.java
+  - backend/src/main/java/com/campus/exchange/config/SecurityConfig.java
+  - frontend/src/pages/UserProfilePage.tsx
+  - frontend/src/pages/ProductDetailPage.tsx
+  - frontend/src/services/user.ts
+  - frontend/src/services/product.ts
+  - frontend/src/App.tsx
+- **备注**: 用户公开主页API(用户信息/统计数据/商品列表) + 公开主页UI(头像/昵称/认证标签/注册时间/信用等级/在售商品数/已售商品数/好评率) + 商品详情页点击卖家头像进入主页 + E2E测试验证
 
 ### 2026-02-19 04:25:00 | 完成: 首页布局/推荐展示/分类导航/搜索框 + 全局导航栏组件 (#52)
 - **开始时间**: 2026-02-19 04:00:00
@@ -540,6 +558,7 @@
 
 ### 用户中心 (P1)
 - [x] #38 个人资料查看/编辑/头像上传 + 资料编辑页面 UI (2026-02-19)
+- [x] #39 个人主页 UI + 用户公开主页/实名认证展示/统计数据 (2026-02-19)
 
 ### UI/UX (P1)
 - [x] #52 首页布局/推荐展示/分类导航/搜索框 + 全局导航栏组件 (2026-02-19)
