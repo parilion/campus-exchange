@@ -24,6 +24,7 @@ import BrowseHistoryPage from './pages/BrowseHistoryPage';
 import AddressPage from './pages/AddressPage';
 import AccountSecurityPage from './pages/AccountSecurityPage';
 import UserAgreementPage from './pages/UserAgreementPage';
+import SystemMessagesPage from './pages/SystemMessagesPage';
 import AuthRoute from './components/AuthRoute';
 import AppHeader from './components/AppHeader';
 
@@ -133,6 +134,11 @@ function App() {
               <Route path="/account-security" element={
                 <AuthRoute>
                   <AccountSecurityPage />
+                </AuthRoute>
+              } />
+              <Route path="/system-messages" element={
+                <AuthRoute>
+                  <SystemMessagesPage />
                 </AuthRoute>
               } />
               <Route path="/agreement" element={<UserAgreementPage />} />

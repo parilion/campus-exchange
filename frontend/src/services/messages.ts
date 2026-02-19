@@ -87,3 +87,43 @@ interface User {
   avatar: string | null;
   email: string;
 }
+
+// 系统消息类型
+export interface SystemMessage {
+  id: number;
+  userId: number;
+  title: string;
+  content: string;
+  type: 'ORDER_NOTIFY' | 'SYSTEM_NOTIFY' | 'ACTIVITY_NOTIFY';
+  relatedId?: number;
+  read: boolean;
+  createTime: string;
+  readTime?: string;
+}
+
+// 获取系统消息列表
+export function getSystemMessages(page: number = 1, size: number = 10, read?: boolean) {
+  return request.get<{ records: SystemMessage[]; total: number; pages: number; current: number }>('/system-messages', {
+    params: { page, size, read }
+  });
+}
+
+// 获取系统消息未读数量
+export function getSystemUnreadCount() {
+  return request.get<{ count: number }>('/system-messages/unread-count');
+}
+
+// 标记系统消息为已读
+export function markSystemMessageAsRead(messageId: number) {
+  return request.put<void>(`/system-messages/${messageId}/read`);
+}
+
+// 标记所有系统消息为已读
+export function markAllSystemMessagesAsRead() {
+  return request.put<void>('/system-messages/read-all');
+}
+
+// 删除系统消息
+export function deleteSystemMessage(messageId: number) {
+  return request.delete<void>(`/system-messages/${messageId}`);
+}

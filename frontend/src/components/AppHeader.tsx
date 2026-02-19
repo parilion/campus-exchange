@@ -1,7 +1,7 @@
 import React from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Layout, Menu, Button, Space, Avatar, Dropdown } from 'antd';
-import { UserOutlined, HeartOutlined, FileTextOutlined, ShoppingOutlined, MessageOutlined, LogoutOutlined, LoginOutlined, LockOutlined, CheckCircleOutlined, SettingOutlined, EyeOutlined } from '@ant-design/icons';
+import { UserOutlined, HeartOutlined, FileTextOutlined, ShoppingOutlined, MessageOutlined, LogoutOutlined, LoginOutlined, LockOutlined, CheckCircleOutlined, SettingOutlined, EyeOutlined, BellOutlined } from '@ant-design/icons';
 import { useUserStore } from '../stores/userStore';
 
 const { Header } = Layout;
@@ -58,6 +58,12 @@ const AppHeader: React.FC = () => {
       icon: <MessageOutlined />,
       label: '消息中心',
       onClick: () => navigate('/messages'),
+    },
+    {
+      key: 'system-messages',
+      icon: <BellOutlined />,
+      label: '系统消息',
+      onClick: () => navigate('/system-messages'),
     },
     {
       type: 'divider' as const,
