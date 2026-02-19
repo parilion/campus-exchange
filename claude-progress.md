@@ -2,10 +2,29 @@
 
 ## 当前状态
 - 开发中模块: 管理后台
-- 当前功能: ID#46 - 商品审核列表/操作 + 强制下架 + 举报处理
-- 进度: 51/190 (26.8%)
+- 当前功能: ID#47 - 分类管理 CRUD + 公告管理 + 轮播图管理
+- 进度: 52/190 (27.4%)
 
 ## 开发日志 (按时间倒序)
+
+### 2026-02-20 03:10:00 | 完成: 商品审核列表/操作 + 强制下架 + 举报处理 (#46)
+- **开始时间**: 2026-02-20 02:50:00
+- **结束时间**: 2026-02-20 03:10:00
+- **Commit**: `feat: add admin product audit, force offline and report handling`
+- **涉及文件**:
+  - sql/add_product_audit.sql
+  - backend/src/main/java/com/campus/exchange/model/Product.java
+  - backend/src/main/java/com/campus/exchange/model/ProductReport.java
+  - backend/src/main/java/com/campus/exchange/mapper/ProductReportMapper.java
+  - backend/src/main/java/com/campus/exchange/dto/AuditProductRequest.java
+  - backend/src/main/java/com/campus/exchange/dto/ForceOfflineRequest.java
+  - backend/src/main/java/com/campus/exchange/dto/HandleReportRequest.java
+  - backend/src/main/java/com/campus/exchange/dto/ProductReportVO.java
+  - backend/src/main/java/com/campus/exchange/controller/AdminController.java
+  - frontend/src/services/admin.ts
+  - frontend/src/pages/AdminProductsPage.tsx
+  - frontend/src/App.tsx
+- **备注**: product表添加audit_status/reject_reason/force_offline_reason字段 + product_report举报表 + 商品审核列表API(列表/统计/审核通过-拒绝/强制下架/删除) + 举报处理API(列表/统计/处理-忽略/同时下架) + 前端AdminProductsPage(两Tab：商品审核+举报处理) + Playwright E2E测试验证
 
 ### 2026-02-20 00:46:40 | 完成: 用户管理列表 + 封禁/解封操作 (#45)
 - **开始时间**: 2026-02-20 00:40:16
@@ -685,6 +704,7 @@
 ### 管理后台 (P2)
 - [x] #44 管理员登录 + 权限控制 + 布局 UI (2026-02-20)
 - [x] #45 用户管理列表 + 封禁/解封操作 (2026-02-20)
+- [x] #46 商品审核列表/操作 + 强制下架 + 举报处理 (2026-02-20)
 
 ### 用户中心 (P1)
 - [x] #38 个人资料查看/编辑/头像上传 + 资料编辑页面 UI (2026-02-19)

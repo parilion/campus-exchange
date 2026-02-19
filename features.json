@@ -365,7 +365,7 @@
     "module": "admin",
     "description": "商品审核列表/操作 + 强制下架 + 举报处理",
     "priority": "P2",
-    "passes": false
+    "passes": true
   },
   {
     "id": 47,
