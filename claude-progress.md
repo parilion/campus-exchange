@@ -2,10 +2,30 @@
 
 ## 当前状态
 - 开发中模块: 评价系统
-- 当前功能: ID#42 - 交易评价 API/列表/评分计算 + 评价页面 UI
-- 进度: 47/190 (24.7%)
+- 当前功能: ID#43 - 评价回复/图片上传/标签/匿名评价/举报/提醒功能
+- 进度: 48/190 (25.3%)
 
 ## 开发日志 (按时间倒序)
+
+### 2026-02-19 17:20:00 | 完成: 交易评价 API/列表/评分计算 + 评价页面 UI (#42)
+- **开始时间**: 2026-02-19 17:00:00
+- **结束时间**: 2026-02-19 17:20:00
+- **Commit**: `feat: add review system API and UI pages`
+- **涉及文件**:
+  - backend/src/main/java/com/campus/exchange/model/Review.java
+  - backend/src/main/java/com/campus/exchange/mapper/ReviewMapper.java
+  - backend/src/main/java/com/campus/exchange/dto/CreateReviewRequest.java
+  - backend/src/main/java/com/campus/exchange/dto/ReviewVO.java
+  - backend/src/main/java/com/campus/exchange/service/ReviewService.java
+  - backend/src/main/java/com/campus/exchange/controller/ReviewController.java
+  - backend/src/main/java/com/campus/exchange/config/SecurityConfig.java
+  - frontend/src/services/review.ts
+  - frontend/src/pages/MyReviewsPage.tsx
+  - frontend/src/pages/ReviewFormPage.tsx
+  - frontend/src/pages/OrderDetailPage.tsx
+  - frontend/src/App.tsx
+  - frontend/src/components/AppHeader.tsx
+- **备注**: 评价表已在schema中 + 后端CRUD API(创建/列表/统计/检查) + 评价页面(统计卡片/评分分布/列表) + 评价表单弹窗 + 订单详情页评价按钮 + 头部导航入口
 
 ### 2026-02-19 15:55:00 | 完成: 从商品详情页发起聊天 + 系统消息展示 (#37)
 - **开始时间**: 2026-02-19 15:55:44
@@ -612,6 +632,9 @@
 - [x] #35 聊天详情页面 UI + 未读计数/已读标记/商品卡片消息 (2026-02-17)
 - [x] #36 WebSocket 实时消息 + 消息通知提醒/快捷回复/聊天记录搜索/屏蔽用户 (2026-02-17)
 - [x] #37 从商品详情页发起聊天 + 系统消息展示 (2026-02-19)
+
+### 评价系统 (P2)
+- [x] #42 交易评价 API/列表/评分计算 + 评价页面 UI (2026-02-19)
 
 ### 用户中心 (P1)
 - [x] #38 个人资料查看/编辑/头像上传 + 资料编辑页面 UI (2026-02-19)
