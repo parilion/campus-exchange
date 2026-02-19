@@ -2,10 +2,28 @@
 
 ## 当前状态
 - 开发中模块: 用户中心
-- 当前功能: ID#40 - 我的收藏列表 + 订单汇总 + 浏览历史
-- 进度: 44/190 (23.2%)
+- 当前功能: ID#41 - 收货地址管理 + 卖家信用展示 + 账号安全设置 + 用户协议
+- 进度: 45/190 (23.7%)
 
 ## 开发日志 (按时间倒序)
+
+### 2026-02-19 13:32:27 | 完成: 我的收藏列表 + 订单汇总 + 浏览历史 (#40)
+- **开始时间**: 2026-02-19 12:52:57
+- **结束时间**: 2026-02-19 13:32:27
+- **Commit**: `feat: add browse history functionality with UI`
+- **涉及文件**:
+  - sql/add_browse_history.sql
+  - backend/src/main/java/com/campus/exchange/model/BrowseHistory.java
+  - backend/src/main/java/com/campus/exchange/mapper/BrowseHistoryMapper.java
+  - backend/src/main/java/com/campus/exchange/service/BrowseHistoryService.java
+  - backend/src/main/java/com/campus/exchange/controller/UserController.java
+  - backend/src/main/java/com/campus/exchange/controller/ProductController.java
+  - backend/src/main/java/com/campus/exchange/config/SecurityConfig.java
+  - frontend/src/pages/BrowseHistoryPage.tsx
+  - frontend/src/services/user.ts
+  - frontend/src/App.tsx
+  - frontend/src/components/AppHeader.tsx
+- **备注**: 浏览历史表 + 后端API(获取/删除/清空) + 自动记录浏览历史 + 前端页面(卡片展示/删除/清空) + 导航菜单入口 + 数据库迁移SQL
 
 ### 2026-02-19 12:50:00 | 完成: 个人主页 UI + 用户公开主页/实名认证展示/统计数据 (#39)
 - **开始时间**: 2026-02-19 12:28:04
@@ -559,6 +577,7 @@
 ### 用户中心 (P1)
 - [x] #38 个人资料查看/编辑/头像上传 + 资料编辑页面 UI (2026-02-19)
 - [x] #39 个人主页 UI + 用户公开主页/实名认证展示/统计数据 (2026-02-19)
+- [x] #40 我的收藏列表 + 订单汇总 + 浏览历史 (2026-02-19)
 
 ### UI/UX (P1)
 - [x] #52 首页布局/推荐展示/分类导航/搜索框 + 全局导航栏组件 (2026-02-19)
