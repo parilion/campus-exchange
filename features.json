@@ -341,7 +341,7 @@
     "module": "review",
     "description": "评价回复/图片上传/标签/匿名评价/举报/提醒功能",
     "priority": "P2",
-    "passes": false
+    "passes": true
   },
   {
     "id": 44,
