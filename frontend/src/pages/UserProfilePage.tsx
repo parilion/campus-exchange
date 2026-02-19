@@ -50,6 +50,17 @@ const UserProfilePage: React.FC = () => {
     ));
   };
 
+  const getCreditLabel = (level: number): { text: string; color: string } => {
+    const labels: Record<number, { text: string; color: string }> = {
+      1: { text: '新手卖家', color: '#8c8c8c' },
+      2: { text: '普通卖家', color: '#1890ff' },
+      3: { text: '良好信用', color: '#52c41a' },
+      4: { text: '优质卖家', color: '#fa8c16' },
+      5: { text: '卓越卖家', color: '#f5222d' },
+    };
+    return labels[level] || labels[1];
+  };
+
   const formatDate = (dateStr: string) => {
     if (!dateStr) return '-';
     const date = new Date(dateStr);
@@ -116,8 +127,18 @@ const UserProfilePage: React.FC = () => {
                 {formatDate(profile.createdAt)}
               </Descriptions.Item>
               <Descriptions.Item label="信用等级">
-                <span style={{ fontSize: 16 }}>
-                  {getCreditStars(profile.creditLevel)}
+                <span>
+                  <span style={{ fontSize: 14 }}>
+                    {getCreditStars(profile.creditLevel)}
+                  </span>
+                  <span style={{
+                    marginLeft: 6,
+                    color: getCreditLabel(profile.creditLevel).color,
+                    fontWeight: 500,
+                    fontSize: 12,
+                  }}>
+                    {getCreditLabel(profile.creditLevel).text}
+                  </span>
                 </span>
               </Descriptions.Item>
             </Descriptions>

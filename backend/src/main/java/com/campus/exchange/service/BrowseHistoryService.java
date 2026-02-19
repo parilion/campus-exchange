@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -59,7 +60,7 @@ public class BrowseHistoryService {
 
         List<Long> productIds = browseHistoryMapper.findProductIdsByUserId(userId, limit);
         if (productIds == null || productIds.isEmpty()) {
-            return List.of();
+            return Collections.emptyList();
         }
 
         List<Product> products = productMapper.selectBatchIds(productIds);

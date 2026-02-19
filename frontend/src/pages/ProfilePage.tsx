@@ -1,6 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { Card, Form, Input, Button, Avatar, Upload, message, Space, Typography, Divider } from 'antd';
-import { UserOutlined, UploadOutlined, MailOutlined, PhoneOutlined, IdcardOutlined, CheckCircleOutlined } from '@ant-design/icons';
+import { Card, Form, Input, Button, Avatar, Upload, message, Space, Typography, Divider, List } from 'antd';
+import {
+  UserOutlined, UploadOutlined, MailOutlined, PhoneOutlined, IdcardOutlined,
+  CheckCircleOutlined, HomeOutlined, SafetyCertificateOutlined, FileTextOutlined,
+  ArrowRightOutlined
+} from '@ant-design/icons';
 import { useNavigate } from 'react-router-dom';
 import { getProfile, updateProfile, uploadAvatar, type UserProfile } from '../services/user';
 import { useUserStore } from '../stores/userStore';
@@ -212,6 +216,50 @@ const ProfilePage: React.FC = () => {
             </div>
           </Space>
         </div>
+
+        <Divider />
+
+        {/* 快捷入口 */}
+        <List
+          size="small"
+          dataSource={[
+            {
+              key: 'address',
+              icon: <HomeOutlined style={{ color: '#1890ff' }} />,
+              title: '收货地址管理',
+              desc: '管理您的收货地址',
+              path: '/addresses',
+            },
+            {
+              key: 'security',
+              icon: <SafetyCertificateOutlined style={{ color: '#52c41a' }} />,
+              title: '账号安全设置',
+              desc: '修改密码、实名认证等',
+              path: '/account-security',
+            },
+            {
+              key: 'agreement',
+              icon: <FileTextOutlined style={{ color: '#722ed1' }} />,
+              title: '用户协议与隐私政策',
+              desc: '查看平台服务条款',
+              path: '/agreement',
+            },
+          ]}
+          renderItem={(item) => (
+            <List.Item
+              key={item.key}
+              style={{ cursor: 'pointer', padding: '10px 0' }}
+              onClick={() => navigate(item.path)}
+              extra={<ArrowRightOutlined style={{ color: '#999' }} />}
+            >
+              <List.Item.Meta
+                avatar={item.icon}
+                title={<Text strong style={{ fontSize: 14 }}>{item.title}</Text>}
+                description={<Text type="secondary" style={{ fontSize: 12 }}>{item.desc}</Text>}
+              />
+            </List.Item>
+          )}
+        />
       </Card>
     </div>
   );

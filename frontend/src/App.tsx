@@ -21,6 +21,9 @@ import ProfilePage from './pages/ProfilePage';
 import UserProfilePage from './pages/UserProfilePage';
 import HomePage from './pages/HomePage';
 import BrowseHistoryPage from './pages/BrowseHistoryPage';
+import AddressPage from './pages/AddressPage';
+import AccountSecurityPage from './pages/AccountSecurityPage';
+import UserAgreementPage from './pages/UserAgreementPage';
 import AuthRoute from './components/AuthRoute';
 import AppHeader from './components/AppHeader';
 
@@ -122,6 +125,17 @@ function App() {
                   <UserProfilePage />
                 </AuthRoute>
               } />
+              <Route path="/addresses" element={
+                <AuthRoute>
+                  <AddressPage />
+                </AuthRoute>
+              } />
+              <Route path="/account-security" element={
+                <AuthRoute>
+                  <AccountSecurityPage />
+                </AuthRoute>
+              } />
+              <Route path="/agreement" element={<UserAgreementPage />} />
             </Routes>
           </Content>
         </Layout>

@@ -53,6 +53,7 @@ public class SecurityConfig {
                 .antMatchers("/uploads/**").permitAll()
                 .antMatchers("/api/images/avatars/**").permitAll()
                 .antMatchers("/ws/**").permitAll()
+                .antMatchers("/api/addresses/**").authenticated()
                 .anyRequest().authenticated()
             .and()
             .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);

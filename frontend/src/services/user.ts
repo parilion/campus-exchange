@@ -75,3 +75,39 @@ export const clearBrowseHistory = () => {
 export const deleteBrowseHistory = (productId: number) => {
   return request.delete<void>(`/users/browse-history/${productId}`);
 };
+
+// ===== 收货地址 =====
+
+export interface Address {
+  id?: number;
+  userId?: number;
+  name: string;
+  phone: string;
+  province: string;
+  city: string;
+  district: string;
+  detail: string;
+  isDefault?: boolean;
+  createdAt?: string;
+  updatedAt?: string;
+}
+
+export const getAddresses = () => {
+  return request.get<Address[]>('/addresses');
+};
+
+export const addAddress = (data: Address) => {
+  return request.post<Address>('/addresses', data);
+};
+
+export const updateAddress = (id: number, data: Address) => {
+  return request.put<void>(`/addresses/${id}`, data);
+};
+
+export const deleteAddress = (id: number) => {
+  return request.delete<void>(`/addresses/${id}`);
+};
+
+export const setDefaultAddress = (id: number) => {
+  return request.put<void>(`/addresses/${id}/default`, {});
+};
