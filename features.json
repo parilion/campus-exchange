@@ -333,7 +333,7 @@
     "module": "review",
     "description": "交易评价 API/列表/评分计算 + 评价页面 UI",
     "priority": "P2",
-    "passes": false
+    "passes": true
   },
   {
     "id": 43,
