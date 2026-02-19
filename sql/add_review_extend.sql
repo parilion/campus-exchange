@@ -1,8 +1,22 @@
+-- =============================================
 -- 评价功能扩展：回复、标签、举报
--- 添加回复和标签字段到review表
-ALTER TABLE review ADD COLUMN IF NOT EXISTS reply TEXT COMMENT '卖家回复';
-ALTER TABLE review ADD COLUMN IF NOT EXISTS reply_at DATETIME COMMENT '回复时间';
-ALTER TABLE review ADD COLUMN IF NOT EXISTS tags VARCHAR(500) COMMENT '评价标签，JSON格式';
+-- 执行前请确保数据库已创建
+-- =============================================
+
+-- 检查并添加 reply 字段
+-- 注意：MySQL 不支持 ALTER TABLE ADD COLUMN IF NOT EXISTS
+-- 请先检查字段是否存在，如不存在再执行以下语句：
+-- ALTER TABLE review ADD COLUMN reply TEXT COMMENT '卖家回复';
+-- ALTER TABLE review ADD COLUMN reply_at DATETIME COMMENT '回复时间';
+-- ALTER TABLE review ADD COLUMN tags VARCHAR(500) COMMENT '评价标签，JSON格式';
+
+-- 安全的字段添加脚本（兼容MySQL）
+-- 如果字段已存在会报错，请忽略错误或删除字段后重新执行
+
+-- 方式1：逐个添加字段（如遇报错请确认字段是否已存在）
+ALTER TABLE review ADD COLUMN reply TEXT COMMENT '卖家回复';
+ALTER TABLE review ADD COLUMN reply_at DATETIME COMMENT '回复时间';
+ALTER TABLE review ADD COLUMN tags VARCHAR(500) COMMENT '评价标签，JSON格式';
 
 -- 创建评价举报表
 CREATE TABLE IF NOT EXISTS review_report (
