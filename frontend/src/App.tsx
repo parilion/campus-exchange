@@ -25,6 +25,7 @@ import AddressPage from './pages/AddressPage';
 import AccountSecurityPage from './pages/AccountSecurityPage';
 import UserAgreementPage from './pages/UserAgreementPage';
 import SystemMessagesPage from './pages/SystemMessagesPage';
+import MyReviewsPage from './pages/MyReviewsPage';
 import AuthRoute from './components/AuthRoute';
 import AppHeader from './components/AppHeader';
 
@@ -141,6 +142,12 @@ function App() {
                   <SystemMessagesPage />
                 </AuthRoute>
               } />
+              <Route path="/my-reviews" element={
+                <AuthRoute>
+                  <MyReviewsPage />
+                </AuthRoute>
+              } />
+              <Route path="/user/:userId/reviews" element={<MyReviewsPage />} />
               <Route path="/agreement" element={<UserAgreementPage />} />
             </Routes>
           </Content>

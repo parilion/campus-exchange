@@ -55,6 +55,10 @@ public class SecurityConfig {
                 .antMatchers("/ws/**").permitAll()
                 .antMatchers("/api/addresses/**").authenticated()
                 .antMatchers("/api/system-messages/**").authenticated()
+                .antMatchers(HttpMethod.GET, "/api/reviews/user/**/stats").permitAll()
+                .antMatchers(HttpMethod.GET, "/api/reviews/user/**").permitAll()
+                .antMatchers(HttpMethod.GET, "/api/reviews/order/**").permitAll()
+                .antMatchers("/api/reviews/**").authenticated()
                 .anyRequest().authenticated()
             .and()
             .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);

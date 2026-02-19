@@ -1,10 +1,12 @@
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { Card, Descriptions, Tag, Button, Space, Typography, Image, Spin, Modal, message, Timeline, Empty, Form, Input, Alert } from 'antd';
-import { ArrowLeftOutlined, CloseCircleOutlined, CarOutlined, CheckCircleOutlined, PayCircleOutlined, ExclamationCircleOutlined, WarningOutlined } from '@ant-design/icons';
+import { ArrowLeftOutlined, CloseCircleOutlined, CarOutlined, CheckCircleOutlined, PayCircleOutlined, ExclamationCircleOutlined, WarningOutlined, StarOutlined } from '@ant-design/icons';
 import { getOrder, cancelOrder, payOrder, shipOrder, confirmOrder, applyRefund, approveRefund, rejectRefund, applyDispute } from '../services/order';
+import { checkReview } from '../services/review';
 import type { Order } from '../services/order';
 import './OrderDetailPage.css';
+import ReviewForm from './ReviewFormPage';
 
 const { Title, Text } = Typography;
 
@@ -38,6 +40,8 @@ export default function OrderDetailPage() {
   const [order, setOrder] = useState<Order | null>(null);
   const [refundModalVisible, setRefundModalVisible] = useState(false);
   const [disputeModalVisible, setDisputeModalVisible] = useState(false);
+  const [reviewModalVisible, setReviewModalVisible] = useState(false);
+  const [hasReviewed, setHasReviewed] = useState(false);
   const [refundForm] = Form.useForm();
   const [disputeForm] = Form.useForm();
   const [currentUserId] = useState<number | null>(() => {
@@ -59,6 +63,16 @@ export default function OrderDetailPage() {
     try {
       const data = await getOrder(Number(id));
       setOrder(data);
+
+      // 检查是否已评价（仅对已完成订单）
+      if (data.status === 'COMPLETED' && currentUserId) {
+        try {
+          const reviewRes = await checkReview(data.id);
+          setHasReviewed(reviewRes.data);
+        } catch (error) {
+          console.error('检查评价状态失败', error);
+        }
+      }
     } catch (error) {
       console.error('Failed to load order:', error);
       message.error('加载订单失败');
@@ -269,6 +283,24 @@ export default function OrderDetailPage() {
         actions.push(
           <Button key="dispute" danger size="large" icon={<WarningOutlined />} onClick={() => setDisputeModalVisible(true)}>
             发起纠纷
+          </Button>
+        );
+      }
+    }
+
+    // 已完成订单 - 买卖双方都可评价
+    if (order.status === 'COMPLETED' && currentUserId) {
+      if (!hasReviewed) {
+        actions.push(
+          <Button key="review" type="primary" size="large" icon={<StarOutlined />} onClick={() => setReviewModalVisible(true)}>
+            评价
+          </Button>
+        );
+      } else {
+        // 已评价，可以查看评价
+        actions.push(
+          <Button key="viewReview" size="large" icon={<StarOutlined />} onClick={() => navigate(`/user/${order.sellerId === currentUserId ? order.buyerId : order.sellerId}/reviews`)}>
+            查看评价
           </Button>
         );
       }
@@ -497,6 +529,16 @@ export default function OrderDetailPage() {
           </Form.Item>
         </Form>
       </Modal>
+
+      {/* 评价弹窗 */}
+      <ReviewForm
+        orderId={order?.id || 0}
+        visible={reviewModalVisible}
+        onClose={() => setReviewModalVisible(false)}
+        onSuccess={() => {
+          loadOrder();
+        }}
+      />
     </div>
   );
 }
