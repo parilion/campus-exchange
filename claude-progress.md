@@ -1,11 +1,32 @@
 # Campus Exchange - 开发进度
 
 ## 当前状态
-- 开发中模块: 用户中心
-- 当前功能: ID#41 - 收货地址管理 + 卖家信用展示 + 账号安全设置 + 用户协议
-- 进度: 45/190 (23.7%)
+- 开发中模块: 消息系统
+- 当前功能: ID#37 - 商品详情页消息入口 + 系统消息展示
+- 进度: 46/190 (24.2%)
 
 ## 开发日志 (按时间倒序)
+
+### 2026-02-19 15:28:00 | 完成: 收货地址管理 + 卖家信用展示 + 账号安全设置 + 用户协议 (#41)
+- **开始时间**: 2026-02-19 14:50:00
+- **结束时间**: 2026-02-19 15:28:00
+- **Commit**: `feat: add address management, account security, and user agreement pages`
+- **涉及文件**:
+  - sql/add_address.sql
+  - backend/src/main/java/com/campus/exchange/model/Address.java
+  - backend/src/main/java/com/campus/exchange/mapper/AddressMapper.java
+  - backend/src/main/java/com/campus/exchange/service/AddressService.java
+  - backend/src/main/java/com/campus/exchange/service/BrowseHistoryService.java
+  - backend/src/main/java/com/campus/exchange/controller/AddressController.java
+  - backend/src/main/java/com/campus/exchange/config/SecurityConfig.java
+  - frontend/src/pages/AddressPage.tsx
+  - frontend/src/pages/AccountSecurityPage.tsx
+  - frontend/src/pages/UserAgreementPage.tsx
+  - frontend/src/pages/ProfilePage.tsx
+  - frontend/src/pages/UserProfilePage.tsx
+  - frontend/src/services/user.ts
+  - frontend/src/App.tsx
+- **备注**: 地址表+CRUD API + 省份下拉选择地址表单 + 默认地址管理 + 账号安全设置页(密码/实名认证/安全建议) + 用户协议静态页(7章节) + ProfilePage快捷入口 + 卖家信用等级标签(新手/普通/良好/优质/卓越) + 修复BrowseHistoryService的Java8兼容性
 
 ### 2026-02-19 13:32:27 | 完成: 我的收藏列表 + 订单汇总 + 浏览历史 (#40)
 - **开始时间**: 2026-02-19 12:52:57

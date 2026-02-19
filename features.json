@@ -1,73 +1,482 @@
 [
-  {"id": 1, "category": "用户认证", "module": "auth", "description": "用户注册 - 邮箱/手机号注册", "priority": "P0", "passes": true},
-  {"id": 2, "category": "用户认证", "module": "auth", "description": "用户登录 - 账号密码登录", "priority": "P0", "passes": true},
-  {"id": 3, "category": "用户认证", "module": "auth", "description": "JWT Token 生成与验证", "priority": "P0", "passes": true},
-  {"id": 4, "category": "用户认证", "module": "auth", "description": "Token 刷新机制", "priority": "P0", "passes": true},
-  {"id": 5, "category": "用户认证", "module": "auth", "description": "退出登录（Token 失效）", "priority": "P0", "passes": true},
-  {"id": 6, "category": "用户认证", "module": "auth", "description": "密码加密存储 (BCrypt)", "priority": "P0", "passes": true},
-  {"id": 7, "category": "用户认证", "module": "auth", "description": "登录页面 UI", "priority": "P0", "passes": true},
-  {"id": 8, "category": "用户认证", "module": "auth", "description": "注册页面 UI", "priority": "P0", "passes": true},
-  {"id": 9, "category": "用户认证", "module": "auth", "description": "前端 Token 存储与自动携带", "priority": "P0", "passes": true},
-  {"id": 10, "category": "用户认证", "module": "auth", "description": "路由守卫 - 未登录跳转", "priority": "P0", "passes": true},
-  {"id": 11, "category": "用户认证", "module": "auth", "description": "忘记密码 - 邮箱重置", "priority": "P1", "passes": true},
-  {"id": 12, "category": "用户认证", "module": "auth", "description": "修改密码", "priority": "P1", "passes": true},
-  {"id": 13, "category": "用户认证", "module": "auth", "description": "学生身份认证（学号验证）", "priority": "P1", "passes": true},
-  {"id": 14, "category": "用户认证", "module": "auth", "description": "登录日志记录", "priority": "P2", "passes": false},
-  {"id": 15, "category": "用户认证", "module": "auth", "description": "账号封禁/解封", "priority": "P2", "passes": false},
-
-  {"id": 16, "category": "商品管理", "module": "product", "description": "发布商品 API - 基本信息", "priority": "P0", "passes": true},
-  {"id": 17, "category": "商品管理", "module": "product", "description": "发布商品 API - 图片上传", "priority": "P0", "passes": true},
-  {"id": 18, "category": "商品管理", "module": "product", "description": "商品列表 API - 分页查询", "priority": "P0", "passes": true},
-  {"id": 19, "category": "商品管理", "module": "product", "description": "商品详情 API", "priority": "P0", "passes": true},
-  {"id": 20, "category": "商品管理", "module": "product", "description": "编辑商品/删除商品/状态管理/分类体系 API", "priority": "P0", "passes": true},
-  {"id": 21, "category": "商品管理", "module": "product", "description": "发布商品/编辑商品页面 UI + 新旧程度/多图上传", "priority": "P0", "passes": true},
-  {"id": 22, "category": "商品管理", "module": "product", "description": "商品列表/详情页面 UI + 图片预览轮播", "priority": "P0", "passes": true},
-  {"id": 23, "category": "商品管理", "module": "product", "description": "商品置顶推荐/浏览量统计/价格区间/标签/草稿箱", "priority": "P0", "passes": true},
-  {"id": 24, "category": "商品管理", "module": "product", "description": "商品收藏 API + 页面 UI", "priority": "P1", "passes": true},
-  {"id": 25, "category": "商品管理", "module": "product", "description": "我的发布列表页面 + 商品举报功能", "priority": "P0", "passes": true},
-
-  {"id": 26, "category": "搜索与筛选", "module": "search", "description": "关键词搜索/分类/价格区间/状态/排序 API", "priority": "P1", "passes": true},
-  {"id": 27, "category": "搜索与筛选", "module": "search", "description": "高级筛选 + 新旧程度筛选 + 结果高亮/统计", "priority": "P1", "passes": true},
-  {"id": 28, "category": "搜索与筛选", "module": "search", "description": "搜索结果页面 UI + 自动补全/历史记录/热门推荐", "priority": "P1", "passes": true},
-
-  {"id": 29, "category": "交易流程", "module": "order", "description": "下单/购买 + 取消订单 + 确认收货 + 发货 API", "priority": "P0", "passes": true},
-  {"id": 30, "category": "交易流程", "module": "order", "description": "订单状态流转 + 订单编号生成 + 自动取消", "priority": "P0", "passes": true},
-  {"id": 31, "category": "交易流程", "module": "order", "description": "订单列表/详情 API + 买家/卖家订单页面 UI", "priority": "P0", "passes": true},
-  {"id": 32, "category": "交易流程", "module": "order", "description": "线下交易/交易方式/议价/交易安全提示", "priority": "P1", "passes": true},
-  {"id": 33, "category": "交易流程", "module": "order", "description": "订单状态通知/统计/退款/纠纷申诉", "priority": "P1", "passes": true},
-
-  {"id": 34, "category": "消息系统", "module": "message", "description": "私信发送/接收/列表 API + 会话列表页面 UI", "priority": "P1", "passes": true},
-  {"id": 35, "category": "消息系统", "module": "message", "description": "聊天详情页面 UI + 未读计数/已读标记/商品卡片消息", "priority": "P1", "passes": true},
-  {"id": 36, "category": "消息系统", "module": "message", "description": "WebSocket 实时消息 + 消息通知提醒/快捷回复/聊天记录搜索/屏蔽用户", "priority": "P1", "passes": true},
-  {"id": 37, "category": "消息系统", "module": "message", "description": "从商品详情页发起聊天 + 系统消息展示", "priority": "P1", "passes": false},
-
-  {"id": 38, "category": "用户中心", "module": "user", "description": "个人资料查看/编辑/头像上传 + 资料编辑页面 UI", "priority": "P1", "passes": true},
-  {"id": 39, "category": "用户中心", "module": "user", "description": "个人主页 UI + 用户公开主页/实名认证展示/统计数据", "priority": "P1", "passes": true},
-  {"id": 40, "category": "用户中心", "module": "user", "description": "我的收藏列表 + 订单汇总 + 浏览历史", "priority": "P1", "passes": true},
-  {"id": 41, "category": "用户中心", "module": "user", "description": "收货地址管理 + 卖家信用展示 + 账号安全设置 + 用户协议", "priority": "P1", "passes": false},
-
-  {"id": 42, "category": "评价系统", "module": "review", "description": "交易评价 API/列表/评分计算 + 评价页面 UI", "priority": "P2", "passes": false},
-  {"id": 43, "category": "评价系统", "module": "review", "description": "评价回复/图片上传/标签/匿名评价/举报/提醒功能", "priority": "P2", "passes": false},
-
-  {"id": 44, "category": "管理后台", "module": "admin", "description": "管理员登录 + 权限控制 + 布局 UI", "priority": "P2", "passes": false},
-  {"id": 45, "category": "管理后台", "module": "admin", "description": "用户管理列表 + 封禁/解封操作", "priority": "P2", "passes": false},
-  {"id": 46, "category": "管理后台", "module": "admin", "description": "商品审核列表/操作 + 强制下架 + 举报处理", "priority": "P2", "passes": false},
-  {"id": 47, "category": "管理后台", "module": "admin", "description": "分类管理 CRUD + 公告管理 + 轮播图管理", "priority": "P2", "passes": false},
-  {"id": 48, "category": "管理后台", "module": "admin", "description": "订单管理 + 评价管理 + 消息推送 + 数据导出", "priority": "P2", "passes": false},
-  {"id": 49, "category": "管理后台", "module": "admin", "description": "数据统计面板 + 系统配置/敏感词/操作日志管理", "priority": "P2", "passes": false},
-
-  {"id": 50, "category": "通知系统", "module": "notification", "description": "站内通知 API/列表/已读未读/类型分类/角标/全部已读", "priority": "P2", "passes": false},
-  {"id": 51, "category": "通知系统", "module": "notification", "description": "邮件通知 + 偏好设置 + 商品降价/系统公告通知", "priority": "P2", "passes": false},
-
-  {"id": 52, "category": "UI/UX", "module": "ui", "description": "首页布局/推荐展示/分类导航/搜索框 + 全局导航栏组件", "priority": "P1", "passes": true},
-  {"id": 53, "category": "UI/UX", "module": "ui", "description": "商品卡片/价格显示/用户头像/标签/轮播图组件", "priority": "P1", "passes": false},
-  {"id": 54, "category": "UI/UX", "module": "ui", "description": "骨架屏/空状态/错误页面/Toast/确认弹窗/图片懒加载", "priority": "P1", "passes": false},
-  {"id": 55, "category": "UI/UX", "module": "ui", "description": "下拉刷新/上拉加载 + 底部信息栏 + 响应式布局 + 暗色模式", "priority": "P1", "passes": false},
-
-  {"id": 56, "category": "安全与性能", "module": "security", "description": "Spring Security + CORS + XSS/SQL注入防护 + 文件上传安全", "priority": "P0", "passes": true},
-  {"id": 57, "category": "安全与性能", "module": "security", "description": "接口限流 + 敏感数据脱敏 + Redis缓存集成", "priority": "P1", "passes": false},
-  {"id": 58, "category": "安全与性能", "module": "security", "description": "请求日志 + Axios拦截器 + 前端路由懒加载", "priority": "P1", "passes": false},
-
-  {"id": 59, "category": "部署与运维", "module": "deploy", "description": "Docker Compose + Dockerfile + Nginx配置 + CI/CD", "priority": "P2", "passes": false},
-  {"id": 60, "category": "部署与运维", "module": "deploy", "description": "环境变量/多环境配置 + 数据库初始化 + 健康检查 + 日志配置", "priority": "P1", "passes": false}
+  {
+    "id": 1,
+    "category": "用户认证",
+    "module": "auth",
+    "description": "用户注册 - 邮箱/手机号注册",
+    "priority": "P0",
+    "passes": true
+  },
+  {
+    "id": 2,
+    "category": "用户认证",
+    "module": "auth",
+    "description": "用户登录 - 账号密码登录",
+    "priority": "P0",
+    "passes": true
+  },
+  {
+    "id": 3,
+    "category": "用户认证",
+    "module": "auth",
+    "description": "JWT Token 生成与验证",
+    "priority": "P0",
+    "passes": true
+  },
+  {
+    "id": 4,
+    "category": "用户认证",
+    "module": "auth",
+    "description": "Token 刷新机制",
+    "priority": "P0",
+    "passes": true
+  },
+  {
+    "id": 5,
+    "category": "用户认证",
+    "module": "auth",
+    "description": "退出登录（Token 失效）",
+    "priority": "P0",
+    "passes": true
+  },
+  {
+    "id": 6,
+    "category": "用户认证",
+    "module": "auth",
+    "description": "密码加密存储 (BCrypt)",
+    "priority": "P0",
+    "passes": true
+  },
+  {
+    "id": 7,
+    "category": "用户认证",
+    "module": "auth",
+    "description": "登录页面 UI",
+    "priority": "P0",
+    "passes": true
+  },
+  {
+    "id": 8,
+    "category": "用户认证",
+    "module": "auth",
+    "description": "注册页面 UI",
+    "priority": "P0",
+    "passes": true
+  },
+  {
+    "id": 9,
+    "category": "用户认证",
+    "module": "auth",
+    "description": "前端 Token 存储与自动携带",
+    "priority": "P0",
+    "passes": true
+  },
+  {
+    "id": 10,
+    "category": "用户认证",
+    "module": "auth",
+    "description": "路由守卫 - 未登录跳转",
+    "priority": "P0",
+    "passes": true
+  },
+  {
+    "id": 11,
+    "category": "用户认证",
+    "module": "auth",
+    "description": "忘记密码 - 邮箱重置",
+    "priority": "P1",
+    "passes": true
+  },
+  {
+    "id": 12,
+    "category": "用户认证",
+    "module": "auth",
+    "description": "修改密码",
+    "priority": "P1",
+    "passes": true
+  },
+  {
+    "id": 13,
+    "category": "用户认证",
+    "module": "auth",
+    "description": "学生身份认证（学号验证）",
+    "priority": "P1",
+    "passes": true
+  },
+  {
+    "id": 14,
+    "category": "用户认证",
+    "module": "auth",
+    "description": "登录日志记录",
+    "priority": "P2",
+    "passes": false
+  },
+  {
+    "id": 15,
+    "category": "用户认证",
+    "module": "auth",
+    "description": "账号封禁/解封",
+    "priority": "P2",
+    "passes": false
+  },
+  {
+    "id": 16,
+    "category": "商品管理",
+    "module": "product",
+    "description": "发布商品 API - 基本信息",
+    "priority": "P0",
+    "passes": true
+  },
+  {
+    "id": 17,
+    "category": "商品管理",
+    "module": "product",
+    "description": "发布商品 API - 图片上传",
+    "priority": "P0",
+    "passes": true
+  },
+  {
+    "id": 18,
+    "category": "商品管理",
+    "module": "product",
+    "description": "商品列表 API - 分页查询",
+    "priority": "P0",
+    "passes": true
+  },
+  {
+    "id": 19,
+    "category": "商品管理",
+    "module": "product",
+    "description": "商品详情 API",
+    "priority": "P0",
+    "passes": true
+  },
+  {
+    "id": 20,
+    "category": "商品管理",
+    "module": "product",
+    "description": "编辑商品/删除商品/状态管理/分类体系 API",
+    "priority": "P0",
+    "passes": true
+  },
+  {
+    "id": 21,
+    "category": "商品管理",
+    "module": "product",
+    "description": "发布商品/编辑商品页面 UI + 新旧程度/多图上传",
+    "priority": "P0",
+    "passes": true
+  },
+  {
+    "id": 22,
+    "category": "商品管理",
+    "module": "product",
+    "description": "商品列表/详情页面 UI + 图片预览轮播",
+    "priority": "P0",
+    "passes": true
+  },
+  {
+    "id": 23,
+    "category": "商品管理",
+    "module": "product",
+    "description": "商品置顶推荐/浏览量统计/价格区间/标签/草稿箱",
+    "priority": "P0",
+    "passes": true
+  },
+  {
+    "id": 24,
+    "category": "商品管理",
+    "module": "product",
+    "description": "商品收藏 API + 页面 UI",
+    "priority": "P1",
+    "passes": true
+  },
+  {
+    "id": 25,
+    "category": "商品管理",
+    "module": "product",
+    "description": "我的发布列表页面 + 商品举报功能",
+    "priority": "P0",
+    "passes": true
+  },
+  {
+    "id": 26,
+    "category": "搜索与筛选",
+    "module": "search",
+    "description": "关键词搜索/分类/价格区间/状态/排序 API",
+    "priority": "P1",
+    "passes": true
+  },
+  {
+    "id": 27,
+    "category": "搜索与筛选",
+    "module": "search",
+    "description": "高级筛选 + 新旧程度筛选 + 结果高亮/统计",
+    "priority": "P1",
+    "passes": true
+  },
+  {
+    "id": 28,
+    "category": "搜索与筛选",
+    "module": "search",
+    "description": "搜索结果页面 UI + 自动补全/历史记录/热门推荐",
+    "priority": "P1",
+    "passes": true
+  },
+  {
+    "id": 29,
+    "category": "交易流程",
+    "module": "order",
+    "description": "下单/购买 + 取消订单 + 确认收货 + 发货 API",
+    "priority": "P0",
+    "passes": true
+  },
+  {
+    "id": 30,
+    "category": "交易流程",
+    "module": "order",
+    "description": "订单状态流转 + 订单编号生成 + 自动取消",
+    "priority": "P0",
+    "passes": true
+  },
+  {
+    "id": 31,
+    "category": "交易流程",
+    "module": "order",
+    "description": "订单列表/详情 API + 买家/卖家订单页面 UI",
+    "priority": "P0",
+    "passes": true
+  },
+  {
+    "id": 32,
+    "category": "交易流程",
+    "module": "order",
+    "description": "线下交易/交易方式/议价/交易安全提示",
+    "priority": "P1",
+    "passes": true
+  },
+  {
+    "id": 33,
+    "category": "交易流程",
+    "module": "order",
+    "description": "订单状态通知/统计/退款/纠纷申诉",
+    "priority": "P1",
+    "passes": true
+  },
+  {
+    "id": 34,
+    "category": "消息系统",
+    "module": "message",
+    "description": "私信发送/接收/列表 API + 会话列表页面 UI",
+    "priority": "P1",
+    "passes": true
+  },
+  {
+    "id": 35,
+    "category": "消息系统",
+    "module": "message",
+    "description": "聊天详情页面 UI + 未读计数/已读标记/商品卡片消息",
+    "priority": "P1",
+    "passes": true
+  },
+  {
+    "id": 36,
+    "category": "消息系统",
+    "module": "message",
+    "description": "WebSocket 实时消息 + 消息通知提醒/快捷回复/聊天记录搜索/屏蔽用户",
+    "priority": "P1",
+    "passes": true
+  },
+  {
+    "id": 37,
+    "category": "消息系统",
+    "module": "message",
+    "description": "从商品详情页发起聊天 + 系统消息展示",
+    "priority": "P1",
+    "passes": false
+  },
+  {
+    "id": 38,
+    "category": "用户中心",
+    "module": "user",
+    "description": "个人资料查看/编辑/头像上传 + 资料编辑页面 UI",
+    "priority": "P1",
+    "passes": true
+  },
+  {
+    "id": 39,
+    "category": "用户中心",
+    "module": "user",
+    "description": "个人主页 UI + 用户公开主页/实名认证展示/统计数据",
+    "priority": "P1",
+    "passes": true
+  },
+  {
+    "id": 40,
+    "category": "用户中心",
+    "module": "user",
+    "description": "我的收藏列表 + 订单汇总 + 浏览历史",
+    "priority": "P1",
+    "passes": true
+  },
+  {
+    "id": 41,
+    "category": "用户中心",
+    "module": "user",
+    "description": "收货地址管理 + 卖家信用展示 + 账号安全设置 + 用户协议",
+    "priority": "P1",
+    "passes": true
+  },
+  {
+    "id": 42,
+    "category": "评价系统",
+    "module": "review",
+    "description": "交易评价 API/列表/评分计算 + 评价页面 UI",
+    "priority": "P2",
+    "passes": false
+  },
+  {
+    "id": 43,
+    "category": "评价系统",
+    "module": "review",
+    "description": "评价回复/图片上传/标签/匿名评价/举报/提醒功能",
+    "priority": "P2",
+    "passes": false
+  },
+  {
+    "id": 44,
+    "category": "管理后台",
+    "module": "admin",
+    "description": "管理员登录 + 权限控制 + 布局 UI",
+    "priority": "P2",
+    "passes": false
+  },
+  {
+    "id": 45,
+    "category": "管理后台",
+    "module": "admin",
+    "description": "用户管理列表 + 封禁/解封操作",
+    "priority": "P2",
+    "passes": false
+  },
+  {
+    "id": 46,
+    "category": "管理后台",
+    "module": "admin",
+    "description": "商品审核列表/操作 + 强制下架 + 举报处理",
+    "priority": "P2",
+    "passes": false
+  },
+  {
+    "id": 47,
+    "category": "管理后台",
+    "module": "admin",
+    "description": "分类管理 CRUD + 公告管理 + 轮播图管理",
+    "priority": "P2",
+    "passes": false
+  },
+  {
+    "id": 48,
+    "category": "管理后台",
+    "module": "admin",
+    "description": "订单管理 + 评价管理 + 消息推送 + 数据导出",
+    "priority": "P2",
+    "passes": false
+  },
+  {
+    "id": 49,
+    "category": "管理后台",
+    "module": "admin",
+    "description": "数据统计面板 + 系统配置/敏感词/操作日志管理",
+    "priority": "P2",
+    "passes": false
+  },
+  {
+    "id": 50,
+    "category": "通知系统",
+    "module": "notification",
+    "description": "站内通知 API/列表/已读未读/类型分类/角标/全部已读",
+    "priority": "P2",
+    "passes": false
+  },
+  {
+    "id": 51,
+    "category": "通知系统",
+    "module": "notification",
+    "description": "邮件通知 + 偏好设置 + 商品降价/系统公告通知",
+    "priority": "P2",
+    "passes": false
+  },
+  {
+    "id": 52,
+    "category": "UI/UX",
+    "module": "ui",
+    "description": "首页布局/推荐展示/分类导航/搜索框 + 全局导航栏组件",
+    "priority": "P1",
+    "passes": true
+  },
+  {
+    "id": 53,
+    "category": "UI/UX",
+    "module": "ui",
+    "description": "商品卡片/价格显示/用户头像/标签/轮播图组件",
+    "priority": "P1",
+    "passes": false
+  },
+  {
+    "id": 54,
+    "category": "UI/UX",
+    "module": "ui",
+    "description": "骨架屏/空状态/错误页面/Toast/确认弹窗/图片懒加载",
+    "priority": "P1",
+    "passes": false
+  },
+  {
+    "id": 55,
+    "category": "UI/UX",
+    "module": "ui",
+    "description": "下拉刷新/上拉加载 + 底部信息栏 + 响应式布局 + 暗色模式",
+    "priority": "P1",
+    "passes": false
+  },
+  {
+    "id": 56,
+    "category": "安全与性能",
+    "module": "security",
+    "description": "Spring Security + CORS + XSS/SQL注入防护 + 文件上传安全",
+    "priority": "P0",
+    "passes": true
+  },
+  {
+    "id": 57,
+    "category": "安全与性能",
+    "module": "security",
+    "description": "接口限流 + 敏感数据脱敏 + Redis缓存集成",
+    "priority": "P1",
+    "passes": false
+  },
+  {
+    "id": 58,
+    "category": "安全与性能",
+    "module": "security",
+    "description": "请求日志 + Axios拦截器 + 前端路由懒加载",
+    "priority": "P1",
+    "passes": false
+  },
+  {
+    "id": 59,
+    "category": "部署与运维",
+    "module": "deploy",
+    "description": "Docker Compose + Dockerfile + Nginx配置 + CI/CD",
+    "priority": "P2",
+    "passes": false
+  },
+  {
+    "id": 60,
+    "category": "部署与运维",
+    "module": "deploy",
+    "description": "环境变量/多环境配置 + 数据库初始化 + 健康检查 + 日志配置",
+    "priority": "P1",
+    "passes": false
+  }
 ]
