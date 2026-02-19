@@ -293,7 +293,7 @@
     "module": "message",
     "description": "从商品详情页发起聊天 + 系统消息展示",
     "priority": "P1",
-    "passes": false
+    "passes": true
   },
   {
     "id": 38,
