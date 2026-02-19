@@ -32,6 +32,12 @@ public class ReviewVO {
 
     private Integer anonymous;
 
+    private String reply;
+
+    private LocalDateTime replyAt;
+
+    private List<String> tags;
+
     private LocalDateTime createdAt;
 
     private String productTitle;
@@ -134,6 +140,30 @@ public class ReviewVO {
 
     public void setAnonymous(Integer anonymous) {
         this.anonymous = anonymous;
+    }
+
+    public String getReply() {
+        return reply;
+    }
+
+    public void setReply(String reply) {
+        this.reply = reply;
+    }
+
+    public LocalDateTime getReplyAt() {
+        return replyAt;
+    }
+
+    public void setReplyAt(LocalDateTime replyAt) {
+        this.replyAt = replyAt;
+    }
+
+    public List<String> getTags() {
+        return tags;
+    }
+
+    public void setTags(List<String> tags) {
+        this.tags = tags;
     }
 
     public LocalDateTime getCreatedAt() {

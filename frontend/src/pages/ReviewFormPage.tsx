@@ -1,11 +1,14 @@
 import React, { useState, useEffect } from 'react';
-import { Modal, Form, Rate, Input, Upload, Button, message, Card } from 'antd';
+import { Modal, Form, Rate, Input, Upload, Button, message, Card, Tag, Space } from 'antd';
 import { UploadOutlined } from '@ant-design/icons';
 import { createReview, checkReview } from '../services/review';
 import type { CreateReviewRequest } from '../services/review';
 import { uploadImage } from '../services/image';
 
 const { TextArea } = Input;
+
+// 预设评价标签
+const REVIEW_TAGS = ['货真价实', '物美价廉', '发货快', '包装好', '态度好', '性价比高', '推荐购买', '不符合描述'];
 
 interface ReviewFormProps {
   orderId: number;
@@ -19,6 +22,7 @@ const ReviewForm: React.FC<ReviewFormProps> = ({ orderId, visible, onClose, onSu
   const [loading, setLoading] = useState(false);
   const [hasReviewed, setHasReviewed] = useState(false);
   const [imageList, setImageList] = useState<any[]>([]);
+  const [selectedTags, setSelectedTags] = useState<string[]>([]);
 
   useEffect(() => {
     if (visible && orderId) {
@@ -60,12 +64,14 @@ const ReviewForm: React.FC<ReviewFormProps> = ({ orderId, visible, onClose, onSu
         content: values.content,
         images: imageUrls.length > 0 ? imageUrls : undefined,
         anonymous: values.anonymous ? 1 : 0,
+        tags: selectedTags.length > 0 ? selectedTags : undefined,
       };
 
       await createReview(request);
       message.success('评价成功');
       form.resetFields();
       setImageList([]);
+      setSelectedTags([]);
       onSuccess();
       onClose();
     } catch (error: any) {
@@ -160,6 +166,32 @@ const ReviewForm: React.FC<ReviewFormProps> = ({ orderId, visible, onClose, onSu
               <input type="checkbox" style={{ marginRight: 8 }} />
               匿名评价
             </span>
+          </Form.Item>
+
+          <Form.Item label="评价标签">
+            <Space wrap>
+              {REVIEW_TAGS.map((tag) => (
+                <Tag
+                  key={tag}
+                  color={selectedTags.includes(tag) ? 'blue' : 'default'}
+                  style={{ cursor: 'pointer' }}
+                  onClick={() => {
+                    if (selectedTags.includes(tag)) {
+                      setSelectedTags(selectedTags.filter((t) => t !== tag));
+                    } else if (selectedTags.length < 4) {
+                      setSelectedTags([...selectedTags, tag]);
+                    } else {
+                      message.warning('最多选择4个标签');
+                    }
+                  }}
+                >
+                  {tag}
+                </Tag>
+              ))}
+            </Space>
+            <div style={{ color: '#999', fontSize: 12, marginTop: 4 }}>
+              选择1-4个标签（可选）
+            </div>
           </Form.Item>
 
           <Form.Item>

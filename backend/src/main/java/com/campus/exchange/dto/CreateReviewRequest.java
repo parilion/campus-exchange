@@ -24,6 +24,8 @@ public class CreateReviewRequest {
 
     private Integer anonymous;
 
+    private List<String> tags;
+
     public Long getOrderId() {
         return orderId;
     }
@@ -62,5 +64,13 @@ public class CreateReviewRequest {
 
     public void setAnonymous(Integer anonymous) {
         this.anonymous = anonymous;
+    }
+
+    public List<String> getTags() {
+        return tags;
+    }
+
+    public void setTags(List<String> tags) {
+        this.tags = tags;
     }
 }

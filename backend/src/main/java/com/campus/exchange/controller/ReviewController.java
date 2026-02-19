@@ -2,7 +2,10 @@ package com.campus.exchange.controller;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.campus.exchange.util.Result;
+import com.campus.exchange.dto.CreateReviewReportRequest;
 import com.campus.exchange.dto.CreateReviewRequest;
+import com.campus.exchange.dto.ReplyReviewRequest;
+import com.campus.exchange.dto.ReviewReportVO;
 import com.campus.exchange.dto.ReviewVO;
 import com.campus.exchange.service.ReviewService;
 import org.springframework.security.core.Authentication;
@@ -75,6 +78,28 @@ public class ReviewController {
         Long userId = getCurrentUserId();
         boolean hasReviewed = reviewService.hasReviewed(userId, orderId);
         return Result.success(hasReviewed);
+    }
+
+    /**
+     * 评价回复
+     */
+    @PostMapping("/reply")
+    public Result<ReviewVO> replyReview(
+            @Validated @RequestBody ReplyReviewRequest request) {
+        Long userId = getCurrentUserId();
+        ReviewVO review = reviewService.replyReview(userId, request);
+        return Result.success(review);
+    }
+
+    /**
+     * 举报评价
+     */
+    @PostMapping("/report")
+    public Result<ReviewReportVO> reportReview(
+            @Validated @RequestBody CreateReviewReportRequest request) {
+        Long userId = getCurrentUserId();
+        ReviewReportVO report = reviewService.reportReview(userId, request);
+        return Result.success(report);
     }
 
     private Long getCurrentUserId() {

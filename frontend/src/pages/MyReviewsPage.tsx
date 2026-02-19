@@ -1,11 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { Card, List, Avatar, Rate, Spin, Empty, Pagination, message, Typography, Tooltip } from 'antd';
-import { getUserReviews, getUserReviewStats } from '../services/review';
+import { Card, List, Avatar, Rate, Spin, Empty, Pagination, message, Typography, Tooltip, Button, Modal, Input, Tag, Space } from 'antd';
+import { getUserReviews, getUserReviewStats, replyReview, reportReview } from '../services/review';
 import type { Review, ReviewStats } from '../services/review';
 import { getProfile } from '../services/user';
 
-const { Text } = Typography;
+const { Text, TextArea } = Typography;
+const { confirm } = Modal;
 
 const MyReviewsPage: React.FC = () => {
   const { userId } = useParams<{ userId?: string }>();
@@ -16,6 +17,12 @@ const MyReviewsPage: React.FC = () => {
   const [currentUserId, setCurrentUserId] = useState<number | null>(null);
   const [current, setCurrent] = useState(1);
   const [total, setTotal] = useState(0);
+  const [replyModalVisible, setReplyModalVisible] = useState(false);
+  const [reportModalVisible, setReportModalVisible] = useState(false);
+  const [selectedReview, setSelectedReview] = useState<Review | null>(null);
+  const [replyContent, setReplyContent] = useState('');
+  const [reportReason, setReportReason] = useState('');
+  const [submitting, setSubmitting] = useState(false);
 
   useEffect(() => {
     const fetchUserInfo = async () => {
@@ -111,10 +118,88 @@ const MyReviewsPage: React.FC = () => {
     );
   };
 
+  const handleReply = (review: Review) => {
+    setSelectedReview(review);
+    setReplyContent(review.reply || '');
+    setReplyModalVisible(true);
+  };
+
+  const handleReport = (review: Review) => {
+    setSelectedReview(review);
+    setReportReason('');
+    setReportModalVisible(true);
+  };
+
+  const submitReply = async () => {
+    if (!selectedReview || !replyContent.trim()) {
+      message.error('回复内容不能为空');
+      return;
+    }
+    setSubmitting(true);
+    try {
+      await replyReview({
+        reviewId: selectedReview.id,
+        reply: replyContent,
+      });
+      message.success('回复成功');
+      setReplyModalVisible(false);
+      // 刷新评价列表
+      if (userId) {
+        loadReviews(parseInt(userId), current);
+      } else if (currentUserId) {
+        loadReviews(currentUserId, current);
+      }
+    } catch (error: any) {
+      message.error(error.response?.data?.message || '回复失败');
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
+  const submitReport = async () => {
+    if (!selectedReview || !reportReason.trim()) {
+      message.error('举报原因不能为空');
+      return;
+    }
+    setSubmitting(true);
+    try {
+      await reportReview({
+        reviewId: selectedReview.id,
+        reason: reportReason,
+      });
+      message.success('举报成功，等待管理员处理');
+      setReportModalVisible(false);
+    } catch (error: any) {
+      message.error(error.response?.data?.message || '举报失败');
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
   const renderReviewItem = (review: Review) => (
     <List.Item
       key={review.id}
       style={{ padding: '12px 0' }}
+      actions={[
+        <Button
+          key="reply"
+          type="link"
+          size="small"
+          onClick={() => handleReply(review)}
+          disabled={review.reply != null && review.reply !== ''}
+        >
+          {review.reply ? '已回复' : '回复'}
+        </Button>,
+        <Button
+          key="report"
+          type="link"
+          size="small"
+          danger
+          onClick={() => handleReport(review)}
+        >
+          举报
+        </Button>,
+      ]}
     >
       <div style={{ width: '100%' }}>
         <div style={{ display: 'flex', alignItems: 'center', marginBottom: 8 }}>
@@ -146,6 +231,32 @@ const MyReviewsPage: React.FC = () => {
             ))}
           </div>
         )}
+        {review.tags && review.tags.length > 0 && (
+          <div style={{ marginBottom: 8 }}>
+            <Space>
+              {review.tags.map((tag, idx) => (
+                <Tag key={idx} color="blue">{tag}</Tag>
+              ))}
+            </Space>
+          </div>
+        )}
+        {review.reply && (
+          <div style={{
+            marginBottom: 8,
+            padding: '8px 12px',
+            background: '#f5f5f5',
+            borderRadius: 4,
+            borderLeft: '3px solid #1890ff'
+          }}>
+            <div style={{ fontSize: 12, color: '#666', marginBottom: 4 }}>卖家回复:</div>
+            <div>{review.reply}</div>
+            {review.replyAt && (
+              <div style={{ fontSize: 12, color: '#999', marginTop: 4 }}>
+                {new Date(review.replyAt).toLocaleDateString('zh-CN')}
+              </div>
+            )}
+          </div>
+        )}
         <div style={{ fontSize: 12, color: '#999' }}>
           评价商品: {review.productTitle}
         </div>
@@ -162,6 +273,42 @@ const MyReviewsPage: React.FC = () => {
       {renderRatingDist()}
 
       <Card>
+        <Modal
+          title="回复评价"
+          open={replyModalVisible}
+          onOk={submitReply}
+          onCancel={() => setReplyModalVisible(false)}
+          confirmLoading={submitting}
+          okText="提交回复"
+          cancelText="取消"
+        >
+          <TextArea
+            rows={4}
+            value={replyContent}
+            onChange={(e) => setReplyContent(e.target.value)}
+            placeholder="请输入回复内容"
+            maxLength={500}
+            showCount
+          />
+        </Modal>
+        <Modal
+          title="举报评价"
+          open={reportModalVisible}
+          onOk={submitReport}
+          onCancel={() => setReportModalVisible(false)}
+          confirmLoading={submitting}
+          okText="提交举报"
+          cancelText="取消"
+        >
+          <TextArea
+            rows={4}
+            value={reportReason}
+            onChange={(e) => setReportReason(e.target.value)}
+            placeholder="请输入举报原因"
+            maxLength={500}
+            showCount
+          />
+        </Modal>
         {loading ? (
           <div style={{ textAlign: 'center', padding: 40 }}>
             <Spin />

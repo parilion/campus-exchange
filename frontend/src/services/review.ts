@@ -13,6 +13,9 @@ export interface Review {
   content: string;
   images: string[];
   anonymous: number;
+  reply: string | null;
+  replyAt: string | null;
+  tags: string[];
   createdAt: string;
   productTitle: string;
   productImage: string;
@@ -24,6 +27,17 @@ export interface CreateReviewRequest {
   content?: string;
   images?: string[];
   anonymous?: number;
+  tags?: string[];
+}
+
+export interface ReplyReviewRequest {
+  reviewId: number;
+  reply: string;
+}
+
+export interface CreateReviewReportRequest {
+  reviewId: number;
+  reason: string;
 }
 
 export interface ReviewStats {
@@ -84,5 +98,23 @@ export function checkReview(orderId: number) {
   return request({
     url: `/reviews/order/${orderId}/check`,
     method: 'GET',
+  });
+}
+
+// 评价回复
+export function replyReview(data: ReplyReviewRequest) {
+  return request({
+    url: '/reviews/reply',
+    method: 'POST',
+    data,
+  });
+}
+
+// 举报评价
+export function reportReview(data: CreateReviewReportRequest) {
+  return request({
+    url: '/reviews/report',
+    method: 'POST',
+    data,
   });
 }
