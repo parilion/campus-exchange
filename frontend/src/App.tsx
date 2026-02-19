@@ -8,6 +8,7 @@ import AdminLoginPage from './pages/AdminLoginPage';
 import AdminLayout from './pages/AdminLayout';
 import AdminDashboardPage from './pages/AdminDashboardPage';
 import AdminUsersPage from './pages/AdminUsersPage';
+import AdminProductsPage from './pages/AdminProductsPage';
 import PublishPage from './pages/PublishPage';
 import EditProductPage from './pages/EditProductPage';
 import ProductListPage from './pages/ProductListPage';
@@ -164,10 +165,15 @@ function App() {
                   <AdminUsersPage />
                 </AdminLayout>
               } />
+              <Route path="/admin/products" element={
+                <AdminLayout>
+                  <AdminProductsPage />
+                </AdminLayout>
+              } />
               <Route path="/admin" element={<Navigate to="/admin/dashboard" replace />} />
               <Route path="/admin/*" element={
                 <AdminLayout>
-                  <AdminUsersPage />
+                  <AdminDashboardPage />
                 </AdminLayout>
               } />
             </Routes>

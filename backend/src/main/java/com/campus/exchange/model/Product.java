@@ -57,6 +57,15 @@ public class Product {
     /** 是否草稿：0-已发布，1-草稿 */
     private Boolean isDraft;
 
+    /** 审核状态：PENDING-待审核, APPROVED-已通过, REJECTED-已拒绝 */
+    private String auditStatus;
+
+    /** 审核拒绝原因 */
+    private String rejectReason;
+
+    /** 强制下架原因 */
+    private String forceOfflineReason;
+
     @TableLogic
     private Integer deleted;
 
