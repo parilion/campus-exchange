@@ -7,6 +7,7 @@ import ForgotPasswordPage from './pages/ForgotPasswordPage';
 import AdminLoginPage from './pages/AdminLoginPage';
 import AdminLayout from './pages/AdminLayout';
 import AdminDashboardPage from './pages/AdminDashboardPage';
+import AdminUsersPage from './pages/AdminUsersPage';
 import PublishPage from './pages/PublishPage';
 import EditProductPage from './pages/EditProductPage';
 import ProductListPage from './pages/ProductListPage';
@@ -158,10 +159,15 @@ function App() {
                   <AdminDashboardPage />
                 </AdminLayout>
               } />
+              <Route path="/admin/users" element={
+                <AdminLayout>
+                  <AdminUsersPage />
+                </AdminLayout>
+              } />
               <Route path="/admin" element={<Navigate to="/admin/dashboard" replace />} />
               <Route path="/admin/*" element={
                 <AdminLayout>
-                  <AdminDashboardPage />
+                  <AdminUsersPage />
                 </AdminLayout>
               } />
             </Routes>

@@ -2,10 +2,23 @@
 
 ## 当前状态
 - 开发中模块: 管理后台
-- 当前功能: ID#45 - 用户管理列表 + 封禁/解封操作
-- 进度: 50/190 (26.3%)
+- 当前功能: ID#46 - 商品审核列表/操作 + 强制下架 + 举报处理
+- 进度: 51/190 (26.8%)
 
 ## 开发日志 (按时间倒序)
+
+### 2026-02-20 00:46:40 | 完成: 用户管理列表 + 封禁/解封操作 (#45)
+- **开始时间**: 2026-02-20 00:40:16
+- **结束时间**: 2026-02-20 00:46:40
+- **Commit**: `feat: add admin user management API and UI pages`
+- **涉及文件**:
+  - backend/src/main/java/com/campus/exchange/controller/AdminController.java
+  - backend/src/main/java/com/campus/exchange/dto/UserPageRequest.java
+  - backend/src/main/java/com/campus/exchange/config/SecurityConfig.java
+  - frontend/src/services/admin.ts
+  - frontend/src/pages/AdminUsersPage.tsx
+  - frontend/src/App.tsx
+- **备注**: 管理员用户管理API(列表/详情/封禁/解封/删除/设置管理员) + 用户管理页面(统计卡片/搜索筛选/表格操作) + PreAuthorize权限控制
 
 ### 2026-02-20 00:15:33 | 完成: 管理员登录 + 权限控制 + 布局 UI (#44)
 - **开始时间**: 2026-02-20 00:09:41
@@ -671,6 +684,7 @@
 
 ### 管理后台 (P2)
 - [x] #44 管理员登录 + 权限控制 + 布局 UI (2026-02-20)
+- [x] #45 用户管理列表 + 封禁/解封操作 (2026-02-20)
 
 ### 用户中心 (P1)
 - [x] #38 个人资料查看/编辑/头像上传 + 资料编辑页面 UI (2026-02-19)

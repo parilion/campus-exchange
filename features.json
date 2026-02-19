@@ -357,7 +357,7 @@
     "module": "admin",
     "description": "用户管理列表 + 封禁/解封操作",
     "priority": "P2",
-    "passes": false
+    "passes": true
   },
   {
     "id": 46,
