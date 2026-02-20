@@ -48,3 +48,20 @@ logging:
   level:
     com.campus.exchange: debug
     com.baomidou.mybatisplus: debug
+
+# 邮件配置
+spring:
+  mail:
+    host: smtp.qq.com
+    port: 587
+    username: your-email@qq.com
+    password: your-auth-code
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+          connectiontimeout: 5000
+          timeout: 3000
+          writetimeout: 5000
