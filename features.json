@@ -117,7 +117,7 @@
     "module": "auth",
     "description": "账号封禁/解封",
     "priority": "P2",
-    "passes": false
+    "passes": true
   },
   {
     "id": 16,
