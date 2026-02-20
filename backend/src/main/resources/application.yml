@@ -20,20 +20,21 @@ spring:
     date-format: yyyy-MM-dd HH:mm:ss
     time-zone: Asia/Shanghai
 
-  mail:
-    host: smtp.qq.com
-    port: 587
-    username: your-email@qq.com
-    password: your-auth-code
-    properties:
-      mail:
-        smtp:
-          auth: true
-          starttls:
-            enable: true
-          connectiontimeout: 5000
-          timeout: 3000
-          writetimeout: 5000
+  # 邮件配置 (暂未启用)
+  # mail:
+  #   host: smtp.qq.com
+  #   port: 587
+  #   username: your-email@qq.com
+  #   password: your-auth-code
+  #   properties:
+  #     mail:
+  #       smtp:
+  #         auth: true
+  #         starttls:
+  #           enable: true
+  #         connectiontimeout: 5000
+  #         timeout: 3000
+  #         writetimeout: 5000
 
 mybatis-plus:
   mapper-locations: classpath*:/mapper/**/*.xml
