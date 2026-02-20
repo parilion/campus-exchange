@@ -161,7 +161,6 @@ public class AuthService {
             emailService.sendPasswordResetEmail(email, code);
         }
 
-        // TODO: 实际项目中需要发送邮件
         // 这里模拟发送，直接返回验证码（演示用）
         System.out.println("【Campus Exchange】您的验证码是：" + code + "，15分钟内有效");
     }
