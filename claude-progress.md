@@ -1,11 +1,27 @@
 # Campus Exchange - 开发进度
 
 ## 当前状态
-- 开发中模块: 管理后台
-- 当前功能: ID#50 - 站内通知 API/列表/已读未读/类型分类/角标/全部已读
-- 进度: 55/190 (28.9%)
+- 开发中模块: UI/UX 组件库
+- 当前功能: ID#54 - 骨架屏/空状态/错误页面/Toast/确认弹窗/图片懒加载
+- 进度: 56/190 (29.5%)
 
 ## 开发日志 (按时间倒序)
+
+### 2026-02-20 14:35:00 | 完成: 商品卡片/价格显示/用户头像/标签/轮播图组件 (#53)
+- **开始时间**: 2026-02-20 14:00:00
+- **结束时间**: 2026-02-20 14:35:00
+- **Commit**: `feat: add reusable ProductCard, HomeBanner components and shared product constants`
+- **涉及文件**:
+  - frontend/src/components/ProductCard.tsx
+  - frontend/src/components/ProductCard.css
+  - frontend/src/components/HomeBanner.tsx
+  - frontend/src/components/HomeBanner.css
+  - frontend/src/constants/product.ts
+  - frontend/src/pages/HomePage.tsx
+  - frontend/src/pages/ProductListPage.tsx
+  - frontend/src/pages/MyProductsPage.tsx
+  - frontend/src/pages/ProductDetailPage.tsx
+- **备注**: 提取可复用ProductCard组件(成色标签/价格/卖家头像+昵称/标签/统计数据) + HomeBanner轮播图组件(渐变遮罩/可点击) + 共享常量文件(消除4个文件中的重复定义) + ProductCardSkeleton骨架屏 + PriceDisplay独立导出 + 重构HomePage/ProductListPage使用新组件
 
 ### 2026-02-20 13:10:49 | 完成: 数据统计面板 + 系统配置/敏感词/操作日志管理 (#49)
 - **开始时间**: 2026-02-20 13:05:00
@@ -777,6 +793,7 @@
 
 ### UI/UX (P1)
 - [x] #52 首页布局/推荐展示/分类导航/搜索框 + 全局导航栏组件 (2026-02-19)
+- [x] #53 商品卡片/价格显示/用户头像/标签/轮播图组件 (2026-02-20)
 
 ## 技术债务
 - 无

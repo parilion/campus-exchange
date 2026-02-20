@@ -421,7 +421,7 @@
     "module": "ui",
     "description": "商品卡片/价格显示/用户头像/标签/轮播图组件",
     "priority": "P1",
-    "passes": false
+    "passes": true
   },
   {
     "id": 54,
