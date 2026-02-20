@@ -14,6 +14,9 @@ import {
   AppstoreOutlined,
   NotificationOutlined,
   PictureOutlined,
+  StarOutlined,
+  SendOutlined,
+  BarChartOutlined,
 } from '@ant-design/icons';
 import { useUserStore } from '../stores/userStore';
 
@@ -69,6 +72,16 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({ children }) => {
       key: '/admin/orders',
       icon: <FileTextOutlined />,
       label: '订单管理',
+    },
+    {
+      key: '/admin/reviews',
+      icon: <StarOutlined />,
+      label: '评价管理',
+    },
+    {
+      key: '/admin/messages',
+      icon: <SendOutlined />,
+      label: '消息推送',
     },
     {
       key: '/admin/settings',

@@ -410,3 +410,173 @@ export async function getCarouselStats() {
   const res = await request.get<Result<CarouselStats>>('/admin/carousels/stats');
   return res.data.data;
 }
+
+// ========== 订单管理 ==========
+
+export interface AdminOrder {
+  id: number;
+  orderNo: string;
+  productId: number;
+  price: number;
+  buyerId: number;
+  sellerId: number;
+  status: string;
+  tradeType: string;
+  tradeLocation?: string;
+  remark?: string;
+  refundStatus?: string;
+  refundReason?: string;
+  refundTime?: string;
+  disputeStatus?: string;
+  disputeReason?: string;
+  disputeEvidence?: string;
+  disputeResult?: string;
+  disputeTime?: string;
+  resolveTime?: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface OrderStats {
+  total: number;
+  pending: number;
+  paid: number;
+  shipped: number;
+  completed: number;
+  cancelled: number;
+}
+
+// 获取订单列表
+export async function getOrderList(params: {
+  page?: number;
+  pageSize?: number;
+  status?: string;
+  startDate?: string;
+  endDate?: string;
+  keyword?: string;
+}) {
+  const res = await request.get<Result<PageResponse<AdminOrder>>>('/admin/orders', { params });
+  return res.data.data;
+}
+
+// 获取订单详情
+export async function getOrderDetail(orderId: number) {
+  const res = await request.get<Result<AdminOrder>>(`/admin/orders/${orderId}`);
+  return res.data.data;
+}
+
+// 管理员取消订单
+export async function cancelOrder(orderId: number, reason: string) {
+  const res = await request.post<Result<void>>(`/admin/orders/${orderId}/cancel`, { reason });
+  return res.data;
+}
+
+// 获取订单统计
+export async function getOrderStats() {
+  const res = await request.get<Result<OrderStats>>('/admin/orders/stats');
+  return res.data.data;
+}
+
+// ========== 评价管理 ==========
+
+export interface AdminReview {
+  id: number;
+  orderId: number;
+  reviewerId: number;
+  targetUserId: number;
+  rating: number;
+  content?: string;
+  images?: string;
+  anonymous: number;
+  reply?: string;
+  replyAt?: string;
+  tags?: string;
+  createdAt: string;
+}
+
+export interface ReviewStats {
+  total: number;
+  avgRating: number;
+  star1: number;
+  star2: number;
+  star3: number;
+  star4: number;
+  star5: number;
+}
+
+// 获取评价列表
+export async function getReviewList(params: {
+  page?: number;
+  pageSize?: number;
+  rating?: number;
+  startDate?: string;
+  endDate?: string;
+  keyword?: string;
+}) {
+  const res = await request.get<Result<PageResponse<AdminReview>>>('/admin/reviews', { params });
+  return res.data.data;
+}
+
+// 获取评价详情
+export async function getReviewDetail(reviewId: number) {
+  const res = await request.get<Result<AdminReview>>(`/admin/reviews/${reviewId}`);
+  return res.data.data;
+}
+
+// 删除评价
+export async function deleteReview(reviewId: number) {
+  const res = await request.delete<Result<void>>(`/admin/reviews/${reviewId}`);
+  return res.data;
+}
+
+// 获取评价统计
+export async function getReviewStats() {
+  const res = await request.get<Result<ReviewStats>>('/admin/reviews/stats');
+  return res.data.data;
+}
+
+// ========== 消息推送 ==========
+
+export interface SystemMessage {
+  id: number;
+  userId: number;
+  title: string;
+  content: string;
+  type: string;
+  relatedId?: number;
+  read: boolean;
+  createTime: string;
+  readTime?: string;
+}
+
+// 推送消息（userId为空时群发）
+export async function pushMessage(data: { userId?: number; title: string; content: string }) {
+  const res = await request.post<Result<void>>('/admin/messages/push', data);
+  return res.data;
+}
+
+// 获取推送历史
+export async function getMessageHistory(params: { page?: number; pageSize?: number; type?: string }) {
+  const res = await request.get<Result<PageResponse<SystemMessage>>>('/admin/messages/history', { params });
+  return res.data.data;
+}
+
+// ========== 数据导出 ==========
+
+// 导出订单
+export function exportOrders(params?: { status?: string; startDate?: string; endDate?: string }) {
+  const query = new URLSearchParams(params as any).toString();
+  window.open(`/api/admin/export/orders?${query}`, '_blank');
+}
+
+// 导出用户
+export function exportUsers(params?: { role?: string; enabled?: boolean }) {
+  const query = new URLSearchParams(params as any).toString();
+  window.open(`/api/admin/export/users?${query}`, '_blank');
+}
+
+// 导出商品
+export function exportProducts(params?: { status?: string; auditStatus?: string }) {
+  const query = new URLSearchParams(params as any).toString();
+  window.open(`/api/admin/export/products?${query}`, '_blank');
+}

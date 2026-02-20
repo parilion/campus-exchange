@@ -3,29 +3,27 @@ package com.campus.exchange.controller;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.campus.exchange.dto.*;
-import com.campus.exchange.mapper.AnnouncementMapper;
-import com.campus.exchange.mapper.CarouselMapper;
-import com.campus.exchange.mapper.CategoryMapper;
-import com.campus.exchange.mapper.ProductMapper;
-import com.campus.exchange.mapper.ProductReportMapper;
-import com.campus.exchange.mapper.UserMapper;
-import com.campus.exchange.model.Announcement;
-import com.campus.exchange.model.Carousel;
-import com.campus.exchange.model.Category;
-import com.campus.exchange.model.Product;
-import com.campus.exchange.model.ProductReport;
-import com.campus.exchange.model.User;
+import com.campus.exchange.mapper.*;
+import com.campus.exchange.model.*;
 import com.campus.exchange.util.Result;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
+import java.io.IOException;
+import java.io.PrintWriter;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/admin")
@@ -37,15 +35,22 @@ public class AdminController {
     private final CategoryMapper categoryMapper;
     private final AnnouncementMapper announcementMapper;
     private final CarouselMapper carouselMapper;
+    private final OrderMapper orderMapper;
+    private final ReviewMapper reviewMapper;
+    private final SystemMessageMapper systemMessageMapper;
 
     public AdminController(UserMapper userMapper, ProductMapper productMapper, ProductReportMapper productReportMapper,
-                          CategoryMapper categoryMapper, AnnouncementMapper announcementMapper, CarouselMapper carouselMapper) {
+                          CategoryMapper categoryMapper, AnnouncementMapper announcementMapper, CarouselMapper carouselMapper,
+                          OrderMapper orderMapper, ReviewMapper reviewMapper, SystemMessageMapper systemMessageMapper) {
         this.userMapper = userMapper;
         this.productMapper = productMapper;
         this.productReportMapper = productReportMapper;
         this.categoryMapper = categoryMapper;
         this.announcementMapper = announcementMapper;
         this.carouselMapper = carouselMapper;
+        this.orderMapper = orderMapper;
+        this.reviewMapper = reviewMapper;
+        this.systemMessageMapper = systemMessageMapper;
     }
 
     /**
@@ -773,6 +778,369 @@ public class AdminController {
         stats.put("draft", carouselMapper.selectCount(new LambdaQueryWrapper<Carousel>().eq(Carousel::getStatus, "DRAFT")));
         stats.put("disabled", carouselMapper.selectCount(new LambdaQueryWrapper<Carousel>().eq(Carousel::getStatus, "DISABLED")));
         return Result.success(stats);
+    }
+
+    // ========== 订单管理 ==========
+
+    /**
+     * 获取订单列表（分页）
+     */
+    @GetMapping("/orders")
+    @PreAuthorize("hasRole('ADMIN')")
+    public Result<Page<Order>> getOrderList(
+            @RequestParam(defaultValue = "1") int page,
+            @RequestParam(defaultValue = "10") int pageSize,
+            @RequestParam(required = false) String status,
+            @RequestParam(required = false) String startDate,
+            @RequestParam(required = false) String endDate,
+            @RequestParam(required = false) String keyword) {
+
+        Page<Order> pageObj = new Page<>(page, pageSize);
+        LambdaQueryWrapper<Order> wrapper = new LambdaQueryWrapper<>();
+
+        if (status != null && !status.isEmpty()) {
+            wrapper.eq(Order::getStatus, status);
+        }
+        if (startDate != null && !startDate.isEmpty()) {
+            wrapper.ge(Order::getCreatedAt, LocalDateTime.parse(startDate + "T00:00:00"));
+        }
+        if (endDate != null && !endDate.isEmpty()) {
+            wrapper.le(Order::getCreatedAt, LocalDateTime.parse(endDate + "T23:59:59"));
+        }
+        if (keyword != null && !keyword.isEmpty()) {
+            wrapper.and(w -> w
+                    .like(Order::getOrderNo, keyword)
+                    .or()
+                    .like(Order::getRemark, keyword)
+            );
+        }
+        wrapper.orderByDesc(Order::getCreatedAt);
+
+        Page<Order> result = orderMapper.selectPage(pageObj, wrapper);
+        return Result.success(result);
+    }
+
+    /**
+     * 获取订单详情
+     */
+    @GetMapping("/orders/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
+    public Result<Order> getOrderDetail(@PathVariable Long id) {
+        Order order = orderMapper.selectById(id);
+        if (order == null) {
+            return Result.error("订单不存在");
+        }
+        return Result.success(order);
+    }
+
+    /**
+     * 管理员取消订单
+     */
+    @PostMapping("/orders/{id}/cancel")
+    @PreAuthorize("hasRole('ADMIN')")
+    public Result<Void> cancelOrder(@PathVariable Long id, @RequestBody Map<String, String> request) {
+        Order order = orderMapper.selectById(id);
+        if (order == null) {
+            return Result.error("订单不存在");
+        }
+
+        String reason = request.get("reason");
+        order.setStatus("CANCELLED");
+        order.setRemark((order.getRemark() != null ? order.getRemark() + " | " : "") + "[管理员取消] " + reason);
+        order.setUpdatedAt(LocalDateTime.now());
+        orderMapper.updateById(order);
+
+        // 恢复商品状态
+        Product product = productMapper.selectById(order.getProductId());
+        if (product != null) {
+            product.setStatus("ON_SALE");
+            product.setUpdatedAt(LocalDateTime.now());
+            productMapper.updateById(product);
+        }
+
+        return Result.success();
+    }
+
+    /**
+     * 获取订单统计数据
+     */
+    @GetMapping("/orders/stats")
+    @PreAuthorize("hasRole('ADMIN')")
+    public Result<Map<String, Long>> getOrderStats() {
+        Map<String, Long> stats = new java.util.HashMap<>();
+        stats.put("total", orderMapper.selectCount(new LambdaQueryWrapper<Order>()));
+        stats.put("pending", orderMapper.selectCount(new LambdaQueryWrapper<Order>().eq(Order::getStatus, "PENDING")));
+        stats.put("paid", orderMapper.selectCount(new LambdaQueryWrapper<Order>().eq(Order::getStatus, "PAID")));
+        stats.put("shipped", orderMapper.selectCount(new LambdaQueryWrapper<Order>().eq(Order::getStatus, "SHIPPED")));
+        stats.put("completed", orderMapper.selectCount(new LambdaQueryWrapper<Order>().eq(Order::getStatus, "COMPLETED")));
+        stats.put("cancelled", orderMapper.selectCount(new LambdaQueryWrapper<Order>().eq(Order::getStatus, "CANCELLED")));
+        return Result.success(stats);
+    }
+
+    // ========== 评价管理 ==========
+
+    /**
+     * 获取评价列表（分页）
+     */
+    @GetMapping("/reviews")
+    @PreAuthorize("hasRole('ADMIN')")
+    public Result<Page<Review>> getReviewList(
+            @RequestParam(defaultValue = "1") int page,
+            @RequestParam(defaultValue = "10") int pageSize,
+            @RequestParam(required = false) Integer rating,
+            @RequestParam(required = false) String startDate,
+            @RequestParam(required = false) String endDate,
+            @RequestParam(required = false) String keyword) {
+
+        Page<Review> pageObj = new Page<>(page, pageSize);
+        LambdaQueryWrapper<Review> wrapper = new LambdaQueryWrapper<>();
+
+        if (rating != null) {
+            wrapper.eq(Review::getRating, rating);
+        }
+        if (startDate != null && !startDate.isEmpty()) {
+            wrapper.ge(Review::getCreatedAt, LocalDateTime.parse(startDate + "T00:00:00"));
+        }
+        if (endDate != null && !endDate.isEmpty()) {
+            wrapper.le(Review::getCreatedAt, LocalDateTime.parse(endDate + "T23:59:59"));
+        }
+        if (keyword != null && !keyword.isEmpty()) {
+            wrapper.and(w -> w
+                    .like(Review::getContent, keyword)
+                    .or()
+                    .like(Review::getTags, keyword)
+            );
+        }
+        wrapper.orderByDesc(Review::getCreatedAt);
+
+        Page<Review> result = reviewMapper.selectPage(pageObj, wrapper);
+        return Result.success(result);
+    }
+
+    /**
+     * 获取评价详情
+     */
+    @GetMapping("/reviews/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
+    public Result<Review> getReviewDetail(@PathVariable Long id) {
+        Review review = reviewMapper.selectById(id);
+        if (review == null) {
+            return Result.error("评价不存在");
+        }
+        return Result.success(review);
+    }
+
+    /**
+     * 删除评价
+     */
+    @DeleteMapping("/reviews/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
+    public Result<Void> deleteReview(@PathVariable Long id) {
+        Review review = reviewMapper.selectById(id);
+        if (review == null) {
+            return Result.error("评价不存在");
+        }
+        reviewMapper.deleteById(id);
+        return Result.success();
+    }
+
+    /**
+     * 获取评价统计数据
+     */
+    @GetMapping("/reviews/stats")
+    @PreAuthorize("hasRole('ADMIN')")
+    public Result<Map<String, Object>> getReviewStats() {
+        Map<String, Object> stats = new java.util.HashMap<>();
+        Long total = reviewMapper.selectCount(new LambdaQueryWrapper<Review>());
+        stats.put("total", total);
+
+        // 计算平均评分
+        List<Review> reviews = reviewMapper.selectList(null);
+        if (!reviews.isEmpty()) {
+            double avgRating = reviews.stream().mapToInt(Review::getRating).average().orElse(0);
+            stats.put("avgRating", Math.round(avgRating * 10) / 10.0);
+        } else {
+            stats.put("avgRating", 0.0);
+        }
+
+        // 评分分布
+        for (int i = 1; i <= 5; i++) {
+            long count = reviewMapper.selectCount(new LambdaQueryWrapper<Review>().eq(Review::getRating, i));
+            stats.put("star" + i, count);
+        }
+
+        return Result.success(stats);
+    }
+
+    // ========== 消息推送 ==========
+
+    /**
+     * 推送系统消息（单用户或群发）
+     */
+    @PostMapping("/messages/push")
+    @PreAuthorize("hasRole('ADMIN')")
+    public Result<Void> pushMessage(@Valid @RequestBody AdminPushMessageRequest request) {
+        if (request.getUserId() == null) {
+            // 群发给所有用户
+            List<User> users = userMapper.selectList(new LambdaQueryWrapper<User>());
+            for (User user : users) {
+                SystemMessage message = new SystemMessage();
+                message.setUserId(user.getId());
+                message.setTitle(request.getTitle());
+                message.setContent(request.getContent());
+                message.setType("ADMIN_BROADCAST");
+                message.setRead(false);
+                message.setCreateTime(LocalDateTime.now());
+                systemMessageMapper.insert(message);
+            }
+        } else {
+            // 单用户推送
+            SystemMessage message = new SystemMessage();
+            message.setUserId(request.getUserId());
+            message.setTitle(request.getTitle());
+            message.setContent(request.getContent());
+            message.setType("ADMIN_PUSH");
+            message.setRead(false);
+            message.setCreateTime(LocalDateTime.now());
+            systemMessageMapper.insert(message);
+        }
+        return Result.success();
+    }
+
+    /**
+     * 获取推送历史
+     */
+    @GetMapping("/messages/history")
+    @PreAuthorize("hasRole('ADMIN')")
+    public Result<Page<SystemMessage>> getMessageHistory(
+            @RequestParam(defaultValue = "1") int page,
+            @RequestParam(defaultValue = "10") int pageSize,
+            @RequestParam(required = false) String type) {
+
+        Page<SystemMessage> pageObj = new Page<>(page, pageSize);
+        LambdaQueryWrapper<SystemMessage> wrapper = new LambdaQueryWrapper<>();
+        if (type != null && !type.isEmpty()) {
+            wrapper.eq(SystemMessage::getType, type);
+        }
+        wrapper.orderByDesc(SystemMessage::getCreateTime);
+        Page<SystemMessage> result = systemMessageMapper.selectPage(pageObj, wrapper);
+        return Result.success(result);
+    }
+
+    // ========== 数据导出 ==========
+
+    /**
+     * 导出订单数据
+     */
+    @GetMapping("/export/orders")
+    @PreAuthorize("hasRole('ADMIN')")
+    public void exportOrders(
+            @RequestParam(required = false) String status,
+            @RequestParam(required = false) String startDate,
+            @RequestParam(required = false) String endDate,
+            HttpServletResponse response) throws IOException {
+
+        LambdaQueryWrapper<Order> wrapper = new LambdaQueryWrapper<>();
+        if (status != null && !status.isEmpty()) {
+            wrapper.eq(Order::getStatus, status);
+        }
+        if (startDate != null && !startDate.isEmpty()) {
+            wrapper.ge(Order::getCreatedAt, LocalDateTime.parse(startDate + "T00:00:00"));
+        }
+        if (endDate != null && !endDate.isEmpty()) {
+            wrapper.le(Order::getCreatedAt, LocalDateTime.parse(endDate + "T23:59:59"));
+        }
+        wrapper.orderByDesc(Order::getCreatedAt);
+
+        List<Order> orders = orderMapper.selectList(wrapper);
+        exportToCsv(response, "orders", orders);
+    }
+
+    /**
+     * 导出用户数据
+     */
+    @GetMapping("/export/users")
+    @PreAuthorize("hasRole('ADMIN')")
+    public void exportUsers(
+            @RequestParam(required = false) String role,
+            @RequestParam(required = false) Boolean enabled,
+            HttpServletResponse response) throws IOException {
+
+        LambdaQueryWrapper<User> wrapper = new LambdaQueryWrapper<>();
+        if (role != null && !role.isEmpty()) {
+            wrapper.eq(User::getRole, role);
+        }
+        if (enabled != null) {
+            wrapper.eq(User::getEnabled, enabled);
+        }
+        wrapper.orderByDesc(User::getCreatedAt);
+
+        List<User> users = userMapper.selectList(wrapper);
+        // 隐藏密码
+        users.forEach(u -> u.setPassword(null));
+        exportToCsv(response, "users", users);
+    }
+
+    /**
+     * 导出商品数据
+     */
+    @GetMapping("/export/products")
+    @PreAuthorize("hasRole('ADMIN')")
+    public void exportProducts(
+            @RequestParam(required = false) String status,
+            @RequestParam(required = false) String auditStatus,
+            HttpServletResponse response) throws IOException {
+
+        LambdaQueryWrapper<Product> wrapper = new LambdaQueryWrapper<>();
+        if (status != null && !status.isEmpty()) {
+            wrapper.eq(Product::getStatus, status);
+        }
+        if (auditStatus != null && !auditStatus.isEmpty()) {
+            wrapper.eq(Product::getAuditStatus, auditStatus);
+        }
+        wrapper.orderByDesc(Product::getCreatedAt);
+
+        List<Product> products = productMapper.selectList(wrapper);
+        exportToCsv(response, "products", products);
+    }
+
+    private <T> void exportToCsv(HttpServletResponse response, String filename, List<T> data) throws IOException {
+        response.setContentType("text/csv;charset=UTF-8");
+        response.setHeader("Content-Disposition", "attachment; filename=" + filename + "_" +
+                LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMddHHmmss")) + ".csv");
+
+        PrintWriter writer = response.getWriter();
+        writer.write("\uFEFF"); // BOM for UTF-8
+
+        if (data.isEmpty()) {
+            writer.close();
+            return;
+        }
+
+        // 写入表头
+        java.lang.reflect.Field[] fields = data.get(0).getClass().getDeclaredFields();
+        String[] headers = new String[fields.length];
+        for (int i = 0; i < fields.length; i++) {
+            fields[i].setAccessible(true);
+            headers[i] = fields[i].getName();
+        }
+        writer.println(String.join(",", headers));
+
+        // 写入数据
+        for (T item : data) {
+            String[] row = new String[fields.length];
+            for (int i = 0; i < fields.length; i++) {
+                try {
+                    Object value = fields[i].get(item);
+                    row[i] = value != null ? value.toString() : "";
+                } catch (Exception e) {
+                    row[i] = "";
+                }
+            }
+            writer.println(String.join(",", row));
+        }
+
+        writer.close();
     }
 
     private Long getCurrentUserId() {

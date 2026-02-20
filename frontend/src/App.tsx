@@ -12,6 +12,9 @@ import AdminProductsPage from './pages/AdminProductsPage';
 import AdminCategoriesPage from './pages/AdminCategoriesPage';
 import AdminAnnouncementsPage from './pages/AdminAnnouncementsPage';
 import AdminCarouselsPage from './pages/AdminCarouselsPage';
+import AdminOrdersPage from './pages/AdminOrdersPage';
+import AdminReviewsPage from './pages/AdminReviewsPage';
+import AdminMessagesPage from './pages/AdminMessagesPage';
 import PublishPage from './pages/PublishPage';
 import EditProductPage from './pages/EditProductPage';
 import ProductListPage from './pages/ProductListPage';
@@ -186,6 +189,21 @@ function App() {
               <Route path="/admin/carousels" element={
                 <AdminLayout>
                   <AdminCarouselsPage />
+                </AdminLayout>
+              } />
+              <Route path="/admin/orders" element={
+                <AdminLayout>
+                  <AdminOrdersPage />
+                </AdminLayout>
+              } />
+              <Route path="/admin/reviews" element={
+                <AdminLayout>
+                  <AdminReviewsPage />
+                </AdminLayout>
+              } />
+              <Route path="/admin/messages" element={
+                <AdminLayout>
+                  <AdminMessagesPage />
                 </AdminLayout>
               } />
               <Route path="/admin" element={<Navigate to="/admin/dashboard" replace />} />
