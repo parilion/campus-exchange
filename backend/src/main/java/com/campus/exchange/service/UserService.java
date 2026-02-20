@@ -86,6 +86,17 @@ public class UserService {
     }
 
     /**
+     * 更新邮件通知偏好
+     */
+    public void updateEmailNotification(Long userId, Boolean enabled) {
+        User user = userMapper.selectById(userId);
+        if (user != null) {
+            user.setEmailNotificationEnabled(enabled);
+            userMapper.updateById(user);
+        }
+    }
+
+    /**
      * 获取用户公开主页信息
      */
     public UserPublicProfileVO getPublicProfile(Long userId) {

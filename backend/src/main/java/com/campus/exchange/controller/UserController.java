@@ -16,6 +16,7 @@ import javax.validation.Valid;
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 @RestController
@@ -66,6 +67,16 @@ public class UserController {
         Long userId = getCurrentUserId();
         userService.updateProfile(userId, request);
         return Result.success();
+    }
+
+    /**
+     * 更新邮件通知偏好
+     */
+    @PutMapping("/email-notification")
+    public Result<Void> updateEmailNotification(@RequestBody Map<String, Boolean> request) {
+        Long userId = getCurrentUserId();
+        userService.updateEmailNotification(userId, request.get("enabled"));
+        return Result.success(null);
     }
 
     /**
