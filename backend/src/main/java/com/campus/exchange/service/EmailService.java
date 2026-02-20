@@ -25,7 +25,7 @@ public class EmailService {
      */
     public boolean sendEmail(String to, String subject, String content) {
         // 参数校验
-        if (to == null || to.isBlank()) {
+        if (to == null || to.trim().isEmpty()) {
             log.error("邮箱地址为空");
             return false;
         }
