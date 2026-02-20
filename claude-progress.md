@@ -2,10 +2,25 @@
 
 ## 当前状态
 - 开发中模块: UI/UX 组件库
-- 当前功能: ID#54 - 骨架屏/空状态/错误页面/Toast/确认弹窗/图片懒加载
-- 进度: 56/190 (29.5%)
+- 当前功能: ID#55 - 下拉刷新/上拉加载 + 底部信息栏 + 响应式布局 + 暗色模式
+- 进度: 57/190 (30.0%)
 
 ## 开发日志 (按时间倒序)
+
+### 2026-02-20 14:55:00 | 完成: 骨架屏/空状态/错误页面/Toast/确认弹窗/图片懒加载 (#54)
+- **开始时间**: 2026-02-20 14:38:00
+- **结束时间**: 2026-02-20 14:55:00
+- **Commit**: `feat: add ErrorBoundary, EmptyState, LazyImage, PageLoading, 404/500 error pages`
+- **涉及文件**:
+  - frontend/src/components/ErrorBoundary.tsx
+  - frontend/src/components/EmptyState.tsx
+  - frontend/src/components/LazyImage.tsx
+  - frontend/src/components/PageLoading.tsx
+  - frontend/src/pages/NotFoundPage.tsx
+  - frontend/src/pages/ErrorPage.tsx
+  - frontend/src/App.tsx
+  - frontend/src/pages/ProductListPage.tsx
+- **备注**: NotFoundPage(404) + ErrorPage(500) + ErrorBoundary全局错误捕获 + LazyImage(IntersectionObserver懒加载) + EmptyState(含Product/Order/Message/Search预设) + PageLoading全页加载 + App.tsx增加*通配路由
 
 ### 2026-02-20 14:35:00 | 完成: 商品卡片/价格显示/用户头像/标签/轮播图组件 (#53)
 - **开始时间**: 2026-02-20 14:00:00
@@ -794,6 +809,7 @@
 ### UI/UX (P1)
 - [x] #52 首页布局/推荐展示/分类导航/搜索框 + 全局导航栏组件 (2026-02-19)
 - [x] #53 商品卡片/价格显示/用户头像/标签/轮播图组件 (2026-02-20)
+- [x] #54 骨架屏/空状态/错误页面/Toast/确认弹窗/图片懒加载 (2026-02-20)
 
 ## 技术债务
 - 无

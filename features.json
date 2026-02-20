@@ -429,7 +429,7 @@
     "module": "ui",
     "description": "骨架屏/空状态/错误页面/Toast/确认弹窗/图片懒加载",
     "priority": "P1",
-    "passes": false
+    "passes": true
   },
   {
     "id": 55,
