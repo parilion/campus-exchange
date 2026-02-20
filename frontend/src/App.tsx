@@ -1,6 +1,7 @@
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
-import { ConfigProvider, Layout } from 'antd';
+import { ConfigProvider, Layout, theme as antTheme } from 'antd';
 import zhCN from 'antd/locale/zh_CN';
+import { useThemeStore } from './stores/themeStore';
 import LoginPage from './pages/LoginPage';
 import RegisterPage from './pages/RegisterPage';
 import ForgotPasswordPage from './pages/ForgotPasswordPage';
@@ -43,13 +44,22 @@ import MyReviewsPage from './pages/MyReviewsPage';
 import NotFoundPage from './pages/NotFoundPage';
 import AuthRoute from './components/AuthRoute';
 import AppHeader from './components/AppHeader';
+import AppFooter from './components/AppFooter';
 import ErrorBoundary from './components/ErrorBoundary';
 
-const { Content } = Layout;
+const { Content, Footer } = Layout;
 
 function App() {
+  const isDark = useThemeStore((s) => s.isDark);
+
   return (
-    <ConfigProvider locale={zhCN}>
+    <ConfigProvider
+      locale={zhCN}
+      theme={{
+        algorithm: isDark ? antTheme.darkAlgorithm : antTheme.defaultAlgorithm,
+        token: { colorPrimary: '#1890ff' },
+      }}
+    >
       <BrowserRouter>
         <Layout style={{ minHeight: '100vh' }}>
           <AppHeader />
@@ -237,6 +247,9 @@ function App() {
             </Routes>
             </ErrorBoundary>
           </Content>
+          <Footer style={{ padding: 0 }}>
+            <AppFooter />
+          </Footer>
         </Layout>
       </BrowserRouter>
     </ConfigProvider>

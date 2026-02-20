@@ -1,14 +1,16 @@
 import React from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { Layout, Menu, Button, Space, Avatar, Dropdown } from 'antd';
-import { UserOutlined, HeartOutlined, FileTextOutlined, ShoppingOutlined, MessageOutlined, LogoutOutlined, LoginOutlined, LockOutlined, CheckCircleOutlined, SettingOutlined, EyeOutlined, BellOutlined, StarOutlined } from '@ant-design/icons';
+import { Layout, Menu, Button, Space, Avatar, Dropdown, Tooltip } from 'antd';
+import { UserOutlined, HeartOutlined, FileTextOutlined, ShoppingOutlined, MessageOutlined, LogoutOutlined, LoginOutlined, LockOutlined, CheckCircleOutlined, SettingOutlined, EyeOutlined, BellOutlined, StarOutlined, SunOutlined, MoonOutlined } from '@ant-design/icons';
 import { useUserStore } from '../stores/userStore';
+import { useThemeStore } from '../stores/themeStore';
 
 const { Header } = Layout;
 
 const AppHeader: React.FC = () => {
   const navigate = useNavigate();
   const { user, logout } = useUserStore();
+  const { isDark, toggle } = useThemeStore();
   const isAuthenticated = !!user;
 
   const handleLogout = () => {
@@ -100,9 +102,8 @@ const AppHeader: React.FC = () => {
       display: 'flex',
       alignItems: 'center',
       justifyContent: 'space-between',
-      background: '#fff',
       padding: '0 24px',
-      boxShadow: '0 2px 8px rgba(0,0,0,0.1)',
+      boxShadow: isDark ? '0 2px 8px rgba(0,0,0,0.4)' : '0 2px 8px rgba(0,0,0,0.1)',
       position: 'sticky',
       top: 0,
       zIndex: 100,
@@ -131,6 +132,14 @@ const AppHeader: React.FC = () => {
       </div>
 
       <Space>
+        <Tooltip title={isDark ? '切换亮色模式' : '切换暗色模式'}>
+          <Button
+            type="text"
+            icon={isDark ? <SunOutlined /> : <MoonOutlined />}
+            onClick={toggle}
+            style={{ fontSize: 16 }}
+          />
+        </Tooltip>
         <Button type="primary" onClick={() => navigate('/publish')}>
           发布商品
         </Button>

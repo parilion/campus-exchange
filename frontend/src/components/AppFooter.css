@@ -1,0 +1,113 @@
+/* 底部 Footer 样式 */
+
+.app-footer {
+  background: var(--footer-bg, #001529);
+  color: rgba(255, 255, 255, 0.65);
+}
+
+.footer-main {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 40px 24px 32px;
+}
+
+.footer-brand {
+  color: #fff !important;
+  margin-bottom: 12px !important;
+}
+
+.footer-desc {
+  display: block;
+  color: rgba(255, 255, 255, 0.5) !important;
+  font-size: 13px;
+  line-height: 1.7;
+  margin-bottom: 16px;
+}
+
+.footer-social {
+  font-size: 20px;
+}
+
+.footer-social a,
+.footer-social span {
+  color: rgba(255, 255, 255, 0.45);
+  transition: color 0.2s;
+  cursor: pointer;
+}
+
+.footer-social a:hover {
+  color: #1890ff;
+}
+
+.footer-title {
+  color: rgba(255, 255, 255, 0.85) !important;
+  font-size: 14px !important;
+  margin-bottom: 16px !important;
+}
+
+.footer-links {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.footer-links li {
+  margin-bottom: 10px;
+}
+
+.footer-links a {
+  color: rgba(255, 255, 255, 0.5);
+  font-size: 13px;
+  transition: color 0.2s;
+}
+
+.footer-links a:hover {
+  color: #1890ff;
+}
+
+/* 平台保障徽章 */
+.footer-badges {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+
+.footer-badge {
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 6px;
+  padding: 6px 10px;
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.6);
+  text-align: center;
+}
+
+/* 版权区域 */
+.footer-bottom {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 16px 24px;
+  text-align: center;
+}
+
+.footer-copyright {
+  color: rgba(255, 255, 255, 0.35) !important;
+  font-size: 12px;
+}
+
+/* 响应式 */
+@media (max-width: 768px) {
+  .footer-main {
+    padding: 28px 16px 20px;
+  }
+
+  .footer-badges {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+@media (max-width: 480px) {
+  .footer-badges {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
