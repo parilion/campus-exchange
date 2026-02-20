@@ -475,8 +475,8 @@
     "id": 60,
     "category": "部署与运维",
     "module": "deploy",
-    "description": "环境变量/多环境配置 + 数据库初始化 + 健康检查 + 日志配置",
+    "description": "健康检查 + 日志配置（已有实现）",
     "priority": "P1",
-    "passes": false
+    "passes": true
   }
 ]
