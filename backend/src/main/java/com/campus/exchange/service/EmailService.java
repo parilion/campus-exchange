@@ -21,8 +21,15 @@ public class EmailService {
 
     /**
      * 发送简单邮件
+     * @return 是否发送成功
      */
-    public void sendEmail(String to, String subject, String content) {
+    public boolean sendEmail(String to, String subject, String content) {
+        // 参数校验
+        if (to == null || to.isEmpty()) {
+            log.error("邮箱地址为空");
+            return false;
+        }
+
         try {
             SimpleMailMessage message = new SimpleMailMessage();
             message.setFrom(fromEmail);
@@ -31,8 +38,10 @@ public class EmailService {
             message.setText(content);
             mailSender.send(message);
             log.info("邮件发送成功: {}", to);
+            return true;
         } catch (Exception e) {
             log.error("邮件发送失败: {}, error: {}", to, e.getMessage());
+            return false;
         }
     }
 
@@ -45,7 +54,10 @@ public class EmailService {
                 "您的验证码为: " + code + "\n\n" +
                 "验证码有效期为 10 分钟，请尽快完成操作。\n\n" +
                 "如果不是您本人操作，请忽略此邮件。";
-        sendEmail(to, subject, content);
+        boolean success = sendEmail(to, subject, content);
+        if (!success) {
+            log.warn("密码重置邮件发送失败: {}", to);
+        }
     }
 
     /**
@@ -57,6 +69,9 @@ public class EmailService {
                 "【公告标题】" + title + "\n\n" +
                 "【公告内容】\n" + content + "\n\n" +
                 "感谢您使用校园二手交易平台！";
-        sendEmail(to, subject, emailContent);
+        boolean success = sendEmail(to, subject, emailContent);
+        if (!success) {
+            log.warn("系统公告邮件发送失败: {}", to);
+        }
     }
 }
