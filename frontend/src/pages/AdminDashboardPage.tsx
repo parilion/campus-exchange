@@ -7,28 +7,13 @@ import {
   DollarOutlined,
   RiseOutlined,
   WarningOutlined,
+  ReloadOutlined,
 } from '@ant-design/icons';
-
-interface DashboardData {
-  totalUsers: number;
-  totalProducts: number;
-  totalOrders: number;
-  totalRevenue: number;
-  recentOrders: Array<{
-    id: number;
-    orderNo: string;
-    productName: string;
-    amount: number;
-    status: string;
-    createdAt: string;
-  }>;
-  pendingProducts: number;
-  pendingReports: number;
-}
+import { getDashboardStats, type DashboardStats } from '../services/admin';
 
 const AdminDashboardPage: React.FC = () => {
   const [loading, setLoading] = useState(false);
-  const [data, setData] = useState<DashboardData>({
+  const [data, setData] = useState<DashboardStats>({
     totalUsers: 0,
     totalProducts: 0,
     totalOrders: 0,
@@ -36,25 +21,30 @@ const AdminDashboardPage: React.FC = () => {
     recentOrders: [],
     pendingProducts: 0,
     pendingReports: 0,
+    todayUsers: 0,
+    todayProducts: 0,
+    todayOrders: 0,
+    userStats: {},
+    productStats: {},
+    orderStats: {},
   });
 
+  const fetchData = async () => {
+    setLoading(true);
+    try {
+      const result = await getDashboardStats();
+      if (result) {
+        setData(result);
+      }
+    } catch (error) {
+      console.error('Failed to fetch dashboard stats:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   useEffect(() => {
-    // 模拟数据，实际应该从 API 获取
-    setData({
-      totalUsers: 1256,
-      totalProducts: 3420,
-      totalOrders: 1856,
-      totalRevenue: 268500,
-      recentOrders: [
-        { id: 1, orderNo: 'ORD20260220001', productName: 'iPhone 14 Pro', amount: 5999, status: 'PAID', createdAt: '2026-02-20 10:30' },
-        { id: 2, orderNo: 'ORD20260220002', productName: 'MacBook Air', amount: 7999, status: 'PENDING', createdAt: '2026-02-20 09:15' },
-        { id: 3, orderNo: 'ORD20260219003', productName: 'AirPods Pro', amount: 1999, status: 'SHIPPED', createdAt: '2026-02-19 16:45' },
-        { id: 4, orderNo: 'ORD20260219004', productName: 'iPad Mini', amount: 3599, status: 'COMPLETED', createdAt: '2026-02-19 14:20' },
-        { id: 5, orderNo: 'ORD20260219005', productName: '小米手环', amount: 299, status: 'COMPLETED', createdAt: '2026-02-19 11:00' },
-      ],
-      pendingProducts: 12,
-      pendingReports: 3,
-    });
+    fetchData();
   }, []);
 
   const getStatusTag = (status: string) => {
@@ -71,7 +61,12 @@ const AdminDashboardPage: React.FC = () => {
 
   return (
     <div>
-      <h1 style={{ fontSize: 24, marginBottom: 24 }}>仪表盘</h1>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 24 }}>
+        <h1 style={{ fontSize: 24, margin: 0 }}>仪表盘</h1>
+        <Button icon={<ReloadOutlined />} loading={loading} onClick={fetchData}>
+          刷新数据
+        </Button>
+      </div>
 
       {/* 统计卡片 */}
       <Row gutter={[16, 16]}>

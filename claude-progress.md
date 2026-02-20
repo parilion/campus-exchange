@@ -2,10 +2,36 @@
 
 ## 当前状态
 - 开发中模块: 管理后台
-- 当前功能: ID#49 - 数据统计面板 + 系统配置/敏感词/操作日志管理
-- 进度: 54/190 (28.4%)
+- 当前功能: ID#50 - 站内通知 API/列表/已读未读/类型分类/角标/全部已读
+- 进度: 55/190 (28.9%)
 
 ## 开发日志 (按时间倒序)
+
+### 2026-02-20 13:10:49 | 完成: 数据统计面板 + 系统配置/敏感词/操作日志管理 (#49)
+- **开始时间**: 2026-02-20 13:05:00
+- **结束时间**: 2026-02-20 13:10:49
+- **Commit**: `feat: add admin dashboard stats, system config, sensitive word and operation log management`
+- **涉及文件**:
+  - sql/add_admin_system_config.sql
+  - backend/src/main/java/com/campus/exchange/model/SystemConfig.java
+  - backend/src/main/java/com/campus/exchange/model/SensitiveWord.java
+  - backend/src/main/java/com/campus/exchange/model/OperationLog.java
+  - backend/src/main/java/com/campus/exchange/mapper/SystemConfigMapper.java
+  - backend/src/main/java/com/campus/exchange/mapper/SensitiveWordMapper.java
+  - backend/src/main/java/com/campus/exchange/mapper/OperationLogMapper.java
+  - backend/src/main/java/com/campus/exchange/dto/SystemConfigRequest.java
+  - backend/src/main/java/com/campus/exchange/dto/SensitiveWordRequest.java
+  - backend/src/main/java/com/campus/exchange/dto/DashboardStatsVO.java
+  - backend/src/main/java/com/campus/exchange/dto/RecentOrderVO.java
+  - backend/src/main/java/com/campus/exchange/controller/AdminController.java
+  - frontend/src/services/admin.ts
+  - frontend/src/pages/AdminSettingsPage.tsx
+  - frontend/src/pages/AdminSensitiveWordsPage.tsx
+  - frontend/src/pages/AdminOperationLogsPage.tsx
+  - frontend/src/pages/AdminDashboardPage.tsx
+  - frontend/src/pages/AdminLayout.tsx
+  - frontend/src/App.tsx
+- **备注**: 数据统计面板API(用户/商品/订单/收入统计 + 最近订单列表) + 系统配置CRUD API + 敏感词CRUD/批量导入API + 操作日志CRUD/批量删除API + 前端管理页面(系统设置/敏感词管理/操作日志) + 仪表盘真实API数据 + 侧边栏菜单更新 + 数据库表创建
 
 ### 2026-02-20 12:46:29 | 完成: 订单管理 + 评价管理 + 消息推送 + 数据导出 (#48)
 - **开始时间**: 2026-02-20 12:28:03
@@ -742,6 +768,7 @@
 - [x] #46 商品审核列表/操作 + 强制下架 + 举报处理 (2026-02-20)
 - [x] #47 分类管理 CRUD + 公告管理 + 轮播图管理 (2026-02-20)
 - [x] #48 订单管理 + 评价管理 + 消息推送 + 数据导出 (2026-02-20)
+- [x] #49 数据统计面板 + 系统配置/敏感词/操作日志管理 (2026-02-20)
 
 ### 用户中心 (P1)
 - [x] #38 个人资料查看/编辑/头像上传 + 资料编辑页面 UI (2026-02-19)

@@ -4,6 +4,9 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.campus.exchange.dto.*;
 import com.campus.exchange.mapper.*;
+import com.campus.exchange.model.SystemConfig;
+import com.campus.exchange.model.SensitiveWord;
+import com.campus.exchange.model.OperationLog;
 import com.campus.exchange.model.*;
 import com.campus.exchange.util.Result;
 import org.springframework.http.HttpHeaders;
@@ -38,10 +41,15 @@ public class AdminController {
     private final OrderMapper orderMapper;
     private final ReviewMapper reviewMapper;
     private final SystemMessageMapper systemMessageMapper;
+    private final SystemConfigMapper systemConfigMapper;
+    private final SensitiveWordMapper sensitiveWordMapper;
+    private final OperationLogMapper operationLogMapper;
 
     public AdminController(UserMapper userMapper, ProductMapper productMapper, ProductReportMapper productReportMapper,
                           CategoryMapper categoryMapper, AnnouncementMapper announcementMapper, CarouselMapper carouselMapper,
-                          OrderMapper orderMapper, ReviewMapper reviewMapper, SystemMessageMapper systemMessageMapper) {
+                          OrderMapper orderMapper, ReviewMapper reviewMapper, SystemMessageMapper systemMessageMapper,
+                          SystemConfigMapper systemConfigMapper, SensitiveWordMapper sensitiveWordMapper,
+                          OperationLogMapper operationLogMapper) {
         this.userMapper = userMapper;
         this.productMapper = productMapper;
         this.productReportMapper = productReportMapper;
@@ -51,6 +59,9 @@ public class AdminController {
         this.orderMapper = orderMapper;
         this.reviewMapper = reviewMapper;
         this.systemMessageMapper = systemMessageMapper;
+        this.systemConfigMapper = systemConfigMapper;
+        this.sensitiveWordMapper = sensitiveWordMapper;
+        this.operationLogMapper = operationLogMapper;
     }
 
     /**
@@ -1146,6 +1157,422 @@ public class AdminController {
     private Long getCurrentUserId() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         return (Long) authentication.getPrincipal();
+    }
+
+    // ========== 数据统计面板 ==========
+
+    /**
+     * 获取仪表盘统计数据
+     */
+    @GetMapping("/dashboard/stats")
+    @PreAuthorize("hasRole('ADMIN')")
+    public Result<DashboardStatsVO> getDashboardStats() {
+        DashboardStatsVO stats = new DashboardStatsVO();
+
+        // 用户统计
+        stats.setTotalUsers(userMapper.selectCount(null));
+        stats.setUserStats(new java.util.HashMap<>());
+        stats.getUserStats().put("enabled", userMapper.selectCount(new LambdaQueryWrapper<User>().eq(User::getEnabled, true)));
+        stats.getUserStats().put("disabled", userMapper.selectCount(new LambdaQueryWrapper<User>().eq(User::getEnabled, false)));
+        stats.getUserStats().put("verified", userMapper.selectCount(new LambdaQueryWrapper<User>().eq(User::getVerified, true)));
+
+        // 商品统计
+        stats.setTotalProducts(productMapper.selectCount(null));
+        stats.setProductStats(new java.util.HashMap<>());
+        stats.getProductStats().put("onSale", productMapper.selectCount(new LambdaQueryWrapper<Product>().eq(Product::getStatus, "ON_SALE")));
+        stats.getProductStats().put("pending", productMapper.selectCount(new LambdaQueryWrapper<Product>().eq(Product::getAuditStatus, "PENDING")));
+        stats.setPendingProducts(productMapper.selectCount(new LambdaQueryWrapper<Product>().eq(Product::getAuditStatus, "PENDING")));
+
+        // 订单统计
+        stats.setTotalOrders(orderMapper.selectCount(null));
+        stats.setOrderStats(new java.util.HashMap<>());
+        stats.getOrderStats().put("pending", orderMapper.selectCount(new LambdaQueryWrapper<Order>().eq(Order::getStatus, "PENDING")));
+        stats.getOrderStats().put("paid", orderMapper.selectCount(new LambdaQueryWrapper<Order>().eq(Order::getStatus, "PAID")));
+        stats.getOrderStats().put("completed", orderMapper.selectCount(new LambdaQueryWrapper<Order>().eq(Order::getStatus, "COMPLETED")));
+
+        // 计算总收入（已完成订单的总金额）
+        List<Order> completedOrders = orderMapper.selectList(new LambdaQueryWrapper<Order>().eq(Order::getStatus, "COMPLETED"));
+        long totalRevenue = completedOrders.stream().mapToLong(o -> o.getPrice() != null ? o.getPrice().longValue() : 0).sum();
+        stats.setTotalRevenue(totalRevenue);
+
+        // 举报统计
+        stats.setPendingReports(productReportMapper.selectCount(new LambdaQueryWrapper<ProductReport>().eq(ProductReport::getStatus, "PENDING")));
+
+        // 最近订单
+        LambdaQueryWrapper<Order> orderWrapper = new LambdaQueryWrapper<>();
+        orderWrapper.orderByDesc(Order::getCreatedAt);
+        orderWrapper.last("LIMIT 5");
+        List<Order> recentOrders = orderMapper.selectList(orderWrapper);
+        List<RecentOrderVO> recentOrderVOList = new ArrayList<>();
+        for (Order order : recentOrders) {
+            RecentOrderVO vo = new RecentOrderVO();
+            vo.setId(order.getId());
+            vo.setOrderNo(order.getOrderNo());
+            vo.setProductName("商品#" + order.getProductId());
+            vo.setAmount(order.getPrice() != null ? order.getPrice().longValue() : 0);
+            vo.setStatus(order.getStatus());
+            vo.setCreatedAt(order.getCreatedAt() != null ? order.getCreatedAt().toString() : "");
+            recentOrderVOList.add(vo);
+        }
+        stats.setRecentOrders(recentOrderVOList);
+
+        return Result.success(stats);
+    }
+
+    // ========== 系统配置管理 ==========
+
+    /**
+     * 获取系统配置列表（分页）
+     */
+    @GetMapping("/config")
+    @PreAuthorize("hasRole('ADMIN')")
+    public Result<Page<SystemConfig>> getConfigList(
+            @RequestParam(defaultValue = "1") int page,
+            @RequestParam(defaultValue = "10") int pageSize,
+            @RequestParam(required = false) String keyword) {
+
+        Page<SystemConfig> pageObj = new Page<>(page, pageSize);
+        LambdaQueryWrapper<SystemConfig> wrapper = new LambdaQueryWrapper<>();
+
+        if (keyword != null && !keyword.isEmpty()) {
+            wrapper.and(w -> w
+                    .like(SystemConfig::getConfigKey, keyword)
+                    .or()
+                    .like(SystemConfig::getConfigName, keyword)
+            );
+        }
+        wrapper.orderByAsc(SystemConfig::getId);
+
+        Page<SystemConfig> result = systemConfigMapper.selectPage(pageObj, wrapper);
+        return Result.success(result);
+    }
+
+    /**
+     * 获取系统配置详情
+     */
+    @GetMapping("/config/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
+    public Result<SystemConfig> getConfigDetail(@PathVariable Long id) {
+        SystemConfig config = systemConfigMapper.selectById(id);
+        if (config == null) {
+            return Result.error("配置不存在");
+        }
+        return Result.success(config);
+    }
+
+    /**
+     * 创建系统配置
+     */
+    @PostMapping("/config")
+    @PreAuthorize("hasRole('ADMIN')")
+    public Result<Void> createConfig(@Valid @RequestBody SystemConfigRequest req) {
+        // 检查key是否已存在
+        LambdaQueryWrapper<SystemConfig> wrapper = new LambdaQueryWrapper<>();
+        wrapper.eq(SystemConfig::getConfigKey, req.getConfigKey());
+        if (systemConfigMapper.selectCount(wrapper) > 0) {
+            return Result.error("配置键已存在");
+        }
+
+        SystemConfig config = new SystemConfig();
+        config.setConfigKey(req.getConfigKey());
+        config.setConfigValue(req.getConfigValue());
+        config.setConfigType(req.getConfigType() != null ? req.getConfigType() : "STRING");
+        config.setConfigName(req.getConfigName());
+        config.setDescription(req.getDescription());
+        config.setCreatedAt(LocalDateTime.now());
+        config.setUpdatedAt(LocalDateTime.now());
+        systemConfigMapper.insert(config);
+        return Result.success();
+    }
+
+    /**
+     * 更新系统配置
+     */
+    @PutMapping("/config/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
+    public Result<Void> updateConfig(@PathVariable Long id, @Valid @RequestBody SystemConfigRequest req) {
+        SystemConfig existing = systemConfigMapper.selectById(id);
+        if (existing == null) {
+            return Result.error("配置不存在");
+        }
+
+        // 如果修改了key，检查是否冲突
+        if (req.getConfigKey() != null && !req.getConfigKey().equals(existing.getConfigKey())) {
+            LambdaQueryWrapper<SystemConfig> wrapper = new LambdaQueryWrapper<>();
+            wrapper.eq(SystemConfig::getConfigKey, req.getConfigKey());
+            if (systemConfigMapper.selectCount(wrapper) > 0) {
+                return Result.error("配置键已存在");
+            }
+        }
+
+        existing.setConfigKey(req.getConfigKey());
+        existing.setConfigValue(req.getConfigValue());
+        if (req.getConfigType() != null) {
+            existing.setConfigType(req.getConfigType());
+        }
+        existing.setConfigName(req.getConfigName());
+        existing.setDescription(req.getDescription());
+        existing.setUpdatedAt(LocalDateTime.now());
+        systemConfigMapper.updateById(existing);
+        return Result.success();
+    }
+
+    /**
+     * 删除系统配置
+     */
+    @DeleteMapping("/config/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
+    public Result<Void> deleteConfig(@PathVariable Long id) {
+        SystemConfig config = systemConfigMapper.selectById(id);
+        if (config == null) {
+            return Result.error("配置不存在");
+        }
+        systemConfigMapper.deleteById(id);
+        return Result.success();
+    }
+
+    // ========== 敏感词管理 ==========
+
+    /**
+     * 获取敏感词列表（分页）
+     */
+    @GetMapping("/sensitive-words")
+    @PreAuthorize("hasRole('ADMIN')")
+    public Result<Page<SensitiveWord>> getSensitiveWordList(
+            @RequestParam(defaultValue = "1") int page,
+            @RequestParam(defaultValue = "10") int pageSize,
+            @RequestParam(required = false) String keyword,
+            @RequestParam(required = false) String category,
+            @RequestParam(required = false) Boolean isEnabled) {
+
+        Page<SensitiveWord> pageObj = new Page<>(page, pageSize);
+        LambdaQueryWrapper<SensitiveWord> wrapper = new LambdaQueryWrapper<>();
+
+        if (keyword != null && !keyword.isEmpty()) {
+            wrapper.like(SensitiveWord::getWord, keyword);
+        }
+        if (category != null && !category.isEmpty()) {
+            wrapper.eq(SensitiveWord::getCategory, category);
+        }
+        if (isEnabled != null) {
+            wrapper.eq(SensitiveWord::getIsEnabled, isEnabled);
+        }
+        wrapper.orderByAsc(SensitiveWord::getLevel, SensitiveWord::getId);
+
+        Page<SensitiveWord> result = sensitiveWordMapper.selectPage(pageObj, wrapper);
+        return Result.success(result);
+    }
+
+    /**
+     * 获取所有敏感词（不分页，用于过滤）
+     */
+    @GetMapping("/sensitive-words/all")
+    @PreAuthorize("hasRole('ADMIN')")
+    public Result<List<SensitiveWord>> getAllSensitiveWords() {
+        LambdaQueryWrapper<SensitiveWord> wrapper = new LambdaQueryWrapper<>();
+        wrapper.eq(SensitiveWord::getIsEnabled, true);
+        wrapper.orderByAsc(SensitiveWord::getLevel);
+        List<SensitiveWord> words = sensitiveWordMapper.selectList(wrapper);
+        return Result.success(words);
+    }
+
+    /**
+     * 创建敏感词
+     */
+    @PostMapping("/sensitive-words")
+    @PreAuthorize("hasRole('ADMIN')")
+    public Result<Void> createSensitiveWord(@Valid @RequestBody SensitiveWordRequest req) {
+        // 检查词是否已存在
+        LambdaQueryWrapper<SensitiveWord> wrapper = new LambdaQueryWrapper<>();
+        wrapper.eq(SensitiveWord::getWord, req.getWord());
+        if (sensitiveWordMapper.selectCount(wrapper) > 0) {
+            return Result.error("敏感词已存在");
+        }
+
+        SensitiveWord word = new SensitiveWord();
+        word.setWord(req.getWord());
+        word.setCategory(req.getCategory() != null ? req.getCategory() : "GENERAL");
+        word.setLevel(req.getLevel() != null ? req.getLevel() : 1);
+        word.setReplaceWord(req.getReplaceWord() != null ? req.getReplaceWord() : "***");
+        word.setIsEnabled(req.getIsEnabled() != null ? req.getIsEnabled() : true);
+        word.setCreatedAt(LocalDateTime.now());
+        word.setUpdatedAt(LocalDateTime.now());
+        sensitiveWordMapper.insert(word);
+        return Result.success();
+    }
+
+    /**
+     * 更新敏感词
+     */
+    @PutMapping("/sensitive-words/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
+    public Result<Void> updateSensitiveWord(@PathVariable Long id, @Valid @RequestBody SensitiveWordRequest req) {
+        SensitiveWord existing = sensitiveWordMapper.selectById(id);
+        if (existing == null) {
+            return Result.error("敏感词不存在");
+        }
+
+        // 如果修改了词，检查是否冲突
+        if (req.getWord() != null && !req.getWord().equals(existing.getWord())) {
+            LambdaQueryWrapper<SensitiveWord> wrapper = new LambdaQueryWrapper<>();
+            wrapper.eq(SensitiveWord::getWord, req.getWord());
+            if (sensitiveWordMapper.selectCount(wrapper) > 0) {
+                return Result.error("敏感词已存在");
+            }
+        }
+
+        existing.setWord(req.getWord());
+        if (req.getCategory() != null) {
+            existing.setCategory(req.getCategory());
+        }
+        if (req.getLevel() != null) {
+            existing.setLevel(req.getLevel());
+        }
+        if (req.getReplaceWord() != null) {
+            existing.setReplaceWord(req.getReplaceWord());
+        }
+        if (req.getIsEnabled() != null) {
+            existing.setIsEnabled(req.getIsEnabled());
+        }
+        existing.setUpdatedAt(LocalDateTime.now());
+        sensitiveWordMapper.updateById(existing);
+        return Result.success();
+    }
+
+    /**
+     * 删除敏感词
+     */
+    @DeleteMapping("/sensitive-words/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
+    public Result<Void> deleteSensitiveWord(@PathVariable Long id) {
+        SensitiveWord word = sensitiveWordMapper.selectById(id);
+        if (word == null) {
+            return Result.error("敏感词不存在");
+        }
+        sensitiveWordMapper.deleteById(id);
+        return Result.success();
+    }
+
+    /**
+     * 批量导入敏感词
+     */
+    @PostMapping("/sensitive-words/batch")
+    @PreAuthorize("hasRole('ADMIN')")
+    public Result<Map<String, Object>> batchImportSensitiveWords(@RequestBody List<String> words) {
+        int success = 0;
+        int failed = 0;
+        List<String> errors = new ArrayList<>();
+
+        for (String word : words) {
+            if (word == null || word.trim().isEmpty()) {
+                failed++;
+                continue;
+            }
+            LambdaQueryWrapper<SensitiveWord> wrapper = new LambdaQueryWrapper<>();
+            wrapper.eq(SensitiveWord::getWord, word.trim());
+            if (sensitiveWordMapper.selectCount(wrapper) > 0) {
+                failed++;
+                errors.add(word + " (已存在)");
+                continue;
+            }
+
+            SensitiveWord sw = new SensitiveWord();
+            sw.setWord(word.trim());
+            sw.setCategory("CUSTOM");
+            sw.setLevel(2);
+            sw.setReplaceWord("***");
+            sw.setIsEnabled(true);
+            sw.setCreatedAt(LocalDateTime.now());
+            sw.setUpdatedAt(LocalDateTime.now());
+            sensitiveWordMapper.insert(sw);
+            success++;
+        }
+
+        Map<String, Object> result = new java.util.HashMap<>();
+        result.put("success", success);
+        result.put("failed", failed);
+        result.put("errors", errors);
+        return Result.success(result);
+    }
+
+    // ========== 操作日志管理 ==========
+
+    /**
+     * 获取操作日志列表（分页）
+     */
+    @GetMapping("/operation-logs")
+    @PreAuthorize("hasRole('ADMIN')")
+    public Result<Page<OperationLog>> getOperationLogList(
+            @RequestParam(defaultValue = "1") int page,
+            @RequestParam(defaultValue = "20") int pageSize,
+            @RequestParam(required = false) String operation,
+            @RequestParam(required = false) String module,
+            @RequestParam(required = false) String username,
+            @RequestParam(required = false) String startDate,
+            @RequestParam(required = false) String endDate) {
+
+        Page<OperationLog> pageObj = new Page<>(page, pageSize);
+        LambdaQueryWrapper<OperationLog> wrapper = new LambdaQueryWrapper<>();
+
+        if (operation != null && !operation.isEmpty()) {
+            wrapper.like(OperationLog::getOperation, operation);
+        }
+        if (module != null && !module.isEmpty()) {
+            wrapper.eq(OperationLog::getModule, module);
+        }
+        if (username != null && !username.isEmpty()) {
+            wrapper.like(OperationLog::getUsername, username);
+        }
+        if (startDate != null && !startDate.isEmpty()) {
+            wrapper.ge(OperationLog::getCreatedAt, LocalDateTime.parse(startDate + "T00:00:00"));
+        }
+        if (endDate != null && !endDate.isEmpty()) {
+            wrapper.le(OperationLog::getCreatedAt, LocalDateTime.parse(endDate + "T23:59:59"));
+        }
+        wrapper.orderByDesc(OperationLog::getCreatedAt);
+
+        Page<OperationLog> result = operationLogMapper.selectPage(pageObj, wrapper);
+        return Result.success(result);
+    }
+
+    /**
+     * 获取操作日志详情
+     */
+    @GetMapping("/operation-logs/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
+    public Result<OperationLog> getOperationLogDetail(@PathVariable Long id) {
+        OperationLog log = operationLogMapper.selectById(id);
+        if (log == null) {
+            return Result.error("日志不存在");
+        }
+        return Result.success(log);
+    }
+
+    /**
+     * 删除操作日志
+     */
+    @DeleteMapping("/operation-logs/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
+    public Result<Void> deleteOperationLog(@PathVariable Long id) {
+        OperationLog log = operationLogMapper.selectById(id);
+        if (log == null) {
+            return Result.error("日志不存在");
+        }
+        operationLogMapper.deleteById(id);
+        return Result.success();
+    }
+
+    /**
+     * 批量删除日志
+     */
+    @DeleteMapping("/operation-logs/batch")
+    @PreAuthorize("hasRole('ADMIN')")
+    public Result<Void> batchDeleteOperationLogs(@RequestBody List<Long> ids) {
+        if (ids == null || ids.isEmpty()) {
+            return Result.error("请选择要删除的日志");
+        }
+        operationLogMapper.deleteBatchIds(ids);
+        return Result.success();
     }
 
     // 用户统计数据内部类

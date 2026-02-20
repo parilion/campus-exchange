@@ -15,6 +15,9 @@ import AdminCarouselsPage from './pages/AdminCarouselsPage';
 import AdminOrdersPage from './pages/AdminOrdersPage';
 import AdminReviewsPage from './pages/AdminReviewsPage';
 import AdminMessagesPage from './pages/AdminMessagesPage';
+import AdminSettingsPage from './pages/AdminSettingsPage';
+import AdminSensitiveWordsPage from './pages/AdminSensitiveWordsPage';
+import AdminOperationLogsPage from './pages/AdminOperationLogsPage';
 import PublishPage from './pages/PublishPage';
 import EditProductPage from './pages/EditProductPage';
 import ProductListPage from './pages/ProductListPage';
@@ -204,6 +207,21 @@ function App() {
               <Route path="/admin/messages" element={
                 <AdminLayout>
                   <AdminMessagesPage />
+                </AdminLayout>
+              } />
+              <Route path="/admin/sensitive-words" element={
+                <AdminLayout>
+                  <AdminSensitiveWordsPage />
+                </AdminLayout>
+              } />
+              <Route path="/admin/operation-logs" element={
+                <AdminLayout>
+                  <AdminOperationLogsPage />
+                </AdminLayout>
+              } />
+              <Route path="/admin/settings" element={
+                <AdminLayout>
+                  <AdminSettingsPage />
                 </AdminLayout>
               } />
               <Route path="/admin" element={<Navigate to="/admin/dashboard" replace />} />

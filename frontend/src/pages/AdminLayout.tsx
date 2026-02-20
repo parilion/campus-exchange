@@ -17,6 +17,9 @@ import {
   StarOutlined,
   SendOutlined,
   BarChartOutlined,
+  FileSearchOutlined,
+  AuditOutlined,
+  HistoryOutlined,
 } from '@ant-design/icons';
 import { useUserStore } from '../stores/userStore';
 
@@ -82,6 +85,16 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({ children }) => {
       key: '/admin/messages',
       icon: <SendOutlined />,
       label: '消息推送',
+    },
+    {
+      key: '/admin/sensitive-words',
+      icon: <AuditOutlined />,
+      label: '敏感词管理',
+    },
+    {
+      key: '/admin/operation-logs',
+      icon: <HistoryOutlined />,
+      label: '操作日志',
     },
     {
       key: '/admin/settings',

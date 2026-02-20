@@ -389,7 +389,7 @@
     "module": "admin",
     "description": "数据统计面板 + 系统配置/敏感词/操作日志管理",
     "priority": "P2",
-    "passes": false
+    "passes": true
   },
   {
     "id": 50,

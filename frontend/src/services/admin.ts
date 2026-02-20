@@ -580,3 +580,207 @@ export function exportProducts(params?: { status?: string; auditStatus?: string 
   const query = new URLSearchParams(params as any).toString();
   window.open(`/api/admin/export/products?${query}`, '_blank');
 }
+
+// ========== 数据统计面板 ==========
+
+export interface DashboardStats {
+  totalUsers: number;
+  totalProducts: number;
+  totalOrders: number;
+  totalRevenue: number;
+  pendingProducts: number;
+  pendingReports: number;
+  todayUsers: number;
+  todayProducts: number;
+  todayOrders: number;
+  recentOrders: Array<{
+    id: number;
+    orderNo: string;
+    productName: string;
+    amount: number;
+    status: string;
+    createdAt: string;
+  }>;
+  userStats: Record<string, number>;
+  productStats: Record<string, number>;
+  orderStats: Record<string, number>;
+}
+
+// 获取仪表盘统计数据
+export async function getDashboardStats() {
+  const res = await request.get<Result<DashboardStats>>('/admin/dashboard/stats');
+  return res.data.data;
+}
+
+// ========== 系统配置管理 ==========
+
+export interface SystemConfig {
+  id: number;
+  configKey: string;
+  configValue: string;
+  configType: string;
+  configName: string;
+  description?: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+// 获取配置列表
+export async function getConfigList(params: { page?: number; pageSize?: number; keyword?: string }) {
+  const res = await request.get<Result<PageResponse<SystemConfig>>>('/admin/config', { params });
+  return res.data.data;
+}
+
+// 获取配置详情
+export async function getConfigDetail(id: number) {
+  const res = await request.get<Result<SystemConfig>>(`/admin/config/${id}`);
+  return res.data.data;
+}
+
+// 创建配置
+export async function createConfig(data: {
+  configKey: string;
+  configValue?: string;
+  configType?: string;
+  configName: string;
+  description?: string;
+}) {
+  const res = await request.post<Result<void>>('/admin/config', data);
+  return res.data;
+}
+
+// 更新配置
+export async function updateConfig(id: number, data: {
+  configKey?: string;
+  configValue?: string;
+  configType?: string;
+  configName?: string;
+  description?: string;
+}) {
+  const res = await request.put<Result<void>>(`/admin/config/${id}`, data);
+  return res.data;
+}
+
+// 删除配置
+export async function deleteConfig(id: number) {
+  const res = await request.delete<Result<void>>(`/admin/config/${id}`);
+  return res.data;
+}
+
+// ========== 敏感词管理 ==========
+
+export interface SensitiveWord {
+  id: number;
+  word: string;
+  category: string;
+  level: number;
+  replaceWord: string;
+  isEnabled: boolean;
+  createdAt: string;
+  updatedAt: string;
+}
+
+// 获取敏感词列表
+export async function getSensitiveWordList(params: {
+  page?: number;
+  pageSize?: number;
+  keyword?: string;
+  category?: string;
+  isEnabled?: boolean;
+}) {
+  const res = await request.get<Result<PageResponse<SensitiveWord>>>('/admin/sensitive-words', { params });
+  return res.data.data;
+}
+
+// 获取所有敏感词
+export async function getAllSensitiveWords() {
+  const res = await request.get<Result<SensitiveWord[]>>('/admin/sensitive-words/all');
+  return res.data.data;
+}
+
+// 创建敏感词
+export async function createSensitiveWord(data: {
+  word: string;
+  category?: string;
+  level?: number;
+  replaceWord?: string;
+  isEnabled?: boolean;
+}) {
+  const res = await request.post<Result<void>>('/admin/sensitive-words', data);
+  return res.data;
+}
+
+// 更新敏感词
+export async function updateSensitiveWord(id: number, data: {
+  word?: string;
+  category?: string;
+  level?: number;
+  replaceWord?: string;
+  isEnabled?: boolean;
+}) {
+  const res = await request.put<Result<void>>(`/admin/sensitive-words/${id}`, data);
+  return res.data;
+}
+
+// 删除敏感词
+export async function deleteSensitiveWord(id: number) {
+  const res = await request.delete<Result<void>>(`/admin/sensitive-words/${id}`);
+  return res.data;
+}
+
+// 批量导入敏感词
+export async function batchImportSensitiveWords(words: string[]) {
+  const res = await request.post<Result<{ success: number; failed: number; errors: string[] }>>('/admin/sensitive-words/batch', words);
+  return res.data.data;
+}
+
+// ========== 操作日志管理 ==========
+
+export interface OperationLog {
+  id: number;
+  userId?: number;
+  username?: string;
+  operation: string;
+  module?: string;
+  method?: string;
+  requestUrl?: string;
+  requestMethod?: string;
+  requestParams?: string;
+  requestIp?: string;
+  responseStatus?: number;
+  responseTime?: number;
+  errorMessage?: string;
+  createdAt: string;
+}
+
+// 获取操作日志列表
+export async function getOperationLogList(params: {
+  page?: number;
+  pageSize?: number;
+  operation?: string;
+  module?: string;
+  username?: string;
+  startDate?: string;
+  endDate?: string;
+}) {
+  const res = await request.get<Result<PageResponse<OperationLog>>>('/admin/operation-logs', { params });
+  return res.data.data;
+}
+
+// 获取操作日志详情
+export async function getOperationLogDetail(id: number) {
+  const res = await request.get<Result<OperationLog>>(`/admin/operation-logs/${id}`);
+  return res.data.data;
+}
+
+// 删除操作日志
+export async function deleteOperationLog(id: number) {
+  const res = await request.delete<Result<void>>(`/admin/operation-logs/${id}`);
+  return res.data;
+}
+
+// 批量删除操作日志
+export async function batchDeleteOperationLogs(ids: number[]) {
+  const res = await request.delete<Result<void>>('/admin/operation-logs/batch', { data: ids });
+  return res.data;
+}
