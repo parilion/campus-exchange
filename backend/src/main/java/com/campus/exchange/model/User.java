@@ -32,6 +32,12 @@ public class User {
 
     private Boolean enabled;
 
+    /**
+     * 是否启用邮件通知
+     */
+    @TableField("email_notification_enabled")
+    private Boolean emailNotificationEnabled;
+
     @TableLogic
     private Integer deleted;
 
