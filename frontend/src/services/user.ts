@@ -13,6 +13,7 @@ export interface UserProfile {
   role: string;
   enabled: boolean;
   createdAt: string;
+  emailNotificationEnabled?: boolean;
 }
 
 export interface UserPublicProfile {

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Card, List, Button, Space, Typography, Tag, Switch, message, Form } from 'antd';
 import {
   LockOutlined, SafetyCertificateOutlined, ClockCircleOutlined,
@@ -6,22 +6,44 @@ import {
 } from '@ant-design/icons';
 import { useNavigate } from 'react-router-dom';
 import { useUserStore } from '../stores/userStore';
-import { updateEmailNotification } from '../services/user';
+import { getProfile, updateEmailNotification } from '../services/user';
 
 const { Title, Text } = Typography;
 
 const AccountSecurityPage: React.FC = () => {
   const navigate = useNavigate();
   const { user } = useUserStore();
-  const [emailNotificationEnabled, setEmailNotificationEnabled] = useState(true);
+  const [emailNotificationEnabled, setEmailNotificationEnabled] = useState<boolean | undefined>(undefined);
+  const [loading, setLoading] = useState(true);
+  const [emailLoading, setEmailLoading] = useState(false);
+
+  useEffect(() => {
+    const fetchEmailNotification = async () => {
+      try {
+        const response = await getProfile();
+        if (response.data.code === 200 && response.data.data) {
+          setEmailNotificationEnabled(response.data.data.emailNotificationEnabled ?? true);
+        }
+      } catch (error) {
+        console.error('Failed to fetch email notification setting:', error);
+        setEmailNotificationEnabled(true);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchEmailNotification();
+  }, []);
 
   const handleEmailNotificationChange = async (checked: boolean) => {
+    setEmailLoading(true);
     try {
       await updateEmailNotification(checked);
       setEmailNotificationEnabled(checked);
       message.success('设置已更新');
     } catch (error) {
       message.error('设置更新失败');
+    } finally {
+      setEmailLoading(false);
     }
   };
 
@@ -117,8 +139,10 @@ const AccountSecurityPage: React.FC = () => {
               </div>
             </Space>
             <Switch
-              checked={emailNotificationEnabled}
+              checked={emailNotificationEnabled ?? true}
+              loading={emailLoading}
               onChange={handleEmailNotificationChange}
+              disabled={loading}
             />
           </Space>
         </div>
