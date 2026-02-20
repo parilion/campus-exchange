@@ -397,7 +397,7 @@
     "module": "notification",
     "description": "站内通知 API/列表/已读未读/类型分类/角标/全部已读",
     "priority": "P2",
-    "passes": false
+    "passes": true
   },
   {
     "id": 51,
@@ -469,7 +469,7 @@
     "module": "deploy",
     "description": "Docker Compose + Dockerfile + Nginx配置 + CI/CD",
     "priority": "P2",
-    "passes": false
+    "passes": true
   },
   {
     "id": 60,
