@@ -25,14 +25,17 @@ public class AuthService {
     private final PasswordResetCodeMapper passwordResetCodeMapper;
     private final PasswordEncoder passwordEncoder;
     private final JwtTokenProvider jwtTokenProvider;
+    private final EmailService emailService;
     private final Random random = new Random();
 
     public AuthService(UserMapper userMapper, PasswordResetCodeMapper passwordResetCodeMapper,
-                      PasswordEncoder passwordEncoder, JwtTokenProvider jwtTokenProvider) {
+                      PasswordEncoder passwordEncoder, JwtTokenProvider jwtTokenProvider,
+                      EmailService emailService) {
         this.userMapper = userMapper;
         this.passwordResetCodeMapper = passwordResetCodeMapper;
         this.passwordEncoder = passwordEncoder;
         this.jwtTokenProvider = jwtTokenProvider;
+        this.emailService = emailService;
     }
 
     /**
@@ -152,6 +155,11 @@ public class AuthService {
         System.out.println("Inserting reset code...");
         passwordResetCodeMapper.insert(resetCode);
         System.out.println("Reset code inserted successfully");
+
+        // 发送密码重置邮件
+        if (user != null && Boolean.TRUE.equals(user.getEmailNotificationEnabled())) {
+            emailService.sendPasswordResetEmail(email, code);
+        }
 
         // TODO: 实际项目中需要发送邮件
         // 这里模拟发送，直接返回验证码（演示用）
