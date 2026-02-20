@@ -25,8 +25,14 @@ public class EmailService {
      */
     public boolean sendEmail(String to, String subject, String content) {
         // 参数校验
-        if (to == null || to.isEmpty()) {
+        if (to == null || to.isBlank()) {
             log.error("邮箱地址为空");
+            return false;
+        }
+
+        // 简单邮箱格式验证
+        if (!to.contains("@") || !to.contains(".")) {
+            log.error("邮箱格式无效: {}", to);
             return false;
         }
 
