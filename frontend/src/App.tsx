@@ -9,6 +9,9 @@ import AdminLayout from './pages/AdminLayout';
 import AdminDashboardPage from './pages/AdminDashboardPage';
 import AdminUsersPage from './pages/AdminUsersPage';
 import AdminProductsPage from './pages/AdminProductsPage';
+import AdminCategoriesPage from './pages/AdminCategoriesPage';
+import AdminAnnouncementsPage from './pages/AdminAnnouncementsPage';
+import AdminCarouselsPage from './pages/AdminCarouselsPage';
 import PublishPage from './pages/PublishPage';
 import EditProductPage from './pages/EditProductPage';
 import ProductListPage from './pages/ProductListPage';
@@ -168,6 +171,21 @@ function App() {
               <Route path="/admin/products" element={
                 <AdminLayout>
                   <AdminProductsPage />
+                </AdminLayout>
+              } />
+              <Route path="/admin/categories" element={
+                <AdminLayout>
+                  <AdminCategoriesPage />
+                </AdminLayout>
+              } />
+              <Route path="/admin/announcements" element={
+                <AdminLayout>
+                  <AdminAnnouncementsPage />
+                </AdminLayout>
+              } />
+              <Route path="/admin/carousels" element={
+                <AdminLayout>
+                  <AdminCarouselsPage />
                 </AdminLayout>
               } />
               <Route path="/admin" element={<Navigate to="/admin/dashboard" replace />} />

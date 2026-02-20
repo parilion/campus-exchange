@@ -6,19 +6,27 @@ import lombok.Data;
 import java.time.LocalDateTime;
 
 @Data
-@TableName("category")
-public class Category {
+@TableName("announcement")
+public class Announcement {
 
     @TableId(type = IdType.AUTO)
     private Long id;
 
-    private String name;
+    private String title;
 
-    private String icon;
+    private String content;
 
-    private Long parentId;
+    private String type;
 
-    private Integer sort;
+    private Integer priority;
+
+    private String status;
+
+    private LocalDateTime startTime;
+
+    private LocalDateTime endTime;
+
+    private Long createdBy;
 
     @TableLogic
     private Integer deleted;

@@ -191,3 +191,222 @@ export async function handleReport(reportId: number, action: 'RESOLVE' | 'IGNORE
   });
   return res.data;
 }
+
+// ========== 分类管理 ==========
+
+export interface Category {
+  id: number;
+  name: string;
+  icon?: string;
+  parentId?: number;
+  sort: number;
+  createdAt: string;
+}
+
+// 获取分类列表
+export async function getCategoryList() {
+  const res = await request.get<Result<Category[]>>('/admin/categories');
+  return res.data.data;
+}
+
+// 创建分类
+export async function createCategory(data: { name: string; icon?: string; parentId?: number; sort?: number }) {
+  const res = await request.post<Result<void>>('/admin/categories', data);
+  return res.data;
+}
+
+// 更新分类
+export async function updateCategory(id: number, data: { name?: string; icon?: string; parentId?: number; sort?: number }) {
+  const res = await request.put<Result<void>>(`/admin/categories/${id}`, data);
+  return res.data;
+}
+
+// 删除分类
+export async function deleteCategory(id: number) {
+  const res = await request.delete<Result<void>>(`/admin/categories/${id}`);
+  return res.data;
+}
+
+// ========== 公告管理 ==========
+
+export interface Announcement {
+  id: number;
+  title: string;
+  content: string;
+  type: string;
+  priority: number;
+  status: string;
+  startTime?: string;
+  endTime?: string;
+  createdBy: number;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface AnnouncementStats {
+  total: number;
+  published: number;
+  draft: number;
+  archived: number;
+}
+
+// 获取公告列表
+export async function getAnnouncementList(params: {
+  page?: number;
+  pageSize?: number;
+  keyword?: string;
+  status?: string;
+  type?: string;
+}) {
+  const res = await request.get<Result<PageResponse<Announcement>>>('/admin/announcements', { params });
+  return res.data.data;
+}
+
+// 获取公告详情
+export async function getAnnouncementDetail(id: number) {
+  const res = await request.get<Result<Announcement>>(`/admin/announcements/${id}`);
+  return res.data.data;
+}
+
+// 创建公告
+export async function createAnnouncement(data: {
+  title: string;
+  content: string;
+  type?: string;
+  priority?: number;
+  status?: string;
+  startTime?: string;
+  endTime?: string;
+}) {
+  const res = await request.post<Result<void>>('/admin/announcements', data);
+  return res.data;
+}
+
+// 更新公告
+export async function updateAnnouncement(id: number, data: {
+  title?: string;
+  content?: string;
+  type?: string;
+  priority?: number;
+  status?: string;
+  startTime?: string;
+  endTime?: string;
+}) {
+  const res = await request.put<Result<void>>(`/admin/announcements/${id}`, data);
+  return res.data;
+}
+
+// 删除公告
+export async function deleteAnnouncement(id: number) {
+  const res = await request.delete<Result<void>>(`/admin/announcements/${id}`);
+  return res.data;
+}
+
+// 发布公告
+export async function publishAnnouncement(id: number) {
+  const res = await request.post<Result<void>>(`/admin/announcements/${id}/publish`);
+  return res.data;
+}
+
+// 获取公告统计
+export async function getAnnouncementStats() {
+  const res = await request.get<Result<AnnouncementStats>>('/admin/announcements/stats');
+  return res.data.data;
+}
+
+// ========== 轮播图管理 ==========
+
+export interface Carousel {
+  id: number;
+  title: string;
+  imageUrl: string;
+  linkUrl?: string;
+  linkType?: string;
+  targetId?: number;
+  position: string;
+  sort: number;
+  status: string;
+  startTime?: string;
+  endTime?: string;
+  clickCount: number;
+  createdBy: number;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface CarouselStats {
+  total: number;
+  published: number;
+  draft: number;
+  disabled: number;
+}
+
+// 获取轮播图列表
+export async function getCarouselList(params: {
+  page?: number;
+  pageSize?: number;
+  keyword?: string;
+  status?: string;
+  position?: string;
+}) {
+  const res = await request.get<Result<PageResponse<Carousel>>>('/admin/carousels', { params });
+  return res.data.data;
+}
+
+// 获取轮播图详情
+export async function getCarouselDetail(id: number) {
+  const res = await request.get<Result<Carousel>>(`/admin/carousels/${id}`);
+  return res.data.data;
+}
+
+// 创建轮播图
+export async function createCarousel(data: {
+  title: string;
+  imageUrl: string;
+  linkUrl?: string;
+  linkType?: string;
+  targetId?: number;
+  position?: string;
+  sort?: number;
+  status?: string;
+  startTime?: string;
+  endTime?: string;
+}) {
+  const res = await request.post<Result<void>>('/admin/carousels', data);
+  return res.data;
+}
+
+// 更新轮播图
+export async function updateCarousel(id: number, data: {
+  title?: string;
+  imageUrl?: string;
+  linkUrl?: string;
+  linkType?: string;
+  targetId?: number;
+  position?: string;
+  sort?: number;
+  status?: string;
+  startTime?: string;
+  endTime?: string;
+}) {
+  const res = await request.put<Result<void>>(`/admin/carousels/${id}`, data);
+  return res.data;
+}
+
+// 删除轮播图
+export async function deleteCarousel(id: number) {
+  const res = await request.delete<Result<void>>(`/admin/carousels/${id}`);
+  return res.data;
+}
+
+// 发布轮播图
+export async function publishCarousel(id: number) {
+  const res = await request.post<Result<void>>(`/admin/carousels/${id}/publish`);
+  return res.data;
+}
+
+// 获取轮播图统计
+export async function getCarouselStats() {
+  const res = await request.get<Result<CarouselStats>>('/admin/carousels/stats');
+  return res.data.data;
+}

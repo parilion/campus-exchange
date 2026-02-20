@@ -11,6 +11,9 @@ import {
   BellOutlined,
   MenuFoldOutlined,
   MenuUnfoldOutlined,
+  AppstoreOutlined,
+  NotificationOutlined,
+  PictureOutlined,
 } from '@ant-design/icons';
 import { useUserStore } from '../stores/userStore';
 
@@ -46,6 +49,21 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({ children }) => {
       key: '/admin/products',
       icon: <ShoppingOutlined />,
       label: '商品管理',
+    },
+    {
+      key: '/admin/categories',
+      icon: <AppstoreOutlined />,
+      label: '分类管理',
+    },
+    {
+      key: '/admin/announcements',
+      icon: <NotificationOutlined />,
+      label: '公告管理',
+    },
+    {
+      key: '/admin/carousels',
+      icon: <PictureOutlined />,
+      label: '轮播图管理',
     },
     {
       key: '/admin/orders',

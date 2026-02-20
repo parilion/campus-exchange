@@ -373,7 +373,7 @@
     "module": "admin",
     "description": "分类管理 CRUD + 公告管理 + 轮播图管理",
     "priority": "P2",
-    "passes": false
+    "passes": true
   },
   {
     "id": 48,

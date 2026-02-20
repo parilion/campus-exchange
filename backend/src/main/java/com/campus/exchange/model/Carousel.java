@@ -6,19 +6,35 @@ import lombok.Data;
 import java.time.LocalDateTime;
 
 @Data
-@TableName("category")
-public class Category {
+@TableName("carousel")
+public class Carousel {
 
     @TableId(type = IdType.AUTO)
     private Long id;
 
-    private String name;
+    private String title;
 
-    private String icon;
+    private String imageUrl;
 
-    private Long parentId;
+    private String linkUrl;
+
+    private String linkType;
+
+    private Long targetId;
+
+    private String position;
 
     private Integer sort;
+
+    private String status;
+
+    private LocalDateTime startTime;
+
+    private LocalDateTime endTime;
+
+    private Integer clickCount;
+
+    private Long createdBy;
 
     @TableLogic
     private Integer deleted;

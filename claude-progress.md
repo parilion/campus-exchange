@@ -2,10 +2,30 @@
 
 ## 当前状态
 - 开发中模块: 管理后台
-- 当前功能: ID#47 - 分类管理 CRUD + 公告管理 + 轮播图管理
-- 进度: 52/190 (27.4%)
+- 当前功能: ID#48 - 订单管理 + 评价管理 + 消息推送 + 数据导出
+- 进度: 53/190 (27.9%)
 
 ## 开发日志 (按时间倒序)
+
+### 2026-02-20 11:42:00 | 完成: 分类管理 CRUD + 公告管理 + 轮播图管理 (#47)
+- **开始时间**: 2026-02-20 11:25:25
+- **结束时间**: 2026-02-20 11:42:00
+- **Commit**: `feat: add admin category, announcement and carousel management`
+- **涉及文件**:
+  - sql/add_announcement_carousel.sql
+  - backend/src/main/java/com/campus/exchange/model/Announcement.java
+  - backend/src/main/java/com/campus/exchange/model/Carousel.java
+  - backend/src/main/java/com/campus/exchange/model/Category.java
+  - backend/src/main/java/com/campus/exchange/mapper/AnnouncementMapper.java
+  - backend/src/main/java/com/campus/exchange/mapper/CarouselMapper.java
+  - backend/src/main/java/com/campus/exchange/controller/AdminController.java
+  - frontend/src/services/admin.ts
+  - frontend/src/pages/AdminCategoriesPage.tsx
+  - frontend/src/pages/AdminAnnouncementsPage.tsx
+  - frontend/src/pages/AdminCarouselsPage.tsx
+  - frontend/src/pages/AdminLayout.tsx
+  - frontend/src/App.tsx
+- **备注**: announcement和carousel数据库表 + Category/Announcement/Carousel模型 + 后端CRUD API(分类/公告/轮播图) + 前端管理页面(列表/新增/编辑/删除/发布) + 侧边栏菜单 + E2E测试验证
 
 ### 2026-02-20 03:10:00 | 完成: 商品审核列表/操作 + 强制下架 + 举报处理 (#46)
 - **开始时间**: 2026-02-20 02:50:00
@@ -705,6 +725,7 @@
 - [x] #44 管理员登录 + 权限控制 + 布局 UI (2026-02-20)
 - [x] #45 用户管理列表 + 封禁/解封操作 (2026-02-20)
 - [x] #46 商品审核列表/操作 + 强制下架 + 举报处理 (2026-02-20)
+- [x] #47 分类管理 CRUD + 公告管理 + 轮播图管理 (2026-02-20)
 
 ### 用户中心 (P1)
 - [x] #38 个人资料查看/编辑/头像上传 + 资料编辑页面 UI (2026-02-19)

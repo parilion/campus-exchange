@@ -3,9 +3,15 @@ package com.campus.exchange.controller;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.campus.exchange.dto.*;
+import com.campus.exchange.mapper.AnnouncementMapper;
+import com.campus.exchange.mapper.CarouselMapper;
+import com.campus.exchange.mapper.CategoryMapper;
 import com.campus.exchange.mapper.ProductMapper;
 import com.campus.exchange.mapper.ProductReportMapper;
 import com.campus.exchange.mapper.UserMapper;
+import com.campus.exchange.model.Announcement;
+import com.campus.exchange.model.Carousel;
+import com.campus.exchange.model.Category;
 import com.campus.exchange.model.Product;
 import com.campus.exchange.model.ProductReport;
 import com.campus.exchange.model.User;
@@ -28,11 +34,18 @@ public class AdminController {
     private final UserMapper userMapper;
     private final ProductMapper productMapper;
     private final ProductReportMapper productReportMapper;
+    private final CategoryMapper categoryMapper;
+    private final AnnouncementMapper announcementMapper;
+    private final CarouselMapper carouselMapper;
 
-    public AdminController(UserMapper userMapper, ProductMapper productMapper, ProductReportMapper productReportMapper) {
+    public AdminController(UserMapper userMapper, ProductMapper productMapper, ProductReportMapper productReportMapper,
+                          CategoryMapper categoryMapper, AnnouncementMapper announcementMapper, CarouselMapper carouselMapper) {
         this.userMapper = userMapper;
         this.productMapper = productMapper;
         this.productReportMapper = productReportMapper;
+        this.categoryMapper = categoryMapper;
+        this.announcementMapper = announcementMapper;
+        this.carouselMapper = carouselMapper;
     }
 
     /**
@@ -463,6 +476,302 @@ public class AdminController {
         stats.put("pending", productReportMapper.selectCount(new LambdaQueryWrapper<ProductReport>().eq(ProductReport::getStatus, "PENDING")));
         stats.put("resolved", productReportMapper.selectCount(new LambdaQueryWrapper<ProductReport>().eq(ProductReport::getStatus, "RESOLVED")));
         stats.put("ignored", productReportMapper.selectCount(new LambdaQueryWrapper<ProductReport>().eq(ProductReport::getStatus, "IGNORED")));
+        return Result.success(stats);
+    }
+
+    // ========== 分类管理 ==========
+
+    /**
+     * 获取分类列表
+     */
+    @GetMapping("/categories")
+    @PreAuthorize("hasRole('ADMIN')")
+    public Result<List<Category>> getCategoryList() {
+        LambdaQueryWrapper<Category> wrapper = new LambdaQueryWrapper<>();
+        wrapper.orderByAsc(Category::getSort);
+        List<Category> categories = categoryMapper.selectList(wrapper);
+        return Result.success(categories);
+    }
+
+    /**
+     * 创建分类
+     */
+    @PostMapping("/categories")
+    @PreAuthorize("hasRole('ADMIN')")
+    public Result<Void> createCategory(@Valid @RequestBody Category category) {
+        category.setCreatedAt(LocalDateTime.now());
+        categoryMapper.insert(category);
+        return Result.success();
+    }
+
+    /**
+     * 更新分类
+     */
+    @PutMapping("/categories/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
+    public Result<Void> updateCategory(@PathVariable Long id, @Valid @RequestBody Category category) {
+        Category existing = categoryMapper.selectById(id);
+        if (existing == null) {
+            return Result.error("分类不存在");
+        }
+        category.setId(id);
+        category.setUpdatedAt(LocalDateTime.now());
+        categoryMapper.updateById(category);
+        return Result.success();
+    }
+
+    /**
+     * 删除分类
+     */
+    @DeleteMapping("/categories/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
+    public Result<Void> deleteCategory(@PathVariable Long id) {
+        Category category = categoryMapper.selectById(id);
+        if (category == null) {
+            return Result.error("分类不存在");
+        }
+        categoryMapper.deleteById(id);
+        return Result.success();
+    }
+
+    // ========== 公告管理 ==========
+
+    /**
+     * 获取公告列表
+     */
+    @GetMapping("/announcements")
+    @PreAuthorize("hasRole('ADMIN')")
+    public Result<Page<Announcement>> getAnnouncementList(
+            @RequestParam(defaultValue = "1") int page,
+            @RequestParam(defaultValue = "10") int pageSize,
+            @RequestParam(required = false) String keyword,
+            @RequestParam(required = false) String status,
+            @RequestParam(required = false) String type) {
+
+        Page<Announcement> pageObj = new Page<>(page, pageSize);
+        LambdaQueryWrapper<Announcement> wrapper = new LambdaQueryWrapper<>();
+
+        if (keyword != null && !keyword.isEmpty()) {
+            wrapper.and(w -> w
+                    .like(Announcement::getTitle, keyword)
+                    .or()
+                    .like(Announcement::getContent, keyword)
+            );
+        }
+        if (status != null && !status.isEmpty()) {
+            wrapper.eq(Announcement::getStatus, status);
+        }
+        if (type != null && !type.isEmpty()) {
+            wrapper.eq(Announcement::getType, type);
+        }
+        wrapper.orderByDesc(Announcement::getPriority, Announcement::getCreatedAt);
+
+        Page<Announcement> result = announcementMapper.selectPage(pageObj, wrapper);
+        return Result.success(result);
+    }
+
+    /**
+     * 获取公告详情
+     */
+    @GetMapping("/announcements/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
+    public Result<Announcement> getAnnouncementDetail(@PathVariable Long id) {
+        Announcement announcement = announcementMapper.selectById(id);
+        if (announcement == null) {
+            return Result.error("公告不存在");
+        }
+        return Result.success(announcement);
+    }
+
+    /**
+     * 创建公告
+     */
+    @PostMapping("/announcements")
+    @PreAuthorize("hasRole('ADMIN')")
+    public Result<Void> createAnnouncement(@Valid @RequestBody Announcement announcement) {
+        announcement.setCreatedBy(getCurrentUserId());
+        announcement.setCreatedAt(LocalDateTime.now());
+        announcement.setUpdatedAt(LocalDateTime.now());
+        announcementMapper.insert(announcement);
+        return Result.success();
+    }
+
+    /**
+     * 更新公告
+     */
+    @PutMapping("/announcements/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
+    public Result<Void> updateAnnouncement(@PathVariable Long id, @Valid @RequestBody Announcement announcement) {
+        Announcement existing = announcementMapper.selectById(id);
+        if (existing == null) {
+            return Result.error("公告不存在");
+        }
+        announcement.setId(id);
+        announcement.setUpdatedAt(LocalDateTime.now());
+        announcementMapper.updateById(announcement);
+        return Result.success();
+    }
+
+    /**
+     * 删除公告
+     */
+    @DeleteMapping("/announcements/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
+    public Result<Void> deleteAnnouncement(@PathVariable Long id) {
+        Announcement announcement = announcementMapper.selectById(id);
+        if (announcement == null) {
+            return Result.error("公告不存在");
+        }
+        announcementMapper.deleteById(id);
+        return Result.success();
+    }
+
+    /**
+     * 发布公告
+     */
+    @PostMapping("/announcements/{id}/publish")
+    @PreAuthorize("hasRole('ADMIN')")
+    public Result<Void> publishAnnouncement(@PathVariable Long id) {
+        Announcement announcement = announcementMapper.selectById(id);
+        if (announcement == null) {
+            return Result.error("公告不存在");
+        }
+        announcement.setStatus("PUBLISHED");
+        announcement.setUpdatedAt(LocalDateTime.now());
+        announcementMapper.updateById(announcement);
+        return Result.success();
+    }
+
+    /**
+     * 获取公告统计
+     */
+    @GetMapping("/announcements/stats")
+    @PreAuthorize("hasRole('ADMIN')")
+    public Result<Map<String, Long>> getAnnouncementStats() {
+        Map<String, Long> stats = new java.util.HashMap<>();
+        stats.put("total", announcementMapper.selectCount(new LambdaQueryWrapper<Announcement>()));
+        stats.put("published", announcementMapper.selectCount(new LambdaQueryWrapper<Announcement>().eq(Announcement::getStatus, "PUBLISHED")));
+        stats.put("draft", announcementMapper.selectCount(new LambdaQueryWrapper<Announcement>().eq(Announcement::getStatus, "DRAFT")));
+        stats.put("archived", announcementMapper.selectCount(new LambdaQueryWrapper<Announcement>().eq(Announcement::getStatus, "ARCHIVED")));
+        return Result.success(stats);
+    }
+
+    // ========== 轮播图管理 ==========
+
+    /**
+     * 获取轮播图列表
+     */
+    @GetMapping("/carousels")
+    @PreAuthorize("hasRole('ADMIN')")
+    public Result<Page<Carousel>> getCarouselList(
+            @RequestParam(defaultValue = "1") int page,
+            @RequestParam(defaultValue = "10") int pageSize,
+            @RequestParam(required = false) String keyword,
+            @RequestParam(required = false) String status,
+            @RequestParam(required = false) String position) {
+
+        Page<Carousel> pageObj = new Page<>(page, pageSize);
+        LambdaQueryWrapper<Carousel> wrapper = new LambdaQueryWrapper<>();
+
+        if (keyword != null && !keyword.isEmpty()) {
+            wrapper.like(Carousel::getTitle, keyword);
+        }
+        if (status != null && !status.isEmpty()) {
+            wrapper.eq(Carousel::getStatus, status);
+        }
+        if (position != null && !position.isEmpty()) {
+            wrapper.eq(Carousel::getPosition, position);
+        }
+        wrapper.orderByDesc(Carousel::getSort, Carousel::getCreatedAt);
+
+        Page<Carousel> result = carouselMapper.selectPage(pageObj, wrapper);
+        return Result.success(result);
+    }
+
+    /**
+     * 获取轮播图详情
+     */
+    @GetMapping("/carousels/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
+    public Result<Carousel> getCarouselDetail(@PathVariable Long id) {
+        Carousel carousel = carouselMapper.selectById(id);
+        if (carousel == null) {
+            return Result.error("轮播图不存在");
+        }
+        return Result.success(carousel);
+    }
+
+    /**
+     * 创建轮播图
+     */
+    @PostMapping("/carousels")
+    @PreAuthorize("hasRole('ADMIN')")
+    public Result<Void> createCarousel(@Valid @RequestBody Carousel carousel) {
+        carousel.setCreatedBy(getCurrentUserId());
+        carousel.setClickCount(0);
+        carousel.setCreatedAt(LocalDateTime.now());
+        carousel.setUpdatedAt(LocalDateTime.now());
+        carouselMapper.insert(carousel);
+        return Result.success();
+    }
+
+    /**
+     * 更新轮播图
+     */
+    @PutMapping("/carousels/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
+    public Result<Void> updateCarousel(@PathVariable Long id, @Valid @RequestBody Carousel carousel) {
+        Carousel existing = carouselMapper.selectById(id);
+        if (existing == null) {
+            return Result.error("轮播图不存在");
+        }
+        carousel.setId(id);
+        carousel.setUpdatedAt(LocalDateTime.now());
+        carouselMapper.updateById(carousel);
+        return Result.success();
+    }
+
+    /**
+     * 删除轮播图
+     */
+    @DeleteMapping("/carousels/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
+    public Result<Void> deleteCarousel(@PathVariable Long id) {
+        Carousel carousel = carouselMapper.selectById(id);
+        if (carousel == null) {
+            return Result.error("轮播图不存在");
+        }
+        carouselMapper.deleteById(id);
+        return Result.success();
+    }
+
+    /**
+     * 发布轮播图
+     */
+    @PostMapping("/carousels/{id}/publish")
+    @PreAuthorize("hasRole('ADMIN')")
+    public Result<Void> publishCarousel(@PathVariable Long id) {
+        Carousel carousel = carouselMapper.selectById(id);
+        if (carousel == null) {
+            return Result.error("轮播图不存在");
+        }
+        carousel.setStatus("PUBLISHED");
+        carousel.setUpdatedAt(LocalDateTime.now());
+        carouselMapper.updateById(carousel);
+        return Result.success();
+    }
+
+    /**
+     * 获取轮播图统计
+     */
+    @GetMapping("/carousels/stats")
+    @PreAuthorize("hasRole('ADMIN')")
+    public Result<Map<String, Long>> getCarouselStats() {
+        Map<String, Long> stats = new java.util.HashMap<>();
+        stats.put("total", carouselMapper.selectCount(new LambdaQueryWrapper<Carousel>()));
+        stats.put("published", carouselMapper.selectCount(new LambdaQueryWrapper<Carousel>().eq(Carousel::getStatus, "PUBLISHED")));
+        stats.put("draft", carouselMapper.selectCount(new LambdaQueryWrapper<Carousel>().eq(Carousel::getStatus, "DRAFT")));
+        stats.put("disabled", carouselMapper.selectCount(new LambdaQueryWrapper<Carousel>().eq(Carousel::getStatus, "DISABLED")));
         return Result.success(stats);
     }
 
