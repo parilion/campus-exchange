@@ -381,7 +381,7 @@
     "module": "admin",
     "description": "订单管理 + 评价管理 + 消息推送 + 数据导出",
     "priority": "P2",
-    "passes": false
+    "passes": true
   },
   {
     "id": 49,

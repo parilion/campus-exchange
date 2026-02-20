@@ -2,10 +2,25 @@
 
 ## 当前状态
 - 开发中模块: 管理后台
-- 当前功能: ID#48 - 订单管理 + 评价管理 + 消息推送 + 数据导出
-- 进度: 53/190 (27.9%)
+- 当前功能: ID#49 - 数据统计面板 + 系统配置/敏感词/操作日志管理
+- 进度: 54/190 (28.4%)
 
 ## 开发日志 (按时间倒序)
+
+### 2026-02-20 12:46:29 | 完成: 订单管理 + 评价管理 + 消息推送 + 数据导出 (#48)
+- **开始时间**: 2026-02-20 12:28:03
+- **结束时间**: 2026-02-20 12:46:29
+- **Commit**: `feat: add admin order, review management, message push and data export`
+- **涉及文件**:
+  - backend/src/main/java/com/campus/exchange/controller/AdminController.java
+  - backend/src/main/java/com/campus/exchange/controller/AdminPushMessageRequest.java
+  - frontend/src/services/admin.ts
+  - frontend/src/pages/AdminOrdersPage.tsx
+  - frontend/src/pages/AdminReviewsPage.tsx
+  - frontend/src/pages/AdminMessagesPage.tsx
+  - frontend/src/pages/AdminLayout.tsx
+  - frontend/src/App.tsx
+- **备注**: 订单管理API(列表/详情/统计/取消/导出CSV) + 评价管理API(列表/详情/统计/删除) + 消息推送API(单用户推送/群发/推送历史) + 前端管理页面(订单列表/评价列表/消息推送) + 侧边栏菜单 + API测试验证
 
 ### 2026-02-20 11:42:00 | 完成: 分类管理 CRUD + 公告管理 + 轮播图管理 (#47)
 - **开始时间**: 2026-02-20 11:25:25
@@ -726,6 +741,7 @@
 - [x] #45 用户管理列表 + 封禁/解封操作 (2026-02-20)
 - [x] #46 商品审核列表/操作 + 强制下架 + 举报处理 (2026-02-20)
 - [x] #47 分类管理 CRUD + 公告管理 + 轮播图管理 (2026-02-20)
+- [x] #48 订单管理 + 评价管理 + 消息推送 + 数据导出 (2026-02-20)
 
 ### 用户中心 (P1)
 - [x] #38 个人资料查看/编辑/头像上传 + 资料编辑页面 UI (2026-02-19)
