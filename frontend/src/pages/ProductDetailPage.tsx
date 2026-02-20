@@ -8,38 +8,12 @@ import { sendMessage } from '../services/messages';
 import { addFavorite, removeFavorite, checkFavorite } from '../services/favorite';
 import { useUserStore } from '../stores/userStore';
 import type { Product } from '../types';
+import { CONDITION_COLORS, CONDITION_LABELS, STATUS_COLORS, STATUS_LABELS } from '../constants/product';
+import { PriceDisplay } from '../components/ProductCard';
 import './ProductDetailPage.css';
 
 const { Title, Text, Paragraph } = Typography;
 
-// 新旧程度映射
-const CONDITION_COLORS: Record<string, string> = {
-  NEW: '#52c41a',
-  LIKE_NEW: '#73d13d',
-  GOOD: '#1890ff',
-  FAIR: '#faad14',
-  POOR: '#ff4d4f',
-};
-
-const CONDITION_LABELS: Record<string, string> = {
-  NEW: '全新',
-  LIKE_NEW: '几乎全新',
-  GOOD: '良好',
-  FAIR: '一般',
-  POOR: '较差',
-};
-
-const STATUS_LABELS: Record<string, string> = {
-  ON_SALE: '在售',
-  SOLD: '已售',
-  OFF_SHELF: '已下架',
-};
-
-const STATUS_COLORS: Record<string, string> = {
-  ON_SALE: 'green',
-  SOLD: 'orange',
-  OFF_SHELF: 'red',
-};
 
 export default function ProductDetailPage() {
   const { id } = useParams<{ id: string }>();

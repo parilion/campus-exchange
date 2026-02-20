@@ -1,0 +1,97 @@
+/* 轮播图Banner样式 */
+
+.hb-wrapper {
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+}
+
+.hb-slide {
+  position: relative;
+  overflow: hidden;
+}
+
+.hb-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  transition: transform 0.5s ease;
+}
+
+.hb-slide:hover .hb-image {
+  transform: scale(1.03);
+}
+
+.hb-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    to right,
+    rgba(0, 0, 0, 0.55) 0%,
+    rgba(0, 0, 0, 0.2) 60%,
+    transparent 100%
+  );
+  display: flex;
+  align-items: center;
+}
+
+.hb-content {
+  padding: 0 48px;
+  max-width: 500px;
+}
+
+.hb-title {
+  font-size: 28px;
+  font-weight: 700;
+  color: #fff;
+  margin: 0 0 12px;
+  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+  line-height: 1.2;
+}
+
+.hb-desc {
+  font-size: 16px;
+  color: rgba(255, 255, 255, 0.9);
+  margin: 0;
+  text-shadow: 0 1px 4px rgba(0, 0, 0, 0.3);
+}
+
+/* 轮播指示点 */
+.hb-dots li button {
+  background: rgba(255, 255, 255, 0.6) !important;
+  border-radius: 4px !important;
+  width: 20px !important;
+  height: 4px !important;
+  transition: all 0.3s !important;
+}
+
+.hb-dots li.slick-active button {
+  background: #fff !important;
+  width: 32px !important;
+}
+
+/* 响应式 */
+@media (max-width: 768px) {
+  .hb-content {
+    padding: 0 24px;
+  }
+
+  .hb-title {
+    font-size: 20px;
+  }
+
+  .hb-desc {
+    font-size: 13px;
+  }
+}
+
+@media (max-width: 480px) {
+  .hb-wrapper {
+    border-radius: 8px;
+  }
+
+  .hb-title {
+    font-size: 16px;
+  }
+}

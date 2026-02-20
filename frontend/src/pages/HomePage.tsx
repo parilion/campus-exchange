@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Row, Col, Card, Carousel, Image, Tag, Space, Typography, Spin } from 'antd';
+import { Row, Col, Typography, Spin } from 'antd';
 import {
   BookOutlined,
   LaptopOutlined,
@@ -10,12 +10,14 @@ import {
   ShoppingOutlined,
   FireOutlined,
   ClockCircleOutlined,
-  EyeOutlined,
-  RightOutlined
+  RightOutlined,
 } from '@ant-design/icons';
 import { getProductList } from '../services/product';
 import type { Product, ProductPageResponse } from '../types';
 import SearchBox from '../components/SearchBox';
+import ProductCard, { ProductCardSkeleton } from '../components/ProductCard';
+import HomeBanner from '../components/HomeBanner';
+import type { BannerItem } from '../components/HomeBanner';
 import './HomePage.css';
 
 const { Title, Text } = Typography;
@@ -31,97 +33,26 @@ const CATEGORIES = [
 ];
 
 // 轮播图数据
-const BANNERS = [
+const BANNERS: BannerItem[] = [
   {
     image: 'https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=1200&h=400&fit=crop',
     title: '校园二手交易平台',
     description: '省钱又环保，让闲置物品找到新主人',
-    link: '/products'
+    link: '/products',
   },
   {
     image: 'https://images.unsplash.com/photo-1498050108023-c5249f4df085?w=1200&h=400&fit=crop',
     title: '电子产品专场',
     description: '手机、电脑、平板优惠多多',
-    link: '/products?categoryId=2'
+    link: '/products?categoryId=2',
   },
   {
     image: 'https://images.unsplash.com/photo-1497633762265-9d179a990aa6?w=1200&h=400&fit=crop',
     title: '教材书籍优惠',
     description: '学长学姐的笔记和教材，超值转让',
-    link: '/products?categoryId=1'
+    link: '/products?categoryId=1',
   },
 ];
-
-// 新旧程度配置
-const CONDITION_COLORS: Record<string, string> = {
-  NEW: '#52c41a',
-  LIKE_NEW: '#73d13d',
-  GOOD: '#1890ff',
-  FAIR: '#faad14',
-  POOR: '#ff4d4f',
-};
-
-const CONDITION_LABELS: Record<string, string> = {
-  NEW: '全新',
-  LIKE_NEW: '几乎全新',
-  GOOD: '良好',
-  FAIR: '一般',
-  POOR: '较差',
-};
-
-// 价格显示组件
-const PriceTag = ({ price, originalPrice }: { price: number; originalPrice?: number }) => (
-  <div className="home-price-container">
-    <span className="home-current-price">¥{price.toFixed(2)}</span>
-    {originalPrice && originalPrice > price && (
-      <span className="home-original-price">¥{originalPrice.toFixed(2)}</span>
-    )}
-  </div>
-);
-
-// 商品卡片组件
-const ProductCard = ({ product, onClick }: { product: Product; onClick: () => void }) => {
-  const imageUrl = product.images && product.images.length > 0
-    ? product.images[0]
-    : 'https://via.placeholder.com/300x200?text=No+Image';
-
-  return (
-    <Card
-      hoverable
-      className="home-product-card"
-      onClick={onClick}
-      cover={
-        <div className="home-product-image-wrapper">
-          <Image
-            src={imageUrl}
-            alt={product.title}
-            preview={false}
-            fallback="https://via.placeholder.com/300x200?text=Image+Error"
-            style={{ height: 180, objectFit: 'cover', width: '100%' }}
-          />
-          <Tag
-            className="home-condition-tag"
-            color={CONDITION_COLORS[product.condition] || 'default'}
-          >
-            {CONDITION_LABELS[product.condition] || product.condition}
-          </Tag>
-        </div>
-      }
-    >
-      <Card.Meta
-        title={<Text ellipsis={{ tooltip: product.title }}>{product.title}</Text>}
-        description={
-          <div className="home-product-info">
-            <PriceTag price={product.price} originalPrice={product.originalPrice} />
-            <Space className="home-product-stats" size="small">
-              <span><EyeOutlined /> {product.viewCount || 0}</span>
-            </Space>
-          </div>
-        }
-      />
-    </Card>
-  );
-};
 
 export default function HomePage() {
   const navigate = useNavigate();
@@ -129,27 +60,15 @@ export default function HomePage() {
   const [latestProducts, setLatestProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
 
-  // 加载热门商品和最新商品
   useEffect(() => {
     const loadProducts = async () => {
       setLoading(true);
       try {
-        // 获取热门商品（按浏览量排序）
-        const hotData: ProductPageResponse = await getProductList({
-          page: 1,
-          pageSize: 8,
-          sortBy: 'viewCount',
-          sortOrder: 'desc',
-        });
+        const [hotData, latestData] = await Promise.all([
+          getProductList({ page: 1, pageSize: 8, sortBy: 'viewCount', sortOrder: 'desc' }),
+          getProductList({ page: 1, pageSize: 8, sortBy: 'createdAt', sortOrder: 'desc' }),
+        ]) as [ProductPageResponse, ProductPageResponse];
         setHotProducts(hotData.list || []);
-
-        // 获取最新商品
-        const latestData: ProductPageResponse = await getProductList({
-          page: 1,
-          pageSize: 8,
-          sortBy: 'createdAt',
-          sortOrder: 'desc',
-        });
         setLatestProducts(latestData.list || []);
       } catch (error) {
         console.error('Failed to load products:', error);
@@ -157,39 +76,33 @@ export default function HomePage() {
         setLoading(false);
       }
     };
-
     loadProducts();
   }, []);
 
-  // 处理搜索
   const handleSearch = (value: string) => {
     navigate(`/products?keyword=${encodeURIComponent(value)}`);
   };
 
-  // 处理分类点击
   const handleCategoryClick = (categoryId: number) => {
     navigate(`/products?categoryId=${categoryId}`);
   };
 
+  // 骨架屏列表
+  const SkeletonGrid = () => (
+    <Row gutter={[16, 16]}>
+      {Array.from({ length: 8 }).map((_, i) => (
+        <Col key={i} xs={12} sm={8} md={6} lg={6}>
+          <ProductCardSkeleton />
+        </Col>
+      ))}
+    </Row>
+  );
+
   return (
     <div className="home-page">
-      {/* 轮播图区域 */}
+      {/* 轮播图 */}
       <div className="home-banner">
-        <Carousel autoplay dots={{ className: 'home-dots' }}>
-          {BANNERS.map((banner, index) => (
-            <div key={index} className="home-banner-slide" onClick={() => navigate(banner.link)}>
-              <div
-                className="home-banner-image"
-                style={{ backgroundImage: `url(${banner.image})` }}
-              >
-                <div className="home-banner-content">
-                  <Title level={2} className="home-banner-title">{banner.title}</Title>
-                  <Text className="home-banner-description">{banner.description}</Text>
-                </div>
-              </div>
-            </div>
-          ))}
-        </Carousel>
+        <HomeBanner banners={BANNERS} height={360} />
       </div>
 
       {/* 搜索区域 */}
@@ -209,10 +122,7 @@ export default function HomePage() {
                   className="home-category-item"
                   onClick={() => handleCategoryClick(category.id)}
                 >
-                  <div
-                    className="home-category-icon"
-                    style={{ backgroundColor: category.color }}
-                  >
+                  <div className="home-category-icon" style={{ backgroundColor: category.color }}>
                     {category.icon}
                   </div>
                   <Text className="home-category-name">{category.name}</Text>
@@ -239,16 +149,23 @@ export default function HomePage() {
             </Text>
           </div>
           <Spin spinning={loading}>
-            <Row gutter={[16, 16]}>
-              {hotProducts.map(product => (
-                <Col key={product.id} xs={12} sm={8} md={6} lg={6}>
-                  <ProductCard
-                    product={product}
-                    onClick={() => navigate(`/products/${product.id}`)}
-                  />
-                </Col>
-              ))}
-            </Row>
+            {loading ? (
+              <SkeletonGrid />
+            ) : (
+              <Row gutter={[16, 16]}>
+                {hotProducts.map(product => (
+                  <Col key={product.id} xs={12} sm={8} md={6} lg={6}>
+                    <ProductCard
+                      product={product}
+                      onClick={() => navigate(`/products/${product.id}`)}
+                      showSeller
+                      showFavoriteCount
+                      imageHeight={180}
+                    />
+                  </Col>
+                ))}
+              </Row>
+            )}
           </Spin>
         </div>
       </div>
@@ -269,16 +186,23 @@ export default function HomePage() {
             </Text>
           </div>
           <Spin spinning={loading}>
-            <Row gutter={[16, 16]}>
-              {latestProducts.map(product => (
-                <Col key={product.id} xs={12} sm={8} md={6} lg={6}>
-                  <ProductCard
-                    product={product}
-                    onClick={() => navigate(`/products/${product.id}`)}
-                  />
-                </Col>
-              ))}
-            </Row>
+            {loading ? (
+              <SkeletonGrid />
+            ) : (
+              <Row gutter={[16, 16]}>
+                {latestProducts.map(product => (
+                  <Col key={product.id} xs={12} sm={8} md={6} lg={6}>
+                    <ProductCard
+                      product={product}
+                      onClick={() => navigate(`/products/${product.id}`)}
+                      showSeller
+                      showDate
+                      imageHeight={180}
+                    />
+                  </Col>
+                ))}
+              </Row>
+            )}
           </Spin>
         </div>
       </div>

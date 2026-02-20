@@ -1,26 +1,15 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Row, Col, Card, Select, Pagination, Empty, Image, Tag, Space, Typography, Input } from 'antd';
-import { FireOutlined, ClockCircleOutlined, EyeOutlined } from '@ant-design/icons';
+import { Row, Col, Select, Pagination, Empty, Space, Typography, Input } from 'antd';
+import { FireOutlined } from '@ant-design/icons';
 import { getProductList } from '../services/product';
 import type { Product, ProductPageResponse } from '../types';
 import SearchBox from '../components/SearchBox';
+import ProductCard, { ProductCardSkeleton } from '../components/ProductCard';
+import { CATEGORY_OPTIONS, CONDITION_LABELS } from '../constants/product';
 import './ProductListPage.css';
 
 const { Title, Text } = Typography;
-
-// 分类选项
-const CATEGORY_OPTIONS = [
-  { value: undefined, label: '全部分类' },
-  { value: 1, label: '教材书籍' },
-  { value: 2, label: '电子产品' },
-  { value: 3, label: '生活用品' },
-  { value: 4, label: '服饰鞋帽' },
-  { value: 5, label: '运动户外' },
-  { value: 6, label: '美妆护肤' },
-  { value: 7, label: '食品饮料' },
-  { value: 8, label: '其他' },
-];
 
 // 排序选项
 const SORT_OPTIONS = [
@@ -31,98 +20,11 @@ const SORT_OPTIONS = [
   { value: 'viewCount-desc', label: '热度优先' },
 ];
 
-// 新旧程度选项
+// 新旧程度筛选选项
 const CONDITION_OPTIONS = [
   { value: undefined, label: '全部成色' },
-  { value: 'NEW', label: '全新' },
-  { value: 'LIKE_NEW', label: '几乎全新' },
-  { value: 'GOOD', label: '良好' },
-  { value: 'FAIR', label: '一般' },
-  { value: 'POOR', label: '较差' },
+  ...Object.entries(CONDITION_LABELS).map(([value, label]) => ({ value, label })),
 ];
-
-// 新旧程度标签颜色
-const CONDITION_COLORS: Record<string, string> = {
-  NEW: '#52c41a',
-  LIKE_NEW: '#73d13d',
-  GOOD: '#1890ff',
-  FAIR: '#faad14',
-  POOR: '#ff4d4f',
-};
-
-const CONDITION_LABELS: Record<string, string> = {
-  NEW: '全新',
-  LIKE_NEW: '几乎全新',
-  GOOD: '良好',
-  FAIR: '一般',
-  POOR: '较差',
-};
-
-// 价格显示组件
-const PriceTag = ({ price, originalPrice }: { price: number; originalPrice?: number }) => (
-  <div className="price-container">
-    <span className="current-price">¥{price.toFixed(2)}</span>
-    {originalPrice && originalPrice > price && (
-      <span className="original-price">¥{originalPrice.toFixed(2)}</span>
-    )}
-  </div>
-);
-
-// 商品卡片组件
-const ProductCard = ({ product, onClick }: { product: Product; onClick: () => void }) => {
-  const imageUrl = product.images && product.images.length > 0
-    ? product.images[0]
-    : 'https://via.placeholder.com/300x200?text=No+Image';
-
-  return (
-    <Card
-      hoverable
-      className="product-card"
-      onClick={onClick}
-      cover={
-        <div className="product-image-wrapper">
-          <Image
-            src={imageUrl}
-            alt={product.title}
-            preview={false}
-            fallback="https://via.placeholder.com/300x200?text=Image+Error"
-            style={{ height: 200, objectFit: 'cover' }}
-          />
-          <Tag
-            className="condition-tag"
-            color={CONDITION_COLORS[product.condition] || 'default'}
-          >
-            {CONDITION_LABELS[product.condition] || product.condition}
-          </Tag>
-        </div>
-      }
-    >
-      <Card.Meta
-        title={<Text ellipsis={{ tooltip: product.title }}>{product.title}</Text>}
-        description={
-          <div className="product-info">
-            <PriceTag price={product.price} originalPrice={product.originalPrice} />
-            <Space className="product-stats" size="small">
-              <span><ClockCircleOutlined /> {new Date(product.createdAt).toLocaleDateString()}</span>
-              <span><EyeOutlined /> {product.viewCount || 0}</span>
-            </Space>
-          </div>
-        }
-      />
-    </Card>
-  );
-};
-
-// 页面骨架组件
-const ProductCardSkeleton = () => (
-  <Card hoverable className="product-card skeleton">
-    <div className="skeleton-image" />
-    <div className="skeleton-content">
-      <div className="skeleton-title" />
-      <div className="skeleton-price" />
-    </div>
-  </Card>
-);
 
 export default function ProductListPage() {
   const navigate = useNavigate();
@@ -144,7 +46,6 @@ export default function ProductListPage() {
     condition: undefined as string | undefined,
   });
 
-  // 加载商品列表
   const loadProducts = async () => {
     setLoading(true);
     try {
@@ -176,7 +77,6 @@ export default function ProductListPage() {
     loadProducts();
   }, [pagination.page, filters]);
 
-  // 处理筛选变化
   const handleCategoryChange = (value: number | undefined) => {
     setFilters(prev => ({ ...prev, categoryId: value }));
     setPagination(prev => ({ ...prev, page: 1 }));
@@ -221,14 +121,9 @@ export default function ProductListPage() {
       {/* 筛选栏 */}
       <div className="filter-bar">
         <Row gutter={[16, 16]} align="middle">
-          {/* 关键词搜索 */}
           <Col xs={24} md={6}>
-            <SearchBox
-              defaultValue={filters.keyword}
-              onSearch={handleSearch}
-            />
+            <SearchBox defaultValue={filters.keyword} onSearch={handleSearch} />
           </Col>
-          {/* 分类筛选 */}
           <Col xs={24} sm={12} md={4}>
             <Select
               style={{ width: '100%' }}
@@ -239,7 +134,6 @@ export default function ProductListPage() {
               allowClear
             />
           </Col>
-          {/* 价格区间筛选 */}
           <Col xs={24} sm={12} md={5}>
             <Space.Compact style={{ width: '100%' }}>
               <Input
@@ -258,7 +152,6 @@ export default function ProductListPage() {
               />
             </Space.Compact>
           </Col>
-          {/* 新旧程度筛选 */}
           <Col xs={24} sm={12} md={4}>
             <Select
               style={{ width: '100%' }}
@@ -269,7 +162,6 @@ export default function ProductListPage() {
               allowClear
             />
           </Col>
-          {/* 排序 */}
           <Col xs={24} sm={12} md={4}>
             <Select
               style={{ width: '100%' }}
@@ -279,11 +171,8 @@ export default function ProductListPage() {
               placeholder="排序方式"
             />
           </Col>
-          {/* 结果数量 */}
           <Col xs={24} md={4} className="result-count">
-            <Text type="secondary">
-              共 {pagination.total} 件商品
-            </Text>
+            <Text type="secondary">共 {pagination.total} 件商品</Text>
           </Col>
         </Row>
       </div>
@@ -291,7 +180,6 @@ export default function ProductListPage() {
       {/* 商品列表 */}
       <div className="product-grid">
         {loading ? (
-          // 加载骨架屏
           <Row gutter={[16, 16]}>
             {Array.from({ length: 8 }).map((_, index) => (
               <Col key={index} xs={12} sm={8} md={6} lg={6}>
@@ -312,6 +200,8 @@ export default function ProductListPage() {
                 <ProductCard
                   product={product}
                   onClick={() => navigate(`/products/${product.id}`)}
+                  showSeller
+                  showDate
                 />
               </Col>
             ))}

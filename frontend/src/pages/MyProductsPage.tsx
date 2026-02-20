@@ -4,6 +4,7 @@ import { Row, Col, Card, Select, Pagination, Empty, Image, Tag, Space, Typograph
 import { PlusOutlined, ClockCircleOutlined, EyeOutlined, MoreOutlined, EditOutlined, DeleteOutlined, StopOutlined, FileTextOutlined, PushpinOutlined } from '@ant-design/icons';
 import { getMyProducts, deleteProduct, getDrafts, setProductTop } from '../services/product';
 import type { Product, ProductPageResponse } from '../types';
+import { CONDITION_COLORS, CONDITION_LABELS, STATUS_COLORS, STATUS_LABELS } from '../constants/product';
 import './MyProductsPage.css';
 
 const { Title, Text } = Typography;
@@ -15,37 +16,6 @@ const STATUS_OPTIONS = [
   { value: 'SOLD', label: '已售' },
   { value: 'OFF_SHELF', label: '已下架' },
 ];
-
-// 新旧程度标签颜色
-const CONDITION_COLORS: Record<string, string> = {
-  NEW: '#52c41a',
-  LIKE_NEW: '#73d13d',
-  GOOD: '#1890ff',
-  FAIR: '#faad14',
-  POOR: '#ff4d4f',
-};
-
-const CONDITION_LABELS: Record<string, string> = {
-  NEW: '全新',
-  LIKE_NEW: '几乎全新',
-  GOOD: '良好',
-  FAIR: '一般',
-  POOR: '较差',
-};
-
-const STATUS_LABELS: Record<string, string> = {
-  ON_SALE: '在售',
-  SOLD: '已售',
-  OFF_SHELF: '已下架',
-  DELETED: '已删除',
-};
-
-const STATUS_COLORS: Record<string, string> = {
-  ON_SALE: 'green',
-  SOLD: 'orange',
-  OFF_SHELF: 'red',
-  DELETED: 'default',
-};
 
 // 商品卡片组件
 const MyProductCard = ({ product, onEdit, onDelete, onStatusChange, onSetTop }: {

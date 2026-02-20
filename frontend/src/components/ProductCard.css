@@ -1,0 +1,196 @@
+/* 商品卡片通用样式 */
+
+.pc-card {
+  border-radius: 12px !important;
+  overflow: hidden;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+  border: 1px solid #f0f0f0 !important;
+  background: #fff !important;
+}
+
+.pc-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 24px rgba(24, 144, 255, 0.15) !important;
+  border-color: #91d5ff !important;
+}
+
+/* 图片区域 */
+.pc-image-wrapper {
+  position: relative;
+  overflow: hidden;
+}
+
+.pc-image-wrapper .ant-image {
+  transition: transform 0.3s ease;
+  display: block;
+}
+
+.pc-card:hover .pc-image-wrapper .ant-image img {
+  transform: scale(1.05);
+}
+
+/* 成色标签 */
+.pc-condition-tag {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  font-size: 11px;
+  font-weight: 600;
+  border-radius: 4px;
+  padding: 1px 6px;
+  border: none !important;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.15);
+  margin: 0;
+}
+
+/* 额外操作按钮（右上角） */
+.pc-extra-action {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  z-index: 10;
+}
+
+/* 商品标题 */
+.pc-title {
+  display: block;
+  font-size: 14px;
+  line-height: 1.4;
+  margin-bottom: 6px;
+  color: #262626;
+}
+
+/* 标签列表 */
+.pc-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  margin-bottom: 6px;
+}
+
+.pc-tag {
+  font-size: 11px;
+  padding: 0 6px;
+  border-radius: 3px;
+  margin: 0;
+  line-height: 18px;
+  background: #f0f5ff;
+  border-color: #adc6ff;
+  color: #2f54eb;
+}
+
+/* 价格显示 */
+.pc-price-container {
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+  margin-bottom: 8px;
+}
+
+.pc-current-price {
+  font-size: 18px;
+  font-weight: 700;
+  color: #ff4d4f;
+  letter-spacing: -0.5px;
+}
+
+.pc-original-price {
+  font-size: 12px;
+  color: #bfbfbf;
+  text-decoration: line-through;
+}
+
+/* 卖家信息 */
+.pc-seller-info {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 8px;
+}
+
+.pc-seller-avatar {
+  flex-shrink: 0;
+  background: #e6f7ff;
+  color: #1890ff;
+}
+
+.pc-seller-name {
+  font-size: 12px;
+  color: #8c8c8c;
+  max-width: 100px;
+}
+
+/* 统计信息 */
+.pc-stats {
+  font-size: 12px;
+  color: #8c8c8c;
+  display: flex;
+  align-items: center;
+}
+
+.pc-stats span {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+}
+
+/* 骨架屏 */
+.pc-skeleton {
+  pointer-events: none;
+}
+
+.pc-skeleton-image {
+  height: 200px;
+  background: linear-gradient(90deg, #f0f0f0 25%, #e8e8e8 50%, #f0f0f0 75%);
+  background-size: 200% 100%;
+  animation: pc-skeleton-loading 1.5s infinite;
+}
+
+.pc-skeleton-body {
+  padding: 12px 0;
+}
+
+.pc-skeleton-title {
+  height: 18px;
+  width: 80%;
+  background: linear-gradient(90deg, #f0f0f0 25%, #e8e8e8 50%, #f0f0f0 75%);
+  background-size: 200% 100%;
+  animation: pc-skeleton-loading 1.5s infinite;
+  border-radius: 4px;
+  margin-bottom: 10px;
+}
+
+.pc-skeleton-price {
+  height: 22px;
+  width: 50%;
+  background: linear-gradient(90deg, #f0f0f0 25%, #e8e8e8 50%, #f0f0f0 75%);
+  background-size: 200% 100%;
+  animation: pc-skeleton-loading 1.5s infinite;
+  border-radius: 4px;
+  margin-bottom: 10px;
+}
+
+.pc-skeleton-meta {
+  height: 14px;
+  width: 60%;
+  background: linear-gradient(90deg, #f0f0f0 25%, #e8e8e8 50%, #f0f0f0 75%);
+  background-size: 200% 100%;
+  animation: pc-skeleton-loading 1.5s infinite;
+  border-radius: 4px;
+}
+
+@keyframes pc-skeleton-loading {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+/* 响应式 */
+@media (max-width: 576px) {
+  .pc-current-price {
+    font-size: 16px;
+  }
+
+  .pc-title {
+    font-size: 13px;
+  }
+}
