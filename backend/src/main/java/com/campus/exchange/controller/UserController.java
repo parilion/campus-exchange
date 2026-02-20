@@ -75,7 +75,11 @@ public class UserController {
     @PutMapping("/email-notification")
     public Result<Void> updateEmailNotification(@RequestBody Map<String, Boolean> request) {
         Long userId = getCurrentUserId();
-        userService.updateEmailNotification(userId, request.get("enabled"));
+        Boolean enabled = request.get("enabled");
+        if (enabled == null) {
+            return Result.error("参数错误");
+        }
+        userService.updateEmailNotification(userId, enabled);
         return Result.success(null);
     }
 
