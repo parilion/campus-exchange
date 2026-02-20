@@ -1,4 +1,5 @@
 import request from './request';
+import type { Result } from '../types';
 
 export interface UserProfile {
   id: number;
@@ -36,15 +37,15 @@ export interface UpdateProfileRequest {
 }
 
 export const getProfile = () => {
-  return request.get<UserProfile>('/users/profile');
+  return request.get<Result<UserProfile>>('/users/profile');
 };
 
 export const getUserById = (userId: number) => {
-  return request.get<UserProfile>(`/users/${userId}`);
+  return request.get<Result<UserProfile>>(`/users/${userId}`);
 };
 
 export const getUserPublicProfile = (userId: number) => {
-  return request.get<UserPublicProfile>(`/users/${userId}/public`);
+  return request.get<Result<UserPublicProfile>>(`/users/${userId}/public`);
 };
 
 export const updateProfile = (data: UpdateProfileRequest) => {
@@ -54,7 +55,7 @@ export const updateProfile = (data: UpdateProfileRequest) => {
 export const uploadAvatar = (file: File) => {
   const formData = new FormData();
   formData.append('file', file);
-  return request.post<string>('/users/avatar', formData, {
+  return request.post<Result<string>>('/users/avatar', formData, {
     headers: {
       'Content-Type': 'multipart/form-data',
     },
@@ -63,7 +64,7 @@ export const uploadAvatar = (file: File) => {
 
 // 获取浏览历史
 export const getBrowseHistory = (limit: number = 20) => {
-  return request.get<any[]>(`/users/browse-history?limit=${limit}`);
+  return request.get<Result<any[]>>(`/users/browse-history?limit=${limit}`);
 };
 
 // 清空浏览历史
@@ -93,11 +94,11 @@ export interface Address {
 }
 
 export const getAddresses = () => {
-  return request.get<Address[]>('/addresses');
+  return request.get<Result<Address[]>>('/addresses');
 };
 
 export const addAddress = (data: Address) => {
-  return request.post<Address>('/addresses', data);
+  return request.post<Result<Address>>('/addresses', data);
 };
 
 export const updateAddress = (id: number, data: Address) => {
@@ -110,4 +111,10 @@ export const deleteAddress = (id: number) => {
 
 export const setDefaultAddress = (id: number) => {
   return request.put<void>(`/addresses/${id}/default`, {});
+};
+
+// ===== 邮件通知设置 =====
+
+export const updateEmailNotification = (enabled: boolean) => {
+  return request.put('/users/email-notification', { enabled });
 };

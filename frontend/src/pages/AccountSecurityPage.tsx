@@ -1,17 +1,29 @@
-import React from 'react';
-import { Card, List, Button, Space, Typography, Tag } from 'antd';
+import React, { useState } from 'react';
+import { Card, List, Button, Space, Typography, Tag, Switch, message, Form } from 'antd';
 import {
   LockOutlined, SafetyCertificateOutlined, ClockCircleOutlined,
-  ArrowRightOutlined, CheckCircleOutlined
+  ArrowRightOutlined, CheckCircleOutlined, BellOutlined
 } from '@ant-design/icons';
 import { useNavigate } from 'react-router-dom';
 import { useUserStore } from '../stores/userStore';
+import { updateEmailNotification } from '../services/user';
 
 const { Title, Text } = Typography;
 
 const AccountSecurityPage: React.FC = () => {
   const navigate = useNavigate();
   const { user } = useUserStore();
+  const [emailNotificationEnabled, setEmailNotificationEnabled] = useState(true);
+
+  const handleEmailNotificationChange = async (checked: boolean) => {
+    try {
+      await updateEmailNotification(checked);
+      setEmailNotificationEnabled(checked);
+      message.success('设置已更新');
+    } catch (error) {
+      message.error('设置更新失败');
+    }
+  };
 
   const securityItems = [
     {
@@ -93,6 +105,23 @@ const AccountSecurityPage: React.FC = () => {
             </List.Item>
           )}
         />
+
+        <div style={{ marginTop: 24, padding: '16px', background: '#f0f5ff', borderRadius: 8, border: '1px solid #adc6ff' }}>
+          <Space style={{ width: '100%', justifyContent: 'space-between' }}>
+            <Space>
+              <BellOutlined style={{ fontSize: 20, color: '#1890ff' }} />
+              <div>
+                <Text strong>邮件通知</Text>
+                <br />
+                <Text type="secondary">接收订单状态、消息通知等邮件推送</Text>
+              </div>
+            </Space>
+            <Switch
+              checked={emailNotificationEnabled}
+              onChange={handleEmailNotificationChange}
+            />
+          </Space>
+        </div>
 
         <div style={{ marginTop: 24, padding: '16px', background: '#fff7e6', borderRadius: 8, border: '1px solid #ffd591' }}>
           <Title level={5} style={{ color: '#d46b08', marginBottom: 8 }}>安全建议</Title>
