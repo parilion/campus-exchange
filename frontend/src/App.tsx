@@ -40,8 +40,10 @@ import AccountSecurityPage from './pages/AccountSecurityPage';
 import UserAgreementPage from './pages/UserAgreementPage';
 import SystemMessagesPage from './pages/SystemMessagesPage';
 import MyReviewsPage from './pages/MyReviewsPage';
+import NotFoundPage from './pages/NotFoundPage';
 import AuthRoute from './components/AuthRoute';
 import AppHeader from './components/AppHeader';
+import ErrorBoundary from './components/ErrorBoundary';
 
 const { Content } = Layout;
 
@@ -52,6 +54,7 @@ function App() {
         <Layout style={{ minHeight: '100vh' }}>
           <AppHeader />
           <Content>
+            <ErrorBoundary>
             <Routes>
               <Route path="/login" element={<LoginPage />} />
               <Route path="/register" element={<RegisterPage />} />
@@ -230,7 +233,9 @@ function App() {
                   <AdminDashboardPage />
                 </AdminLayout>
               } />
+              <Route path="*" element={<NotFoundPage />} />
             </Routes>
+            </ErrorBoundary>
           </Content>
         </Layout>
       </BrowserRouter>

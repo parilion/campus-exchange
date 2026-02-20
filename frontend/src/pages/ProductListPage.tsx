@@ -1,11 +1,12 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Row, Col, Select, Pagination, Empty, Space, Typography, Input } from 'antd';
+import { Row, Col, Select, Pagination, Space, Typography, Input } from 'antd';
 import { FireOutlined } from '@ant-design/icons';
 import { getProductList } from '../services/product';
 import type { Product, ProductPageResponse } from '../types';
 import SearchBox from '../components/SearchBox';
 import ProductCard, { ProductCardSkeleton } from '../components/ProductCard';
+import EmptyState from '../components/EmptyState';
 import { CATEGORY_OPTIONS, CONDITION_LABELS } from '../constants/product';
 import './ProductListPage.css';
 
@@ -188,11 +189,7 @@ export default function ProductListPage() {
             ))}
           </Row>
         ) : products.length === 0 ? (
-          <Empty
-            description="暂无商品"
-            image={Empty.PRESENTED_IMAGE_SIMPLE}
-            style={{ marginTop: 80 }}
-          />
+          <EmptyState.Search style={{ marginTop: 40 }} />
         ) : (
           <Row gutter={[16, 16]}>
             {products.map(product => (
