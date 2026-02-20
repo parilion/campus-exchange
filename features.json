@@ -403,9 +403,9 @@
     "id": 51,
     "category": "通知系统",
     "module": "notification",
-    "description": "邮件通知 + 偏好设置 + 商品降价/系统公告通知",
+    "description": "邮件通知 + 偏好设置 + 密码重置邮件发送",
     "priority": "P2",
-    "passes": false
+    "passes": true
   },
   {
     "id": 52,
