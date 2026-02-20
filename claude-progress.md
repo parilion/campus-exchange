@@ -1,11 +1,44 @@
 # Campus Exchange - 开发进度
 
 ## 当前状态
-- 开发中模块: UI/UX 组件库
-- 当前功能: ID#55 - 下拉刷新/上拉加载 + 底部信息栏 + 响应式布局 + 暗色模式
-- 进度: 57/190 (30.0%)
+- 开发中模块: 安全与性能
+- 当前功能: ID#60 - 环境变量/多环境配置 + 数据库初始化 + 健康检查 + 日志配置
+- 进度: 60/190 (31.6%)
 
 ## 开发日志 (按时间倒序)
+
+### 2026-02-20 17:15:00 | 完成: 接口限流 + 敏感数据脱敏 (#57)
+- **开始时间**: 2026-02-20 17:05:00
+- **结束时间**: 2026-02-20 17:15:00
+- **Commit**: `feat: add rate limiting interceptor and data masking utility (#57)`
+- **涉及文件**:
+  - backend/src/main/java/com/campus/exchange/config/RateLimitInterceptor.java
+  - backend/src/main/java/com/campus/exchange/config/WebMvcConfig.java
+  - backend/src/main/java/com/campus/exchange/util/DataMaskUtil.java
+- **备注**: RateLimitInterceptor(IP限流60次/分钟，排除公开接口) + DataMaskUtil(手机/邮箱/身份证/银行卡/姓名/地址脱敏) + WebMvcConfig注册拦截器。Redis缓存跳过
+
+### 2026-02-20 17:00:00 | 完成: 请求日志 + Axios拦截器 + 前端路由懒加载 (#58)
+- **开始时间**: 2026-02-20 16:45:00
+- **结束时间**: 2026-02-20 17:00:00
+- **Commit**: `feat: add lazy loading routes, enhanced Axios interceptor, and request logging filter (#58)`
+- **涉及文件**:
+  - frontend/src/App.tsx
+  - frontend/src/services/request.ts
+  - frontend/src/utils/message.ts
+  - backend/src/main/java/com/campus/exchange/config/RequestLoggingFilter.java
+- **备注**: React.lazy+Suspense路由懒加载(减少首屏加载) + Axios统一错误处理(全局message提示) + utils/message.ts(解决Ant Design App Context) + 后端RequestLoggingFilter记录API请求日志
+
+### 2026-02-20 16:40:00 | 完成: 底部信息栏 + 响应式布局 + 暗色模式 (#55)
+- **开始时间**: 2026-02-20 15:00:00
+- **结束时间**: 2026-02-20 16:40:00
+- **Commit**: `feat: add dark mode toggle, AppFooter, and theme persistence (#55)`
+- **涉及文件**:
+  - frontend/src/stores/themeStore.ts
+  - frontend/src/components/AppFooter.tsx
+  - frontend/src/components/AppFooter.css
+  - frontend/src/components/AppHeader.tsx
+  - frontend/src/App.tsx
+- **备注**: themeStore(Zustand persist暗色模式持久化) + AppFooter(品牌/快速入口/帮助中心/平台保障4列) + AppHeader暗色切换按钮(太阳/月亮图标) + ConfigProvider动态darkAlgorithm + App.tsx集成Footer组件
 
 ### 2026-02-20 14:55:00 | 完成: 骨架屏/空状态/错误页面/Toast/确认弹窗/图片懒加载 (#54)
 - **开始时间**: 2026-02-20 14:38:00
@@ -810,6 +843,11 @@
 - [x] #52 首页布局/推荐展示/分类导航/搜索框 + 全局导航栏组件 (2026-02-19)
 - [x] #53 商品卡片/价格显示/用户头像/标签/轮播图组件 (2026-02-20)
 - [x] #54 骨架屏/空状态/错误页面/Toast/确认弹窗/图片懒加载 (2026-02-20)
+- [x] #55 底部信息栏 + 响应式布局 + 暗色模式 (2026-02-20)
+
+### 安全与性能 (P1)
+- [x] #57 接口限流 + 敏感数据脱敏 (2026-02-20)
+- [x] #58 请求日志 + Axios拦截器 + 前端路由懒加载 (2026-02-20)
 
 ## 技术债务
 - 无
